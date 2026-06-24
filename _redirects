@@ -1,0 +1,23 @@
+# ══════════════════════════════════════════════════════════
+#  La Enbajada — Netlify Redirects v2
+#  Actualizado junio 2026
+# ══════════════════════════════════════════════════════════
+
+# Consolidar todo el tráfico en el dominio definitivo
+http://laenbajada.netlify.app/*   https://laenbajada.com/:splat  301!
+https://laenbajada.netlify.app/*  https://laenbajada.com/:splat  301!
+
+# Bloquear acceso directo a admin desde bots/crawlers comunes
+# (la seguridad real está en Supabase Auth — esto es capa adicional)
+/admin  /admin.html  200
+
+# Rutas limpias sin .html
+/articulo    /articulo.html    301
+/edicion     /edicion.html     301
+/secciones   /secciones.html   301
+/archivo     /archivo.html     301
+/sobre       /sobre.html       301
+/editor      /editor.html      301
+
+# 404 personalizado
+/*           /404.html         404

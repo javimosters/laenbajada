@@ -1,0 +1,24 @@
+# ══════════════════════════════════════════════════════════
+#  La Enbajada — robots.txt
+#  Actualizado junio 2026
+# ══════════════════════════════════════════════════════════
+
+User-agent: *
+Allow: /
+Allow: /articulo.html
+Allow: /edicion.html
+Allow: /secciones.html
+Allow: /archivo.html
+Allow: /sobre.html
+
+# Bloquear panel admin y rutas sensibles
+Disallow: /admin.html
+Disallow: /admin
+Disallow: /editor.html
+Disallow: /?preview=1
+Disallow: /*.json$
+Disallow: /*?*token=
+Disallow: /*?*access_token=
+
+# Sitemap
+Sitemap: https://laenbajada.com/sitemap.xml

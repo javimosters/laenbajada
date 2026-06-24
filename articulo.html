@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#0C0B09">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artículo — La Enbajada</title>
+  <meta name="description" content="Artículo de La Enbajada, revista cultural del Caribe colombiano." id="meta-desc">
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="La Enbajada" id="og-title">
+  <meta property="og:description" content="" id="og-desc">
+  <meta property="og:image" content="" id="og-image">
+  <meta property="og:url" content="" id="og-url">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="La Enbajada" id="tw-title">
+  <meta name="twitter:description" content="" id="tw-desc">
+  <meta name="twitter:image" content="" id="tw-image">
+  <link rel="canonical" href="" id="canonical">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+
+/* ── RESPONSIVE BASE — Fixes globales ── */
+*, *::before, *::after { box-sizing: border-box }
+html { overflow-x: hidden; scroll-behavior: smooth }
+body { overflow-x: hidden; -webkit-text-size-adjust: 100% }
+img, video, svg { max-width: 100%; height: auto; display: block }
+table { width: 100%; border-collapse: collapse }
+input, textarea, select, button { max-width: 100% }
+/* ══ ARTÍCULO — La Enbajada v8 ══ */
+
+/* ── HERO DEL ARTÍCULO ── */
+.art-hero {
+  position:relative; background:var(--negro);
+  min-height:clamp(380px,55vw,680px);
+  display:flex; flex-direction:column; justify-content:flex-end; overflow:hidden;
+}
+.art-hero-bg { position:absolute; inset:0; z-index:0; }
+.art-hero-bg img { width:100%; height:100%; object-fit:cover; object-position:center 35%; display:block; animation:kenBurns 22s ease forwards; }
+@media(max-width:959px) { .art-hero-bg img { animation:none; } }
+@media(prefers-reduced-motion:reduce) { .art-hero-bg img { animation:none; } }
+.art-hero-bg-ph { width:100%; height:100%; background:linear-gradient(160deg,#050d1c,#004AAD); }
+.art-hero-ov {
+  position:absolute; inset:0; z-index:1;
+  background:
+    linear-gradient(to top, rgba(0,0,0,.97) 0%, rgba(0,0,0,.68) 42%, rgba(0,0,0,.18) 100%),
+    linear-gradient(to right, rgba(0,0,0,.6) 0%, transparent 65%);
+}
+.art-hero-accent { position:absolute; left:0; top:0; bottom:0; width:3px; z-index:2; background:linear-gradient(to bottom,var(--azul),transparent 70%); }
+.art-hero-body { position:relative; z-index:3; padding:clamp(80px,10vw,120px) var(--pad) clamp(36px,5vw,52px); max-width:860px; }
+.art-hero-tag { display:flex; align-items:center; gap:8px; margin-bottom:clamp(14px,2vw,20px); }
+.art-hero-tag-pill {
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--ui); font-size:8.5px; font-weight:700;
+  letter-spacing:.20em; text-transform:uppercase;
+  border:1px solid rgba(255,255,255,.25); color:rgba(255,255,255,.75);
+  padding:5px 14px; text-decoration:none;
+  transition:background .18s, border-color .18s, color .18s;
+}
+.art-hero-tag-pill:hover { background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.6); color:#fff; }
+.art-hero-tag-sep { color:rgba(255,255,255,.2); font-size:11px; }
+.art-hero-num { font-family:var(--ui); font-size:8.5px; font-weight:600; letter-spacing:.18em; text-transform:uppercase; color:var(--azul); }
+.art-h1 {
+  font-family:var(--serif); font-size:clamp(32px,6vw,80px);
+  font-weight:700; color:#fff; letter-spacing:-.04em; line-height:.9;
+  margin-bottom:clamp(14px,2vw,22px);
+}
+.art-h1 em { font-style:italic; color:rgba(255,255,255,.82); }
+.art-hero-sub {
+  font-family:var(--body); font-size:clamp(15px,2vw,20px);
+  font-style:italic; color:rgba(255,255,255,.55); line-height:1.65;
+  max-width:580px; border-left:3px solid rgba(255,255,255,.3); padding-left:16px;
+  margin-bottom:clamp(22px,3vw,32px);
+}
+.art-hero-autor-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+/* Foto del editor en el héro */
+.art-hero-editor-foto {
+  width:40px; height:40px; border-radius:50%; object-fit:cover;
+  border:1.5px solid rgba(255,255,255,.25); flex-shrink:0;
+}
+.art-hero-editor-ph {
+  width:40px; height:40px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg,var(--negro),var(--azul));
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--serif); font-size:14px; font-weight:700; color:rgba(255,255,255,.82);
+  border:1.5px solid rgba(255,255,255,.15);
+}
+.art-hero-editor-info { display:flex; flex-direction:column; gap:2px; }
+.art-hero-editor-nombre { font-family:var(--ui); font-size:12px; font-weight:600; color:rgba(255,255,255,.8); letter-spacing:.03em; text-decoration:none; transition:color .18s; }
+.art-hero-editor-nombre:hover { color:#fff; }
+.art-hero-editor-cargo { font-family:var(--ui); font-size:9px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.35); }
+.art-hero-meta-sep { color:rgba(255,255,255,.15); font-size:12px; }
+.art-hero-meta-txt { font-family:var(--ui); font-size:9px; color:rgba(255,255,255,.3); letter-spacing:.1em; text-transform:uppercase; }
+
+/* ── BARRA DE HERRAMIENTAS — estática, no sticky ── */
+.art-tools-bar {
+  background:var(--bg); border-bottom:1px solid var(--bd);
+  display:flex; align-items:center;
+  padding:10px var(--pad); gap:10px;
+}
+.art-tools-left { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.art-tool-btn {
+  display:flex; align-items:center; gap:5px;
+  font-family:var(--ui); font-size:9px; font-weight:700;
+  letter-spacing:.12em; text-transform:uppercase;
+  color:var(--t3); border:1px solid var(--bd); background:none;
+  padding:7px 14px; cursor:pointer; transition:all .18s; white-space:nowrap;
+  text-decoration:none;
+}
+.art-tool-btn:hover { color:var(--t1); border-color:var(--t2); }
+.art-tool-btn.activo { color:var(--azul); border-color:var(--azul); background:var(--azul-c); }
+
+/* ── LAYOUT EDITORIAL ── */
+.art-layout {
+  display:block;
+  max-width:740px; margin:0 auto;
+  padding:clamp(40px,5.5vw,68px) clamp(16px,4vw,32px);
+}
+
+/* ── TIPOGRAFÍA DEL ARTÍCULO — más legible, más generosa ── */
+.art-contenido {
+  font-family: var(--body);
+  font-size: clamp(17.5px,2.5vw,20px);
+  line-height: 1.78;
+  color: var(--t1);
+  max-width: min(700px, 100%);
+  letter-spacing: .01em;
+}
+.art-contenido p { margin-bottom: 28px; }
+.art-contenido h2 {
+  font-family: var(--serif);
+  font-size: clamp(23px,3.4vw,34px); font-weight: 700;
+  margin: 46px 0 16px; letter-spacing: -.025em; line-height: 1.08;
+}
+.art-contenido h3 {
+  font-family: var(--serif);
+  font-size: clamp(19px,2.8vw,26px); font-weight: 700;
+  margin: 36px 0 12px; letter-spacing: -.015em; line-height: 1.12;
+}
+.art-contenido h4 {
+  font-family: var(--ui);
+  font-size: clamp(11px,1.5vw,13px); font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--azul); margin: 28px 0 10px;
+}
+.art-contenido strong { font-weight: 700; }
+.art-contenido em { font-style: italic; }
+.art-contenido a { color: var(--azul); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness:1px; }
+.art-contenido a:hover { color: var(--azul-d); }
+.art-contenido ul { padding-left: 22px; margin-bottom: 28px; list-style: disc; }
+.art-contenido ol { padding-left: 22px; margin-bottom: 28px; }
+.art-contenido li { margin-bottom: 9px; padding-left: 4px; }
+.art-contenido hr { border:none; border-top:1px solid var(--bd); margin:48px auto; width:36%; }
+.art-contenido blockquote {
+  border-left: 3px solid var(--oro); background: var(--paper2);
+  padding: 22px 26px 22px 30px; margin: 40px 0;
+  font-family: var(--serif);
+  font-style: italic; font-size: clamp(18px,2.7vw,23px);
+  color: var(--t1); line-height: 1.62; position: relative;
+}
+.art-contenido blockquote::before {
+  content: '"'; font-family: var(--serif);
+  font-size: 3.6em; color:rgba(255,255,255,.82);
+  position: absolute; top: -10px; left: 14px; line-height: 1; opacity: .32;
+}
+html.dark .art-contenido blockquote { background: var(--surface); }
+/* Drop cap — primera letra del artículo */
+.art-contenido > p:first-of-type::first-letter {
+  font-family: var(--serif);
+  font-size: clamp(62px,9vw,90px); font-weight: 700;
+  float: left; line-height: .80;
+  margin-right: 13px; margin-bottom: -6px; margin-top: 6px;
+  color: var(--azul);
+}
+
+/* ── ASIDE ── */
+/* Aside — oculto, todo va abajo */
+.art-aside { display:none; }
+
+/* ── SECCIÓN COMPARTIR — debajo del artículo ── */
+.art-share-section {
+  max-width:740px; margin:0 auto;
+  padding:0 clamp(16px,4vw,32px) clamp(40px,5vw,60px);
+  border-top:1px solid var(--bd);
+}
+.art-share-section-hdr { font-family:var(--ui); font-size:8px; font-weight:700; letter-spacing:.26em; text-transform:uppercase; color:var(--azul); padding:20px 0 14px; }
+.art-share-section-btns { display:flex; gap:10px; flex-wrap:wrap; }
+
+/* ── SECCIÓN RELACIONADOS — grid grande debajo ── */
+.art-rel-section {
+  border-top:1px solid var(--bd);
+  padding:clamp(40px,5vw,64px) clamp(16px,4vw,32px);
+  max-width:1240px; margin:0 auto;
+}
+.art-rel-section-hdr {
+  font-family:var(--ui); font-size:8px; font-weight:700;
+  letter-spacing:.26em; text-transform:uppercase; color:var(--azul);
+  margin-bottom:clamp(24px,3vw,36px);
+}
+.art-rel-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));
+  gap:clamp(16px,2.5vw,32px);
+}
+.art-rel-card-big {
+  display:flex; flex-direction:column;
+  text-decoration:none; color:var(--t1);
+  border:1px solid var(--bd); background:var(--surface);
+  overflow:hidden; transition:border-color .18s, box-shadow .18s;
+}
+.art-rel-card-big:hover { border-color:var(--azul); box-shadow:0 4px 24px rgba(0,74,173,.08); }
+.art-rel-card-big-img { aspect-ratio:16/9; overflow:hidden; background:linear-gradient(135deg,#0a1628,#004AAD); }
+.art-rel-card-big-img img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .4s ease; }
+.art-rel-card-big:hover .art-rel-card-big-img img { transform:scale(1.03); }
+.art-rel-card-big-body { padding:clamp(14px,2vw,20px); display:flex; flex-direction:column; gap:6px; flex:1; }
+.art-rel-card-big-cat { font-family:var(--ui); font-size:7.5px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--azul); }
+.art-rel-card-big-titulo { font-family:var(--serif); font-size:clamp(16px,2vw,20px); font-weight:700; line-height:1.2; color:var(--t1); transition:color .18s; }
+.art-rel-card-big:hover .art-rel-card-big-titulo { color:var(--azul); }
+.art-rel-card-big-autor { font-family:var(--ui); font-size:9px; color:var(--t4); margin-top:auto; padding-top:10px; border-top:1px solid var(--bd); }
+
+/* Perfil del editor (sidebar) */
+.art-editor-card {
+  border:1px solid var(--bd); padding:22px 20px;
+  background:var(--surface); display:flex; flex-direction:column; gap:14px;
+}
+.art-editor-card-hdr {
+  font-family:var(--ui); font-size:8px; font-weight:700;
+  letter-spacing:.24em; text-transform:uppercase; color:var(--azul);
+  padding-bottom:12px; border-bottom:1px solid var(--bd);
+}
+.art-editor-perfil { display:flex; align-items:flex-start; gap:12px; text-decoration:none; }
+.art-editor-perfil:hover .art-editor-pfnombre { color:var(--azul); }
+.art-editor-pfoto {
+  width:52px; height:52px; border-radius:50%; object-fit:cover;
+  border:1.5px solid var(--bd); flex-shrink:0;
+}
+.art-editor-pfph {
+  width:52px; height:52px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg,var(--negro),var(--azul));
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--serif); font-size:16px; font-weight:700; color:rgba(255,255,255,.82);
+  border:1.5px solid var(--bd);
+}
+.art-editor-pf-info { flex:1; min-width:0; }
+.art-editor-pfnombre { font-family:var(--serif); font-size:15px; font-weight:700; font-style:italic; color:var(--t1); transition:color .18s; }
+.art-editor-pfcargo { font-family:var(--ui); font-size:9.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--t4); margin-top:2px; }
+.art-editor-pfbio { font-family:var(--body); font-size:12.5px; font-style:italic; color:var(--t2); line-height:1.65; }
+.art-editor-ver {
+  display:inline-flex; align-items:center; gap:5px;
+  font-family:var(--ui); font-size:9px; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--azul); text-decoration:none; transition:gap .2s;
+}
+.art-editor-ver::after { content:'→'; transition:transform .2s var(--spring); }
+.art-editor-ver:hover::after { transform:translateX(4px); }
+.art-editor-art-cnt { font-family:var(--mono,monospace); font-size:11px; font-weight:600; color:var(--azul); }
+.art-editor-art-lbl { font-family:var(--ui); font-size:9px; color:var(--t4); }
+
+/* Compartir (aside) */
+.art-share-card { border:1px solid var(--bd); padding:18px 20px; background:var(--surface); }
+.art-share-hdr { font-family:var(--ui); font-size:8px; font-weight:700; letter-spacing:.24em; text-transform:uppercase; color:var(--t4); margin-bottom:12px; }
+.art-share-btns { display:flex; flex-direction:column; gap:8px; }
+.art-share-btn {
+  display:flex; align-items:center; gap:8px;
+  font-family:var(--ui); font-size:9.5px; font-weight:700;
+  letter-spacing:.1em; text-transform:uppercase;
+  border:1px solid var(--bd); color:var(--t2); padding:9px 14px;
+  cursor:pointer; background:none; transition:all .18s; text-decoration:none;
+}
+.art-share-btn:hover { border-color:var(--azul); color:var(--azul); }
+.art-share-btn svg { flex-shrink:0; }
+
+/* Artículos relacionados (aside) */
+.art-rel-card { border:1px solid var(--bd); background:var(--surface); overflow:hidden; }
+.art-rel-hdr { font-family:var(--ui); font-size:8px; font-weight:700; letter-spacing:.24em; text-transform:uppercase; color:var(--azul); padding:14px 18px; border-bottom:1px solid var(--bd); }
+.art-rel-item { display:flex; gap:10px; padding:13px 18px; border-bottom:1px solid var(--bd); text-decoration:none; color:var(--t1); transition:background .15s; }
+.art-rel-item:last-child { border-bottom:none; }
+.art-rel-item:hover { background:var(--paper2); }
+.art-rel-img { width:54px; height:40px; object-fit:cover; flex-shrink:0; }
+.art-rel-img-ph { width:54px; height:40px; background:linear-gradient(135deg,#0a1628,#004AAD); flex-shrink:0; }
+.art-rel-info { flex:1; min-width:0; }
+.art-rel-cat { font-family:var(--ui); font-size:7.5px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--azul); margin-bottom:3px; }
+.art-rel-titulo { font-family:var(--serif); font-size:13px; font-weight:600; line-height:1.2; color:var(--t1); transition:color .18s; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+.art-rel-item:hover .art-rel-titulo { color:var(--azul); }
+.art-rel-meta { font-family:var(--ui); font-size:9px; color:var(--t4); margin-top:3px; }
+
+/* Colofón — oculto, autor ya está en el hero */
+.art-colofon { display:none !important; }
+@media(max-width:479px) { .art-colofon { flex-direction:column; gap:14px; } }
+.art-colofon-foto {
+  width:72px; height:72px; border-radius:50%; object-fit:cover;
+  border:2px solid var(--bd); flex-shrink:0;
+}
+.art-colofon-ph {
+  width:72px; height:72px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg,var(--negro),var(--azul));
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--serif); font-size:22px; font-weight:700; color:rgba(255,255,255,.82);
+  border:2px solid var(--bd);
+}
+.art-colofon-info { flex:1; }
+.art-colofon-label { font-family:var(--ui); font-size:8px; font-weight:700; letter-spacing:.26em; text-transform:uppercase; color:var(--azul); margin-bottom:6px; }
+.art-colofon-nombre { font-family:var(--serif); font-size:clamp(18px,3vw,22px); font-weight:700; font-style:italic; color:var(--t1); margin-bottom:3px; }
+.art-colofon-cargo { font-family:var(--ui); font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--t4); margin-bottom:10px; }
+.art-colofon-bio { font-family:var(--body); font-size:14px; font-style:italic; color:var(--t2); line-height:1.7; max-width:520px; margin-bottom:12px; }
+.art-colofon-links { display:flex; gap:8px; flex-wrap:wrap; }
+.art-colofon-link {
+  display:inline-flex; align-items:center; gap:5px;
+  font-family:var(--ui); font-size:9px; font-weight:700;
+  letter-spacing:.12em; text-transform:uppercase;
+  color:var(--t2); border:1px solid var(--bd); padding:6px 12px;
+  text-decoration:none; transition:all .18s;
+}
+.art-colofon-link:hover { border-color:var(--azul); color:var(--azul); }
+.art-colofon-ver-arts {
+  display:inline-flex; align-items:center; gap:5px;
+  font-family:var(--ui); font-size:9px; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--azul); text-decoration:none; transition:gap .2s;
+  border-bottom:1px solid var(--azul); padding-bottom:2px;
+}
+.art-colofon-ver-arts:hover { gap:9px; }
+
+/* Breadcrumb */
+.art-breadcrumb {
+  margin-bottom:20px; font-family:var(--ui); font-size:9.5px;
+  color:var(--t4); display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+}
+.art-breadcrumb a { color:var(--t4); text-decoration:none; transition:color .18s; }
+.art-breadcrumb a:hover { color:var(--azul); }
+.art-breadcrumb-cur { color:var(--t2); }
+
+/* Botón volver */
+.art-volver {
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:var(--ui); font-size:9px; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--t3);
+  text-decoration:none; transition:color .18s, gap .2s;
+  margin-bottom:28px;
+}
+.art-volver:hover { color:var(--azul); gap:11px; }
+.art-volver::before { content:'←'; }
+
+/* TOC inline — visible por defecto si hay headings */
+.art-toc { background:var(--paper2); border:1px solid var(--bd); padding:18px 20px; margin-bottom:28px; display:none; }
+.art-toc.visible { display:block; animation:fadeUp .22s var(--ease); }
+html.dark .art-toc { background:var(--surface); }
+.art-toc-hdr { font-family:var(--ui); font-size:8px; font-weight:700; letter-spacing:.24em; text-transform:uppercase; color:var(--azul); margin-bottom:10px; }
+.art-toc-list { list-style:none; display:flex; flex-direction:column; gap:5px; }
+.art-toc-item { }
+.art-toc-item a { font-family:var(--ui); font-size:12.5px; color:var(--t2); text-decoration:none; transition:color .15s; }
+.art-toc-item a:hover { color:var(--azul); }
+.art-toc-h2 a { font-weight:600; color:var(--t1); }
+.art-toc-h3 a { padding-left:14px; font-size:11.5px; }
+
+/* Barra inferior compartir (mobile) — solo botones, sin porcentaje */
+.art-share-bottom {
+  background:var(--bg); border-top:1.5px solid var(--bd);
+  display:flex; align-items:center; justify-content:center;
+  padding:12px var(--pad); gap:8px; flex-wrap:wrap;
+}
+@media(min-width:960px) { .art-share-bottom { display:none; } }
+.art-share-bottom-left { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
+.art-share-bottom-btn {
+  display:flex; align-items:center; gap:5px;
+  font-family:var(--ui); font-size:9px; font-weight:700;
+  letter-spacing:.1em; text-transform:uppercase;
+  border:1px solid var(--bd); color:var(--t2); padding:7px 12px;
+  cursor:pointer; background:none; transition:all .18s; text-decoration:none;
+}
+.art-share-bottom-btn:hover { border-color:var(--azul); color:var(--azul); }
+
+/* Relacionados mobile — visible solo en <960px, al final del artículo */
+.art-rel-mobile {
+  padding:clamp(28px,4vw,44px) var(--pad);
+  border-top:1.5px solid var(--bd2);
+  background:var(--bg2);
+}
+@media(min-width:960px) { .art-rel-mobile { display:none; } }
+.art-rel-mobile-hdr {
+  font-family:var(--ui); font-size:8px; font-weight:700;
+  letter-spacing:.24em; text-transform:uppercase; color:var(--azul);
+  margin-bottom:18px;
+}
+.art-rel-mobile-grid {
+  display:grid; grid-template-columns:repeat(2,1fr); gap:12px;
+}
+.art-rel-mobile-card {
+  display:flex; flex-direction:column; text-decoration:none;
+  color:var(--t1); background:var(--surface); border:1px solid var(--bd);
+  transition:border-color .18s;
+}
+.art-rel-mobile-card:hover { border-color:var(--azul); }
+.art-rel-mobile-img { aspect-ratio:3/2; overflow:hidden; background:linear-gradient(135deg,#0a1628,#004AAD); }
+.art-rel-mobile-img img { width:100%; height:100%; object-fit:cover; display:block; }
+.art-rel-mobile-body { padding:10px 12px 14px; display:flex; flex-direction:column; gap:4px; }
+.art-rel-mobile-cat { font-family:var(--ui); font-size:7.5px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--azul); }
+.art-rel-mobile-titulo { font-family:var(--serif); font-size:13px; font-weight:700; line-height:1.2; color:var(--t1); transition:color .18s; }
+.art-rel-mobile-card:hover .art-rel-mobile-titulo { color:var(--azul); }
+
+/* ── NAVEGACIÓN ENTRE ARTÍCULOS — oculta ── */
+.art-nav-strip { display:none !important; }
+.art-nav-btn {
+  display:flex; flex-direction:column; gap:6px;
+  padding:clamp(18px,3vw,28px) clamp(16px,3vw,32px);
+  text-decoration:none; color:var(--t1);
+  background:var(--surface);
+  transition:background .18s;
+}
+.art-nav-btn:hover { background:var(--paper2); }
+.art-nav-btn.prev { border-right:none; }
+.art-nav-btn.next { text-align:right; }
+.art-nav-dir { font-family:var(--ui); font-size:8px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--t4); display:flex; align-items:center; gap:6px; }
+.art-nav-btn.next .art-nav-dir { justify-content:flex-end; }
+.art-nav-titulo { font-family:var(--serif); font-size:clamp(14px,1.8vw,17px); font-weight:700; font-style:italic; line-height:1.2; color:var(--t1); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.art-nav-btn:hover .art-nav-titulo { color:var(--azul); }
+
+/* ── MODAL BUSCADOR ESTILO ATMOS ── */
+.search-modal { position:fixed; inset:0; z-index:9000; background:var(--bg); display:flex; flex-direction:column; opacity:0; pointer-events:none; transition:opacity .22s var(--ease); }
+.search-modal.open { opacity:1; pointer-events:all; }
+.search-modal-header { display:flex; align-items:center; justify-content:space-between; padding:0 var(--pad); height:64px; flex-shrink:0; border-bottom:1px solid var(--bd); }
+.search-modal-logo { font-family:var(--serif); font-size:20px; font-weight:700; color:var(--t1); letter-spacing:.01em; }
+.search-modal-close { display:flex; align-items:center; gap:8px; font-family:var(--ui); font-size:9px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--t3); background:none; border:none; cursor:pointer; transition:color .18s; }
+.search-modal-close:hover { color:var(--t1); }
+.search-modal-input-area { padding:clamp(28px,4vw,52px) var(--pad) clamp(20px,3vw,36px); border-bottom:1px solid var(--bd); flex-shrink:0; }
+.search-modal-row { display:flex; align-items:center; gap:16px; border-bottom:2px solid var(--azul); padding-bottom:12px; }
+.search-modal-row svg { color:var(--azul); flex-shrink:0; }
+.search-modal-input { font-family:var(--serif); font-size:clamp(28px,5vw,52px); font-weight:400; letter-spacing:-.02em; color:var(--t1); background:none; border:none; outline:none; width:100%; line-height:1; }
+.search-modal-input::placeholder { color:var(--t4); }
+.search-modal-hint { font-family:var(--ui); font-size:9px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--t3); margin-top:14px; min-height:16px; }
+.search-modal-results { flex:1; overflow-y:auto; padding:clamp(20px,3vw,36px) var(--pad) clamp(28px,4vw,48px); scrollbar-width:thin; scrollbar-color:var(--bd2) transparent; }
+.search-modal-results::-webkit-scrollbar { width:4px; }
+
+/* ── FOOTER FULL-WIDTH ── */
+.site-footer { width:100%; box-sizing:border-box; }
+.footer-inner { max-width:1600px; margin:0 auto; }
+
+/* ── RESPONSIVE ARTÍCULO ── */
+
+/* Desktop grande — ≥1400px */
+@media(min-width:1400px) {
+  .art-layout { max-width:740px; }
+  .art-contenido { font-size:clamp(18px,1.4vw,21px) !important; }
+}
+
+/* Tablet grande — 768-959px */
+@media(min-width:768px) and (max-width:959px) {
+  .art-contenido { font-size:clamp(16px,2.8vw,19px) !important; }
+  .art-rel-mobile-grid { grid-template-columns:repeat(3,1fr); }
+}
+
+/* Tablet — 480-767px */
+@media(min-width:480px) and (max-width:767px) {
+  .art-h1 { font-size:clamp(28px,6vw,52px) !important; }
+  .art-contenido { font-size:clamp(16px,3.5vw,18px) !important; }
+  .art-contenido > p:first-of-type::first-letter { font-size:clamp(48px,9vw,68px) !important; }
+  .art-rel-mobile-grid { grid-template-columns:repeat(2,1fr); }
+}
+
+/* Móvil grande — ≤700px */
+@media(max-width:700px) {
+  /* Hero más compacto */
+  .art-hero-body { padding-top:clamp(64px,10vw,88px); }
+  .art-h1 { font-size:clamp(28px,7vw,46px) !important; }
+  .art-hero-sub { font-size:clamp(13px,3.8vw,16px); border-left-width:2px; padding-left:12px; }
+  /* Herramientas en fila compacta */
+  .art-tools-bar { padding:8px var(--pad); gap:6px; }
+  .art-tool-btn { padding:6px 11px; }
+  /* Footer 2 columnas en tablet */
+  .footer-cols { grid-template-columns:repeat(2,1fr) !important; }
+}
+
+/* Móvil — ≤479px */
+@media(max-width:479px) {
+  /* Hero */
+  .art-hero-body { padding-top:56px; padding-bottom:clamp(24px,4vw,36px); }
+  .art-h1 { font-size:clamp(24px,7.5vw,38px) !important; }
+  .art-hero-sub { font-size:clamp(13px,4vw,15px); padding-left:10px; }
+  /* Autor row en columna si hace falta */
+  .art-hero-autor-row { flex-wrap:wrap; gap:8px; }
+  /* Drop cap más pequeño */
+  .art-contenido > p:first-of-type::first-letter { font-size:clamp(42px,11vw,58px) !important; margin-right:9px; }
+  .art-contenido { font-size:clamp(16px,4.5vw,18px) !important; }
+  /* Barra herramientas compacta */
+  .art-tools-bar { flex-wrap:wrap; gap:6px; padding:8px var(--pad); }
+  .art-tool-btn { padding:6px 10px; font-size:8px; }
+  /* TOC compacto */
+  .art-toc-item a { font-size:12px; }
+  /* Colofón en columna */
+  .art-colofon { flex-direction:column; gap:12px; }
+  .art-colofon-foto, .art-colofon-ph { width:56px; height:56px; }
+  /* Relacionados mobile 1 col */
+  .art-rel-mobile-grid { grid-template-columns:1fr; }
+  /* Share bar compacta */
+  .art-share-bottom { padding:10px var(--pad); gap:6px; }
+  .art-share-bottom-btn { padding:6px 10px; font-size:8px; }
+  /* Boletín en columna */
+  .boletin-form { flex-direction:column; }
+  .boletin-btn { width:100%; padding:13px 16px; }
+  /* Footer 1 columna */
+  .footer-cols { grid-template-columns:1fr !important; }
+}
+
+/* Pantalla muy pequeña — ≤360px */
+@media(max-width:360px) {
+  .art-hero-body { padding-top:48px; padding-left:16px; padding-right:16px; }
+  .art-h1 { font-size:clamp(21px,8.5vw,32px) !important; }
+  .art-hero-sub { display:none; }
+  .art-layout { padding-left:14px; padding-right:14px; }
+  .art-contenido { font-size:clamp(15px,4.5vw,17px) !important; }
+  .art-tool-btn { padding:5px 8px; font-size:7.5px; }
+}
+.search-modal-results::-webkit-scrollbar-thumb { background:var(--bd2); border-radius:2px; }
+.search-results-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(14px,2vw,24px); }
+@media(max-width:900px) { .search-results-grid { grid-template-columns:repeat(3,1fr); } }
+@media(max-width:600px) { .search-results-grid { grid-template-columns:repeat(2,1fr); } }
+.search-result-card { text-decoration:none; color:var(--t1); display:flex; flex-direction:column; gap:10px; transition:opacity .18s; }
+.search-result-card:hover { opacity:.75; }
+.search-result-img { aspect-ratio:3/4; overflow:hidden; background:linear-gradient(160deg,#0a1628,#004AAD); position:relative; border-radius:2px; }
+.search-result-img img { width:100%; height:100%; object-fit:cover; display:block; }
+.search-result-img-ov { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,.55) 0%,transparent 50%); display:flex; align-items:flex-end; padding:10px 12px; }
+.search-result-cat { font-family:var(--ui); font-size:8px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.8); }
+.search-result-titulo { font-family:var(--serif); font-size:clamp(13px,1.4vw,16px); font-weight:600; line-height:1.25; color:var(--t1); }
+.search-result-meta { font-family:var(--ui); font-size:9px; color:var(--t3); letter-spacing:.04em; }
+.search-modal-empty { padding:48px 0; text-align:center; font-family:var(--serif); font-size:clamp(18px,2vw,24px); font-style:italic; color:var(--t3); }
+html.dark .search-modal { background:var(--bg); }
+</style>
+</head>
+<body>
+<noscript>
+  <style>body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#F7F4EE;font-family:Georgia,serif;text-align:center;padding:40px}</style>
+  <div style="max-width:480px;margin:auto">
+    <div style="font-size:48px;margin-bottom:16px">📰</div>
+    <h1 style="font-size:28px;font-weight:700;margin-bottom:12px;letter-spacing:-.02em">La Enbajada requiere JavaScript</h1>
+    <p style="color:#6C6760;line-height:1.7;font-style:italic">Para disfrutar la revista cultural del Caribe colombiano, por favor activa JavaScript en tu navegador.</p>
+    <a href="https://laenbajada.com" style="display:inline-block;margin-top:24px;background:#004AAD;color:#fff;padding:12px 28px;font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;text-decoration:none">Ir al inicio</a>
+  </div>
+</noscript>
+<a href="#main-content" class="skip-link">Saltar al contenido</a>
+
+
+
+<header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo-wrap">
+      <img src="assets/logo.png" alt="" class="logo-img" onerror="this.style.display='none'">
+      <div class="logo-text-group">
+        <span class="logo-name js-logo-name">La Enbajada</span>
+        <span class="logo-tag js-logo-tag">Aterrizamos la Cultura</span>
+      </div>
+    </a>
+    <nav class="nav-left">
+      <a href="index.html">Inicio</a>
+      <a href="edicion.html" id="nav-edicion">Edición actual</a>
+      <span id="nav-secs-dyn"></span>
+      <a href="archivo.html">Archivo</a>
+      <a href="sobre.html">Nosotros</a>
+    </nav>
+    <div class="header-spacer"></div>
+    <nav class="nav-right">
+      <div class="nav-search-wrap" id="search-wrap">
+        <button class="nav-search-icon" id="search-icon-btn" onclick="openSearch()" aria-label="Buscar" aria-expanded="false">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+      </div>
+      <a class="nav-ig-btn js-footer-ig" href="https://instagram.com/laenbajada" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </a>
+      <a href="index.html#sec-boletin" class="nav-cta">Suscribirse<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      <button class="hamburger" id="hamburger-btn" onclick="toggleMenu()" aria-label="Menú">
+        <div class="hamburger-icon"><span></span><span></span><span></span></div>
+      </button>
+    </nav>
+  </div>
+  <nav class="mobile-menu" id="mobile-menu">
+    <a href="index.html">Inicio</a>
+    <a href="edicion.html">Edición actual</a>
+    <div class="mm-sep"></div>
+    <div id="mm-secs-dyn"></div>
+    <div class="mm-sep"></div>
+    <a href="archivo.html">Archivo</a>
+    <a href="sobre.html">Nosotros</a>
+    <div class="mm-sep"></div>
+    <a href="index.html#sec-boletin" class="mm-cta">Suscribirse →</a>
+  </nav>
+</header>
+
+<main id="main-content">
+  <!-- HERO -->
+  <div class="art-hero" id="art-hero">
+    <div class="art-hero-bg" id="art-hero-bg"><div class="art-hero-bg-ph"></div></div>
+    <div class="art-hero-ov"></div>
+    <div class="art-hero-accent"></div>
+    <div class="art-hero-body">
+      <div class="art-hero-tag" id="art-hero-tag"></div>
+      <h1 class="art-h1" id="art-h1">Cargando…</h1>
+      <p class="art-hero-sub" id="art-hero-sub" style="display:none"></p>
+      <div class="art-hero-autor-row" id="art-hero-autor-row"></div>
+    </div>
+  </div>
+
+  <!-- BARRA HERRAMIENTAS -->
+  <div class="art-tools-bar" id="art-tools-bar">
+    <div class="art-tools-left">
+      <a class="art-tool-btn" id="btn-volver" href="edicion.html">← Volver</a>
+      <button class="art-tool-btn" id="btn-toc" onclick="toggleTOC()">☰ Índice</button>
+    </div>
+  </div>
+
+  <!-- LAYOUT -->
+  <div class="art-layout" id="art-layout">
+    <!-- PRINCIPAL -->
+    <article class="art-main" id="art-main">
+      <nav class="art-breadcrumb" aria-label="Ruta">
+        <a href="index.html">Inicio</a>
+        <span>›</span>
+        <a id="bc-sec" href="secciones.html">Secciones</a>
+        <span>›</span>
+        <span class="art-breadcrumb-cur" id="bc-titulo">—</span>
+      </nav>
+
+      <!-- TOC -->
+      <div class="art-toc" id="art-toc">
+        <div class="art-toc-hdr">En este artículo</div>
+        <ul class="art-toc-list" id="art-toc-list"></ul>
+      </div>
+
+      <!-- CONTENIDO -->
+      <div class="art-contenido" id="art-contenido">
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div class="skeleton skel-title"></div>
+          <div class="skeleton skel-line"></div>
+          <div class="skeleton skel-line"></div>
+          <div class="skeleton skel-short"></div>
+          <div class="skeleton skel-line"></div>
+          <div class="skeleton skel-line"></div>
+          <div class="skeleton skel-short"></div>
+        </div>
+      </div>
+
+      <!-- COLOFÓN EDITOR -->
+      <div class="art-colofon" id="art-colofon" style="display:none"></div>
+    </article>
+
+    <!-- ASIDE — vacío, todo va abajo -->
+    <aside class="art-aside" id="art-aside" aria-hidden="true"></aside>
+  </div>
+
+  <!-- COMPARTIR — debajo del artículo -->
+  <div class="art-share-section" id="art-share-section" style="display:none">
+    <div class="art-share-section-hdr">Compartir</div>
+    <div class="art-share-section-btns" id="art-share-section-btns"></div>
+  </div>
+
+  <!-- RELACIONADOS — grid grande -->
+  <div class="art-rel-section" id="art-rel-section" style="display:none">
+    <div class="art-rel-section-hdr">También en La Enbajada</div>
+    <div class="art-rel-grid" id="art-rel-grid"></div>
+  </div>
+
+  <!-- BOLETÍN -->
+  <section class="boletin-wrap" id="sec-boletin">
+    <div class="boletin-deco" aria-hidden="true">@</div>
+    <div class="boletin-inner">
+      <div class="boletin-col-left">
+        <div class="boletin-kicker">Boletín editorial</div>
+        <h2 class="boletin-titulo js-boletin-titulo">Recibe cada número en tu correo</h2>
+        <p class="boletin-texto js-boletin-texto">La Enbajada llega a tu bandeja cuando hay algo que vale la pena leer.</p>
+      </div>
+      <div class="boletin-col-right">
+        <div class="boletin-form">
+          <input class="boletin-input" type="email" id="boletin-email" placeholder="tu@correo.com" autocomplete="email">
+          <button class="boletin-btn" onclick="suscribirse()">Suscribirse</button>
+        </div>
+        <p class="boletin-feedback" id="boletin-feedback"></p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="art-nav-strip" id="art-nav-strip" style="display:none"></div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand-row">
+      <div class="footer-brand js-footer-brand">La Enbajada</div>
+      <div class="footer-tagline js-footer-tagline">Aterrizamos la Cultura</div>
+      <p class="footer-desc js-footer-desc"></p>
+    </div>
+    <div class="footer-cols">
+      <div class="footer-col"><h5>La Revista</h5><ul>
+        <li><a href="edicion.html">Edición actual</a></li>
+        <li><a href="archivo.html">Archivo</a></li>
+        <li><a href="sobre.html">Nosotros</a></li>
+      </ul></div>
+      <div class="footer-col"><h5>Secciones</h5><ul><li id="footer-secs-dyn"></li></ul></div>
+      <div class="footer-col"><h5>Contacto</h5><ul>
+        <li><a href="https://instagram.com/laenbajada" target="_blank" class="js-footer-ig">Instagram</a></li>
+        <li><a href="mailto:contacto@laenbajada.com" class="js-footer-email">contacto@laenbajada.com</a></li>
+      </ul></div>
+      <div class="footer-col"><h5>Redes</h5>
+        <div class="footer-redes" id="footer-redes-wrap"></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="js-footer-copy">© 2025 La Enbajada</span>
+    </div>
+  </div>
+</footer>
+<!-- ══ MODAL BUSCADOR FULLSCREEN ══ -->
+<div class="search-modal" id="search-modal" role="dialog" aria-modal="true" aria-label="Buscador">
+  <div class="search-modal-header">
+    <div class="search-modal-logo">La Enbajada</div>
+    <button class="search-modal-close" onclick="closeSearch()" aria-label="Cerrar buscador">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      Cerrar
+    </button>
+  </div>
+  <div class="search-modal-input-area">
+    <div class="search-modal-row">
+      <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-modal-input" id="search-modal-input" type="search" placeholder="Buscar artículos…" autocomplete="off" oninput="_searchModal(this.value)" onkeydown="_searchModalKey(event)" aria-label="Buscar artículos">
+    </div>
+    <div class="search-modal-hint" id="search-modal-hint">Escribe para buscar</div>
+  </div>
+  <div class="search-modal-results" id="search-modal-results"></div>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+  /* OG image dinámica */
+  function _setOGImage(url) {
+    const og = document.getElementById('og-image');
+    const tw = document.querySelector('meta[name="twitter:image"]');
+    if(og && url) og.setAttribute('content', url);
+    if(tw && url) tw.setAttribute('content', url);
+  }
+</script>
+<script>
+/* ══ articulo.html — La Enbajada v8 ══ */
+
+/* ── HELPERS ── */
+function articuloUrl(a) {
+  if (a.slug) return 'articulo.html?slug=' + encodeURIComponent(a.slug);
+  var _s = (a.titulo || '').toLowerCase().normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return 'articulo.html?slug=' + _s;
+}
+function editorUrl(ed) {
+  return `editor.html?slug=${ed.slug||ed.id}`;
+}
+function _slugInit(nombre) {
+  return (nombre||'?').split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
+}
+/* Normalizar slug (quitar acentos, espacios → guiones) */
+function _normalizeSlug(s) {
+  return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+}
+
+
+  /* ── SCHEMA.ORG ARTICLE ── */
+  function _inyectarSchema(a, ed) {
+    const schema = {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "headline": a.titulo || '',
+      "description": a.subtitulo || '',
+      "image": a.imagen_url ? [a.imagen_url] : [],
+      "datePublished": a.fecha_publicacion || a.created_at || '',
+      "dateModified": a.updated_at || a.fecha_publicacion || '',
+      "author": [{
+        "@type": "Person",
+        "name": ed ? ed.nombre : (a.autor || 'La Enbajada'),
+        "url": ed ? `https://laenbajada.com/editor.html?slug=${ed.slug||ed.id}` : 'https://laenbajada.com'
+      }],
+      "publisher": {
+        "@type": "Organization",
+        "name": "La Enbajada",
+        "url": "https://laenbajada.com",
+        "logo": { "@type": "ImageObject", "url": "https://laenbajada.com/assets/logo.png" }
+      },
+      "mainEntityOfPage": { "@type": "WebPage", "@id": window.location.href },
+      "inLanguage": "es-CO",
+      "isPartOf": { "@type": "Periodical", "name": "La Enbajada" }
+    };
+    const el = document.createElement('script');
+    el.type = 'application/ld+json';
+    el.textContent = JSON.stringify(schema);
+    document.head.appendChild(el);
+  }
+
+
+/* ── ARTÍCULOS LEÍDOS ── */
+const _LEIDOS_KEY = 'le_leidos';
+function _marcarLeido(id) {
+  try {
+    const leidos = JSON.parse(localStorage.getItem(_LEIDOS_KEY) || '[]');
+    if (!leidos.includes(id)) { leidos.push(id); localStorage.setItem(_LEIDOS_KEY, JSON.stringify(leidos)); }
+  } catch(e) {}
+}
+function _esLeido(id) {
+  try { return JSON.parse(localStorage.getItem(_LEIDOS_KEY) || '[]').includes(id); } catch(e) { return false; }
+}
+function _marcarLeidosEnGrid(selector) {
+  try {
+    const leidos = JSON.parse(localStorage.getItem(_LEIDOS_KEY) || '[]');
+    if (!leidos.length) return;
+    document.querySelectorAll(selector).forEach(card => {
+      const href = card.getAttribute('href') || '';
+      const match = leidos.some(id => href.includes(id));
+      if (match) card.classList.add('art-leido');
+    });
+  } catch(e) {}
+}
+
+
+/* ── NAVEGACIÓN ANTERIOR/SIGUIENTE ── */
+function _renderNavArticulos(artActual, todos) {
+  const strip = document.getElementById('art-nav-strip');
+  if (!strip) return;
+  const misma = todos.filter(a => normTag(a.seccion_tag) === normTag(artActual.seccion_tag) && a.id !== artActual.id);
+  const sorted = [...misma].sort((a,b) => new Date(b.fecha_publicacion||b.created_at||0) - new Date(a.fecha_publicacion||a.created_at||0));
+  const idx = sorted.findIndex(a => a.id === artActual.id);
+  const prev = sorted[idx + 1] || null;
+  const next = sorted[idx - 1] || null;
+  // Si no hay ni prev ni next en la misma sección, buscar en todos
+  const fallback = todos.filter(a => a.id !== artActual.id).sort((a,b) => new Date(b.fecha_publicacion||b.created_at||0) - new Date(a.fecha_publicacion||a.created_at||0));
+  const fallIdx = fallback.findIndex(a => false); // no usado
+  const prevArt = prev || fallback[1] || null;
+  const nextArt = next || fallback[0] || null;
+  if (!prevArt && !nextArt) return;
+  strip.innerHTML = `
+    ${prevArt ? `<a class="art-nav-btn prev" href="${articuloUrl(prevArt)}"><div class="art-nav-dir">← Anterior</div><div class="art-nav-titulo">${prevArt.titulo}</div></a>` : '<div></div>'}
+    ${nextArt ? `<a class="art-nav-btn next" href="${articuloUrl(nextArt)}"><div class="art-nav-dir">Siguiente →</div><div class="art-nav-titulo">${nextArt.titulo}</div></a>` : '<div></div>'}
+  `;
+  strip.style.display = '';
+}
+
+/* ── HEADER ── */
+(()=>{ const h=document.getElementById('site-header'); window.addEventListener('scroll',()=>h?.classList.toggle('scrolled',window.scrollY>20),{passive:true}); })();
+
+/* ── BUSCADOR FULLSCREEN ESTILO ATMOS ── */
+function openSearch(){const modal=document.getElementById('search-modal');const input=document.getElementById('search-modal-input');modal.classList.add('open');document.body.style.overflow='hidden';document.getElementById('search-icon-btn').setAttribute('aria-expanded','true');setTimeout(()=>input?.focus(),80);}
+function closeSearch(){const modal=document.getElementById('search-modal');const input=document.getElementById('search-modal-input');const hint=document.getElementById('search-modal-hint');const res=document.getElementById('search-modal-results');modal.classList.remove('open');document.body.style.overflow='';document.getElementById('search-icon-btn').setAttribute('aria-expanded','false');if(input)input.value='';if(hint)hint.textContent='Escribe para buscar';if(res)res.innerHTML='';}
+function _searchModalKey(e){if(e.key==='Escape')closeSearch();}
+let _smTimer=null;function _searchModal(q){clearTimeout(_smTimer);_smTimer=setTimeout(()=>_doSearchModal(q),240);}
+async function _doSearchModal(q){const hint=document.getElementById('search-modal-hint');const res=document.getElementById('search-modal-results');if(!res)return;const v=(q||'').trim();if(v.length<2){if(hint)hint.textContent='Escribe para buscar';res.innerHTML='';return;}if(hint)hint.textContent='Buscando…';const arts=await DB.buscar(v).catch(()=>[]);if(!arts.length){if(hint)hint.textContent=`Sin resultados para "${v}"`;res.innerHTML=`<div class="search-modal-empty">No encontramos nada para <em>"${v}"</em></div>`;return;}if(hint)hint.textContent=`${arts.length} resultado${arts.length!==1?'s':''} encontrado${arts.length!==1?'s':''}`;res.innerHTML=`<div class="search-results-grid">${arts.map(a=>`<a class="search-result-card" href="${articuloUrl(a)}" onclick="closeSearch()"><div class="search-result-img">${a.imagen_url?`<img src="${a.imagen_url}" alt="${a.titulo}" loading="lazy">`:''}<div class="search-result-img-ov"><div class="search-result-cat">${a.seccion_tag||'La Enbajada'}</div></div></div><div class="search-result-titulo">${a.titulo}</div><div class="search-result-meta">${a.autor||''} · N.º ${a.numero_id||''}</div></a>`).join('')}</div>`;}
+document.getElementById('search-modal')?.addEventListener('click',function(e){if(e.target===this)closeSearch();});
+
+function toggleMenu(){const h=document.getElementById('site-header'),m=document.getElementById('mobile-menu'),b=document.getElementById('hamburger-btn'),o=m.classList.toggle('open');h.classList.toggle('menu-open',o);b.setAttribute('aria-expanded',o);document.body.style.overflow=o?'hidden':'';}
+document.addEventListener('click',e=>{const h=document.getElementById('site-header');if(h&&!h.contains(e.target)){document.getElementById('mobile-menu')?.classList.remove('open');h.classList.remove('menu-open');document.body.style.overflow='';}});
+
+/* ── TOC ── */
+let _tocVisible = false;
+function _generarTOC() {
+  const contenido = document.getElementById('art-contenido');
+  const list = document.getElementById('art-toc-list');
+  if (!contenido || !list) return;
+  const heads = contenido.querySelectorAll('h2, h3');
+  if (heads.length < 2) return;
+  let html = '';
+  heads.forEach((h, i) => {
+    if (!h.id) h.id = `h${i}`;
+    const cls = h.tagName==='H2' ? 'art-toc-h2' : 'art-toc-h3';
+    html += `<li class="art-toc-item ${cls}"><a href="#${h.id}">${h.textContent}</a></li>`;
+  });
+  list.innerHTML = html;
+  /* Abrir TOC por defecto */
+  _tocVisible = true;
+  document.getElementById('art-toc')?.classList.add('visible');
+  document.getElementById('btn-toc')?.classList.add('activo');
+}
+function toggleTOC() {
+  _tocVisible = !_tocVisible;
+  document.getElementById('art-toc')?.classList.toggle('visible', _tocVisible);
+  document.getElementById('btn-toc')?.classList.toggle('activo', _tocVisible);
+}
+
+/* ── COMPARTIR ── */
+function _renderShare(a) {
+  const url   = encodeURIComponent(location.href);
+  const titulo = encodeURIComponent(a.titulo||'');
+  const btns  = [
+    { lbl:'Copiar enlace', ico:'🔗', fn:'_copiarEnlace()' },
+    { lbl:'WhatsApp', ico:'💬', fn:`window.open('https://wa.me/?text=${titulo}%20${url}','_blank')` },
+    { lbl:'X / Twitter', ico:'✕', fn:`window.open('https://twitter.com/intent/tweet?text=${titulo}&url=${url}','_blank')` },
+  ];
+  /* Nueva sección debajo del artículo */
+  const sec = document.getElementById('art-share-section');
+  const btnsEl = document.getElementById('art-share-section-btns');
+  if (btnsEl) {
+    btnsEl.innerHTML = btns.map(b=>`<button class="art-share-btn" onclick="${b.fn}">${b.ico} ${b.lbl}</button>`).join('');
+    sec?.removeAttribute('style');
+  }
+  /* Mantener también el share bar debajo del contenido */
+  const bar = document.getElementById('art-share-bar');
+  if (bar) {
+    bar.innerHTML = btns.map(b=>`<button class="art-share-btn" onclick="${b.fn}">${b.ico} ${b.lbl}</button>`).join('');
+  }
+}
+function _copiarEnlace() {
+  navigator.clipboard.writeText(location.href).then(()=>{
+    const b = document.querySelector('[onclick="_copiarEnlace()"]');
+    if (b) { const orig=b.textContent; b.textContent='✓ Copiado'; setTimeout(()=>b.textContent=orig,1800); }
+  });
+}
+
+/* ── EDITOR EN SIDEBAR — eliminado, autor ya está en el hero ── */
+function _renderEditorAside(ed, artsCnt) { /* no-op */ }
+
+/* ── COLOFÓN EDITOR (al final del artículo) ── */
+function _renderColofonEditor(ed, artsCnt) {
+  const col = document.getElementById('art-colofon'); if (!col) return;
+  const foto = ed.foto_url;
+  const init = _slugInit(ed.nombre);
+  col.innerHTML = `
+    ${foto
+      ? `<img class="art-colofon-foto" src="${foto}" alt="${ed.nombre}" loading="lazy">`
+      : `<div class="art-colofon-ph">${init}</div>`}
+    <div class="art-colofon-info">
+      <div class="art-colofon-label">Sobre el autor</div>
+      <div class="art-colofon-nombre">${ed.nombre}</div>
+      ${ed.cargo?`<div class="art-colofon-cargo">${ed.cargo}</div>`:''}
+      ${ed.bio?`<div class="art-colofon-bio">${ed.bio}</div>`:''}
+      <div class="art-colofon-links">
+        ${ed.email?`<a class="art-colofon-link" href="mailto:${ed.email}">✉ ${ed.email}</a>`:''}
+        <a class="art-colofon-ver-arts" href="${editorUrl(ed)}">
+          Ver los ${artsCnt} artículo${artsCnt!==1?'s':''} de ${ed.nombre.split(' ')[0]} →
+        </a>
+      </div>
+    </div>`;
+  col.style.display = '';
+}
+
+/* ── RELACIONADOS — grid grande debajo del artículo ── */
+function _renderRelacionados(arts, artId) {
+  const sec  = document.getElementById('art-rel-section'); if (!sec) return;
+  const grid = document.getElementById('art-rel-grid');    if (!grid) return;
+  const rel  = arts.filter(a => a.id !== artId).slice(0, 3);
+  if (!rel.length) return;
+  grid.innerHTML = rel.map(a=>`
+    <a class="art-rel-card-big" href="${articuloUrl(a)}">
+      <div class="art-rel-card-big-img">
+        ${a.imagen_url?`<img src="${a.imagen_url}" alt="${a.titulo}" loading="lazy">`:''}
+      </div>
+      <div class="art-rel-card-big-body">
+        <div class="art-rel-card-big-cat">${a.seccion_tag||''}</div>
+        <div class="art-rel-card-big-titulo">${a.titulo}</div>
+        <div class="art-rel-card-big-autor">${a.autor||''}</div>
+      </div>
+    </a>`).join('');
+  sec.removeAttribute('style');
+}
+
+/* ── RELACIONADOS MOBILE — ya no se usa ── */
+function _renderRelacionadosMobile(arts, artId) { /* no-op */ }
+
+/* ── HERO AUTOR ── */
+function _renderHeroAutor(a, ed) {
+  const row = document.getElementById('art-hero-autor-row'); if (!row) return;
+  if (ed) {
+    const foto = ed.foto_url;
+    const init = _slugInit(ed.nombre);
+    row.innerHTML = `
+      ${foto
+        ? `<img class="art-hero-editor-foto" src="${foto}" alt="${ed.nombre}" loading="lazy">`
+        : `<div class="art-hero-editor-ph">${init}</div>`}
+      <div class="art-hero-editor-info">
+        <a class="art-hero-editor-nombre" href="${editorUrl(ed)}">${ed.nombre}</a>
+        ${ed.cargo?`<div class="art-hero-editor-cargo">${ed.cargo}</div>`:''}
+      </div>
+      ${a.numero_id?`<span class="art-hero-meta-sep">·</span><span class="art-hero-meta-txt">N.º ${a.numero_id}</span>`:''}`;
+  } else {
+    row.innerHTML = `<span class="art-hero-meta-txt">${a.autor||''}</span>
+      ${a.numero_id?`<span class="art-hero-meta-sep">·</span><span class="art-hero-meta-txt">N.º ${a.numero_id}</span>`:''}`;
+  }
+}
+
+/* ── INIT ── */
+
+function _renderNavSecs(secs) {
+  const navDyn = document.getElementById('nav-secs-dyn');
+  if (navDyn) {
+    secs.forEach(s => {
+      const a = document.createElement('a');
+      a.href = 'secciones.html?sec=' + normTag(s.tag);
+      a.textContent = s.nombre;
+      navDyn.parentNode.insertBefore(a, navDyn);
+    });
+    navDyn.remove();
+  }
+  const mmDyn = document.getElementById('mm-secs-dyn');
+  if (mmDyn) mmDyn.innerHTML = secs.map(s =>
+    '<a href="secciones.html?sec=' + normTag(s.tag) + '">' + s.nombre + '</a>'
+  ).join('');
+  const ftDyn = document.getElementById('footer-secs-dyn');
+  if (ftDyn) {
+    const ul = ftDyn.closest('ul');
+    if (ul) ul.innerHTML = secs.map(s =>
+      '<li><a href="secciones.html?sec=' + normTag(s.tag) + '">' + s.nombre + '</a></li>'
+    ).join('');
+  }
+}
+
+function normTag(v) {
+  if (!v) return 'la-cronica';
+  const s = String(v).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/#/g,'').replace(/\s+/g,'-').trim();
+  const aliases = { 'cronica':'la-cronica','conversacion':'la-conversacion','curatia':'la-curaturia','curaturia':'la-curaturia','la-curatia':'la-curaturia','la-curaturia':'la-curaturia','la-cronica':'la-cronica','la-conversacion':'la-conversacion' };
+  return aliases[s] || s;
+}
+async function init() {
+  await initSite();
+  const _secsNav = await DB.getSecciones().catch(() => []);
+  _renderNavSecs(_secsNav);
+
+  const params = new URLSearchParams(location.search);
+
+  /* URL: ?slug=valor · también soporta ?s=slug y ?id=uuid */
+  /* También soporta legacy: ?id=xxx&s=slug */
+  let artId   = params.get('id') || null;
+  const slug  = params.get('slug') || params.get('s') || params.get('') || null;
+  const isPreview = params.get('preview') === '1';
+
+  /* Si no hay ID, buscar por slug en todos los artículos */
+  if (!artId && slug) {
+    const todos = await DB.getPublicados().catch(()=>[]);
+    const match = todos.find(a => a.slug === slug) || todos.find(a => _normalizeSlug(a.titulo) === _normalizeSlug(slug));
+    if (match) artId = match.id;
+  }
+
+  if (!artId) { window.location.href = '404.html'; return; }
+
+  const [a, todosLosArts] = await Promise.all([
+    DB.getArticulo(artId),
+    DB.getPublicados(),
+  ]);
+  if (!a) { window.location.href = '404.html'; return; }
+
+  /* URL canónica: solo slug, sin id */
+  const cleanSlug = _normalizeSlug(a.titulo);
+  const cleanUrl  = 'articulo.html?slug=' + cleanSlug;
+  history.replaceState(null, '', cleanUrl);
+
+  /* Registrar visita (solo si no es preview del admin) */
+  if (!isPreview) {
+    SB.insert('visitas', {
+      pagina: 'articulo', tipo: 'articulo',
+      referencia_id: a.id, slug: cleanSlug,
+      sesion_id: _getSesionId(),
+    }).catch(()=>{});
+  }
+
+  /* SEO */
+  aplicarSEO({ titulo: a.titulo, desc: a.subtitulo || a.extracto || '', imagen: a.imagen_url || '', type: 'article' });
+  const canonical = document.getElementById('canonical');
+  if (canonical) canonical.href = `https://laenbajada.com/articulo.html?slug=${encodeURIComponent(a.slug||a.id)}`;
+
+  /* HERO */
+  if (a.imagen_url) {
+    document.getElementById('art-hero-bg').innerHTML = `<img src="${a.imagen_url}" alt="${a.titulo}" loading="eager">`;
+  }
+  const tagRow = document.getElementById('art-hero-tag');
+  if (tagRow) {
+    const secTag = normTag(a.seccion_tag||'');
+    const secUrl = `secciones.html?sec=${secTag}`;
+    tagRow.innerHTML = `<a class="art-hero-tag-pill" href="${secUrl}">${a.seccion_tag||a.tipo||'La Enbajada'}</a>
+      ${a.numero_id?`<span class="art-hero-tag-sep">·</span><span class="art-hero-num">N.º ${a.numero_id}</span>`:''}`;
+  }
+  const h1 = document.getElementById('art-h1');
+  if (h1) h1.innerHTML = a.titulo.replace(/([^ ]+)$/, '<em>$1</em>');
+  const sub = document.getElementById('art-hero-sub');
+  if (sub && a.subtitulo) { sub.textContent = a.subtitulo; sub.style.display = ''; }
+
+  /* Breadcrumb */
+  const bcSec = document.getElementById('bc-sec');
+  const bcTit = document.getElementById('bc-titulo');
+  if (bcSec) {
+    const secTag = normTag(a.seccion_tag||'');
+    bcSec.href = `secciones.html?sec=${secTag}`;
+    bcSec.textContent = normTag(a.seccion_tag) || 'Secciones';
+  }
+  if (bcTit) bcTit.textContent = a.titulo.length > 40 ? a.titulo.slice(0,40)+'…' : a.titulo;
+
+  /* Botón volver */
+  const btnVolver = document.getElementById('btn-volver');
+  if (btnVolver && a.numero_id) btnVolver.href = `edicion.html?num=${a.numero_id}`;
+
+  /* Editor */
+  let ed = null;
+  let edArtsCnt = 0;
+  if (a.editor_id) {
+    try {
+      const eds = await SB.select('editores', `id=eq.${a.editor_id}`);
+      ed = eds?.[0] || null;
+      if (ed) edArtsCnt = todosLosArts.filter(x => x.editor_id === ed.id).length;
+    } catch(e) {}
+  }
+
+  /* Hero autor row */
+  _renderHeroAutor(a, ed);
+  _inyectarSchema(a, ed);
+  if(a.id) _marcarLeido(String(a.id));
+  _renderNavArticulos(a, todosLosArts);
+
+  /* Bloques de contenido */
+  const bloques = await DB.getBloques(artId).catch(() => []);
+  const cont    = document.getElementById('art-contenido');
+  if (cont) {
+    if (bloques.length) {
+      cont.innerHTML = renderBloques(bloques);
+    } else {
+      cont.innerHTML = '<p style="color:var(--t4);font-style:italic;font-family:var(--body)">Este artículo no tiene contenido publicado aún.</p>';
+    }
+    _generarTOC();
+  }
+
+  /* Colofón y aside editor */
+  if (ed) {
+    _renderEditorAside(ed, edArtsCnt);
+    _renderColofonEditor(ed, edArtsCnt);
+  } else if (a.autor) {
+    const aside = document.getElementById('aside-editor');
+    if (aside) aside.innerHTML = `<div class="art-editor-card" style="padding:14px 18px">
+      <div style="font-family:var(--ui);font-size:8px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--azul);margin-bottom:8px">Autor</div>
+      <div style="font-family:var(--serif);font-size:15px;font-weight:700;font-style:italic">${a.autor}</div>
+    </div>`;
+  }
+
+  /* Compartir */
+  _renderShare(a);
+
+  /* Relacionados */
+  const relacionados = todosLosArts.filter(x =>
+    x.id !== a.id &&
+    (normTag(x.seccion_tag) === normTag(a.seccion_tag) || x.numero_id === a.numero_id)
+  );
+  _renderRelacionados(relacionados, a.id);
+  _renderRelacionadosMobile(relacionados, a.id);
+
+  /* Banner preview del admin */
+  if (isPreview) {
+    const banner = document.createElement('div');
+    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:var(--azul);color:#fff;text-align:center;padding:8px 16px;font-family:var(--ui);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:12px';
+    banner.innerHTML = `Vista previa del admin — El artículo no ha sido publicado aún <button onclick="window.close()" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:4px 12px;cursor:pointer;font-family:var(--ui);font-size:10px;font-weight:700">✕ Cerrar</button>`;
+    document.body.prepend(banner);
+    document.body.style.paddingTop = '36px';
+  }
+
+  observeReveal();
+}
+
+/* Sesión anónima para no inflar con recargas */
+function _getSesionId() {
+  let sid = sessionStorage.getItem('_lae_sid');
+  if (!sid) { sid = Math.random().toString(36).slice(2); sessionStorage.setItem('_lae_sid', sid); }
+  return sid;
+}
+
+init();
+</script>
+<script src="assets/tracking.js"></script>
+</body>
+</html>

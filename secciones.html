@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#0C0B09">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Explora las secciones de La Enbajada: Historias, Conversaciones, Recomendados y más. Revista cultural del Caribe colombiano.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="La Enbajada — Secciones">
+  <meta property="og:description" content="Explora las secciones de La Enbajada: Historias, Conversaciones, Recomendados y más. Revista cultural del Caribe colombiano.">
+  <meta property="og:image" content="https://laenbajada.com/assets/og-image.jpg">
+  <meta property="og:url" content="https://laenbajada.com/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="La Enbajada — Secciones">
+  <meta name="twitter:description" content="Explora las secciones de La Enbajada: Historias, Conversaciones, Recomendados y más. Revista cultural del Caribe colombiano.">
+<title>La Enbajada — Secciones</title>
+  <meta name="robots" content="index, follow">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+
+/* ── RESPONSIVE BASE — Fixes globales ── */
+*, *::before, *::after { box-sizing: border-box }
+html { overflow-x: hidden; scroll-behavior: smooth }
+body { overflow-x: hidden; -webkit-text-size-adjust: 100% }
+img, video, svg { max-width: 100%; height: auto; display: block }
+table { width: 100%; border-collapse: collapse }
+input, textarea, select, button { max-width: 100% }
+/* ══ SECCIONES — La Enbajada v8 ══ */
+
+/* Hero compacto */
+.sec-hero {
+  background: var(--negro);
+  padding: clamp(60px,9vw,120px) var(--pad) clamp(40px,6vw,72px);
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.sec-hero-accent { position:absolute; left:0; top:0; bottom:0; width:3px; background:linear-gradient(to bottom,var(--azul),transparent); }
+.sec-hero-deco { position:absolute; right:-10px; bottom:-16px; font-family:var(--serif); font-size:clamp(120px,24vw,320px); font-weight:700; color:rgba(255,255,255,.025); letter-spacing:-.07em; line-height:.8; user-select:none; pointer-events:none; }
+.sec-hero-inner { max-width:860px; position:relative; z-index:1; }
+.sec-eyebrow { display:flex; align-items:center; gap:10px; margin-bottom:clamp(14px,2vw,22px); }
+.sec-eyebrow-line { width:22px; height:1px; background:var(--azul); }
+.sec-eyebrow-txt { font-family:var(--ui); font-size:8.5px; font-weight:700; letter-spacing:.28em; text-transform:uppercase; color:var(--azul); }
+.sec-h1 { font-family:var(--serif); font-size:clamp(44px,9vw,110px); font-style:italic; font-weight:700; color:rgba(255,255,255,.88); letter-spacing:-.04em; line-height:.9; margin-bottom:clamp(16px,2vw,24px); }
+.sec-h1 em { font-style:italic; color:rgba(255,255,255,.82); }
+.sec-sub { font-family:var(--body); font-size:clamp(14px,1.8vw,18px); font-style:italic; color:rgba(255,255,255,.48); line-height:1.75; max-width:480px; }
+
+/* Cuerpo */
+.sec-body { padding: clamp(36px,5vw,64px) var(--pad); max-width: 1280px; margin: 0 auto; }
+
+/* Header de sección activa */
+.sec-active-hdr {
+  display: flex; align-items: baseline;
+  justify-content: space-between; gap: 12px;
+  margin-bottom: clamp(24px,3.5vw,40px); flex-wrap: wrap;
+  padding-bottom: 18px; border-bottom: 1.5px solid var(--bd2);
+}
+.sec-active-nombre { font-family: var(--serif); font-size: clamp(26px,4vw,44px); font-weight: 700; letter-spacing: -.03em; color: var(--t1); }
+.sec-active-nombre em { font-style: italic; color: var(--t1); }
+.sec-active-desc { font-family: var(--body); font-size: 14px; font-style: italic; color: var(--t3); line-height: 1.65; margin-top: 8px; }
+
+/* Grid de artículos — sin background para evitar celda gris */
+.sec-art-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 12px;
+}
+@media(min-width:600px) { .sec-art-grid { grid-template-columns: repeat(2,1fr); } }
+@media(min-width:960px) { .sec-art-grid { grid-template-columns: repeat(3,1fr); } }
+@media(min-width:960px) {
+  .sec-art-grid.has-featured .sec-art-card:first-child { grid-column: span 2; }
+  .sec-art-grid.has-featured .sec-art-card:first-child .sec-art-img { aspect-ratio: 16/9; }
+}
+.sec-art-card {
+  background: var(--surface); display: flex; flex-direction: column;
+  text-decoration: none; color: var(--t1);
+  transition: background .18s, border-color .2s; cursor: pointer;
+  border: 1px solid var(--bd);
+}
+.sec-art-card:hover { background: var(--paper); border-color: var(--bd2); transform:translateY(-3px); box-shadow:0 8px 28px rgba(0,74,173,.10); }
+.sec-art-img {
+  aspect-ratio: 3/2; overflow: hidden;
+  background: linear-gradient(135deg,#0a1628,#004AAD); flex-shrink: 0;
+}
+.sec-art-img img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 7s var(--ease); }
+.sec-art-card:hover .sec-art-img img { transform: scale(1.04); }
+.sec-art-body { padding: 18px 20px 22px; display:flex; flex-direction:column; flex:1; gap:8px; }
+.sec-art-cat { font-family:var(--ui); font-size:8px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--azul); display:flex; align-items:center; gap:6px; }
+.sec-art-cat::before { content:''; display:block; width:12px; height:1px; background:var(--azul); }
+.sec-art-titulo { font-family:var(--serif); font-size:clamp(15px,4vw,20px); font-weight:700; line-height:1.16; color:var(--t1); letter-spacing:-.01em; transition:color .18s; }
+.sec-art-card:hover .sec-art-titulo { color:var(--azul); }
+.sec-art-sub { font-family:var(--body); font-size:13px; font-style:italic; color:var(--t2); line-height:1.55; }
+.sec-art-meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-family:var(--ui); font-size:9px; color:var(--t4); letter-spacing:.06em; margin-top:auto; padding-top:10px; border-top:1px solid var(--bd); }
+
+/* Lista conversación */
+.sec-list-item {
+  display: grid; grid-template-columns: 80px 1fr;
+  gap: 0; border-bottom: 1px solid var(--bd);
+  text-decoration: none; color: var(--t1);
+  transition: background .15s; overflow: hidden;
+}
+@media(min-width:600px) { .sec-list-item { grid-template-columns: 120px 1fr; } }
+.sec-list-item:last-child { border-bottom: none; }
+.sec-list-item:hover { background: var(--paper); }
+.sec-list-img { aspect-ratio: 3/2; overflow: hidden; background: linear-gradient(135deg,#0a1628,#004AAD); }
+.sec-list-img img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 6s; }
+.sec-list-item:hover .sec-list-img img { transform:scale(1.04); }
+.sec-list-body { padding: clamp(10px,2vw,16px) clamp(12px,2vw,20px); display:flex; flex-direction:column; justify-content:center; gap:6px; }
+.sec-list-cat { font-family:var(--ui); font-size:8px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--azul); }
+.sec-list-titulo { font-family:var(--serif); font-size:clamp(14px,4vw,19px); font-weight:700; line-height:1.15; color:var(--t1); transition:color .18s; }
+.sec-list-item:hover .sec-list-titulo { color:var(--azul); }
+.sec-list-sub { font-family:var(--body); font-size:12.5px; font-style:italic; color:var(--t2); line-height:1.5; display:none; }
+@media(min-width:600px) { .sec-list-sub { display:block; } }
+.sec-list-meta { font-family:var(--ui); font-size:9px; color:var(--t4); }
+
+/* Paginación */
+.sec-pag { display:flex; align-items:center; justify-content:center; gap:8px; padding:32px 0 0; flex-wrap:wrap; }
+.sec-pag-btn { display:flex; align-items:center; gap:6px; font-family:var(--ui); font-size:9px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; border:1px solid var(--bd); color:var(--t2); padding:10px 18px; cursor:pointer; background:none; transition:all .18s; }
+.sec-pag-btn:hover { border-color:var(--azul); color:var(--azul); }
+.sec-pag-btn.disabled { opacity:.3; pointer-events:none; }
+.sec-pag-info { font-family:var(--ui); font-size:10px; color:var(--t4); letter-spacing:.08em; }
+
+/* Estado vacío */
+.sec-empty { padding:60px var(--pad); text-align:center; color:var(--t4); }
+.sec-empty-ic { font-size:32px; margin-bottom:14px; opacity:.3; }
+.sec-empty h3 { font-family:var(--serif); font-size:22px; font-weight:700; font-style:italic; color:var(--t2); margin-bottom:8px; }
+.sec-empty p { font-size:14px; color:var(--t3); line-height:1.65; }
+
+/* ── FOOTER FULL-WIDTH ── */
+.site-footer { width:100%; box-sizing:border-box; }
+.footer-inner { max-width:1600px; margin:0 auto; }
+
+/* ── RESPONSIVE SECCIONES ── */
+
+/* Desktop grande — ≥1400px */
+@media(min-width:1400px) {
+  .sec-body { max-width:1440px; }
+}
+
+/* Tablet — 480-767px */
+@media(min-width:480px) and (max-width:767px) {
+  .sec-h1 { font-size:clamp(40px,8vw,72px) !important; }
+  .sec-art-grid { grid-template-columns:repeat(2,1fr); }
+}
+
+/* Móvil grande — ≤700px */
+@media(max-width:700px) {
+  .sec-h1 { font-size:clamp(34px,9vw,56px) !important; }
+  .sec-sub { font-size:clamp(13px,3.5vw,16px); }
+  /* Deco: evitar scroll horizontal */
+  .sec-hero-deco { font-size:clamp(80px,22vw,160px); right:0; overflow:hidden; }
+  .sec-hero { overflow:hidden; }
+}
+
+/* Móvil — ≤479px */
+@media(max-width:479px) {
+  .sec-hero { padding:clamp(52px,10vw,80px) var(--pad) clamp(28px,5vw,40px); }
+  .sec-h1 { font-size:clamp(28px,9.5vw,44px) !important; }
+  .sec-sub { display:none; }
+  .sec-hero-deco { display:none; }
+  .sec-body { padding:clamp(22px,4vw,36px) var(--pad); }
+  .sec-active-hdr { flex-direction:column; gap:6px; }
+  .sec-pag-btn { padding:8px 14px; }
+  /* Footer 1 columna */
+  .footer-cols { grid-template-columns:1fr !important; }
+}
+
+/* Pantalla muy pequeña — ≤360px */
+@media(max-width:360px) {
+  .sec-h1 { font-size:clamp(24px,10vw,36px) !important; }
+  .sec-hero { padding:clamp(44px,10vw,64px) 16px clamp(22px,5vw,32px); }
+}
+
+/* ── MODAL BUSCADOR ESTILO ATMOS ── */
+.search-modal { position:fixed; inset:0; z-index:9000; background:var(--bg); display:flex; flex-direction:column; opacity:0; pointer-events:none; transition:opacity .22s var(--ease); }
+.search-modal.open { opacity:1; pointer-events:all; }
+.search-modal-header { display:flex; align-items:center; justify-content:space-between; padding:0 var(--pad); height:64px; flex-shrink:0; border-bottom:1px solid var(--bd); }
+.search-modal-logo { font-family:var(--serif); font-size:20px; font-weight:700; color:var(--t1); letter-spacing:.01em; }
+.search-modal-close { display:flex; align-items:center; gap:8px; font-family:var(--ui); font-size:9px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--t3); background:none; border:none; cursor:pointer; transition:color .18s; }
+.search-modal-close:hover { color:var(--t1); }
+.search-modal-input-area { padding:clamp(28px,4vw,52px) var(--pad) clamp(20px,3vw,36px); border-bottom:1px solid var(--bd); flex-shrink:0; }
+.search-modal-row { display:flex; align-items:center; gap:16px; border-bottom:2px solid var(--azul); padding-bottom:12px; }
+.search-modal-row svg { color:var(--azul); flex-shrink:0; }
+.search-modal-input { font-family:var(--serif); font-size:clamp(28px,5vw,52px); font-weight:400; letter-spacing:-.02em; color:var(--t1); background:none; border:none; outline:none; width:100%; line-height:1; }
+.search-modal-input::placeholder { color:var(--t4); }
+.search-modal-hint { font-family:var(--ui); font-size:9px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--t3); margin-top:14px; min-height:16px; }
+.search-modal-results { flex:1; overflow-y:auto; padding:clamp(20px,3vw,36px) var(--pad) clamp(28px,4vw,48px); scrollbar-width:thin; scrollbar-color:var(--bd2) transparent; }
+.search-modal-results::-webkit-scrollbar { width:4px; }
+.search-modal-results::-webkit-scrollbar-thumb { background:var(--bd2); border-radius:2px; }
+.search-results-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(14px,2vw,24px); }
+@media(max-width:900px) { .search-results-grid { grid-template-columns:repeat(3,1fr); } }
+@media(max-width:600px) { .search-results-grid { grid-template-columns:repeat(2,1fr); } }
+.search-result-card { text-decoration:none; color:var(--t1); display:flex; flex-direction:column; gap:10px; transition:opacity .18s; }
+.search-result-card:hover { opacity:.75; }
+.search-result-img { aspect-ratio:3/4; overflow:hidden; background:linear-gradient(160deg,#0a1628,#004AAD); position:relative; border-radius:2px; }
+.search-result-img img { width:100%; height:100%; object-fit:cover; display:block; }
+.search-result-img-ov { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,.55) 0%,transparent 50%); display:flex; align-items:flex-end; padding:10px 12px; }
+.search-result-cat { font-family:var(--ui); font-size:8px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.8); }
+.search-result-titulo { font-family:var(--serif); font-size:clamp(13px,1.4vw,16px); font-weight:600; line-height:1.25; color:var(--t1); }
+.search-result-meta { font-family:var(--ui); font-size:9px; color:var(--t3); letter-spacing:.04em; }
+.search-modal-empty { padding:48px 0; text-align:center; font-family:var(--serif); font-size:clamp(18px,2vw,24px); font-style:italic; color:var(--t3); }
+html.dark .search-modal { background:var(--bg); }
+</style>
+</head>
+<body>
+<noscript>
+  <style>body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#F7F4EE;font-family:Georgia,serif;text-align:center;padding:40px}</style>
+  <div style="max-width:480px;margin:auto">
+    <div style="font-size:48px;margin-bottom:16px">📰</div>
+    <h1 style="font-size:28px;font-weight:700;margin-bottom:12px;letter-spacing:-.02em">La Enbajada requiere JavaScript</h1>
+    <p style="color:#6C6760;line-height:1.7;font-style:italic">Para disfrutar la revista cultural del Caribe colombiano, por favor activa JavaScript en tu navegador.</p>
+    <a href="https://laenbajada.com" style="display:inline-block;margin-top:24px;background:#004AAD;color:#fff;padding:12px 28px;font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;text-decoration:none">Ir al inicio</a>
+  </div>
+</noscript>
+<a href="#main-content" class="skip-link">Saltar al contenido</a>
+
+
+
+<header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo-wrap">
+      <img src="assets/logo.png" alt="" class="logo-img" onerror="this.style.display='none'">
+      <div class="logo-text-group">
+        <span class="logo-name js-logo-name">La Enbajada</span>
+        <span class="logo-tag js-logo-tag">Aterrizamos la Cultura</span>
+      </div>
+    </a>
+    <nav class="nav-left">
+      <a href="index.html">Inicio</a>
+      <a href="edicion.html">Edición actual</a>
+      <!-- secciones dinámicas —la activa se marca en JS -->
+      <span id="nav-secs-dyn"></span>
+      <a href="archivo.html">Archivo</a>
+      <a href="sobre.html">Nosotros</a>
+    </nav>
+    <div class="header-spacer"></div>
+    <nav class="nav-right">
+      <div class="nav-search-wrap" id="search-wrap">
+        <button class="nav-search-icon" id="search-icon-btn" onclick="openSearch()" aria-label="Buscar" aria-expanded="false">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+      </div>
+      <a class="nav-ig-btn js-footer-ig" href="https://instagram.com/laenbajada" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </a>
+      <a href="index.html#sec-boletin" class="nav-cta">Suscribirse<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      <button class="hamburger" id="hamburger-btn" onclick="toggleMenu()" aria-label="Menú">
+        <div class="hamburger-icon"><span></span><span></span><span></span></div>
+      </button>
+    </nav>
+  </div>
+  <nav class="mobile-menu" id="mobile-menu">
+    <a href="index.html">Inicio</a>
+    <a href="edicion.html">Edición actual</a>
+    <div class="mm-sep"></div>
+    <div id="mm-secs-dyn"></div>
+    <div class="mm-sep"></div>
+    <a href="archivo.html">Archivo</a>
+    <a href="sobre.html">Nosotros</a>
+    <div class="mm-sep"></div>
+    <a href="index.html#sec-boletin" class="mm-cta">Suscribirse →</a>
+  </nav>
+</header>
+
+<main id="main-content">
+
+<!-- HERO -->
+<div class="sec-hero">
+  <div class="sec-hero-accent"></div>
+  <div class="sec-hero-deco" id="sec-hero-deco" aria-hidden="true"></div>
+  <div class="sec-hero-inner" id="sec-hero-inner" style="opacity:0;transition:opacity .35s ease">
+    <div class="sec-eyebrow"><div class="sec-eyebrow-line"></div><div class="sec-eyebrow-txt" id="sec-eyebrow-txt">La Enbajada · Secciones editoriales</div></div>
+    <h1 class="sec-h1" id="sec-h1"></h1>
+    <p class="sec-sub" id="sec-sub"></p>
+  </div>
+</div>
+
+<!-- CUERPO -->
+<div class="sec-body">
+  <div class="sec-active-hdr" id="sec-active-hdr" style="opacity:0;transition:opacity .35s ease">
+    <div>
+      <div class="sec-active-nombre" id="sec-active-nombre"></div>
+    </div>
+  </div>
+  <div id="sec-art-container"></div>
+  <div id="sec-paginacion"></div>
+</div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand-row">
+      <div class="footer-brand js-footer-brand">La Enbajada</div>
+      <div class="footer-tagline js-footer-tagline">Aterrizamos la Cultura</div>
+      <p class="footer-desc js-footer-desc"></p>
+    </div>
+    <div class="footer-cols">
+      <div class="footer-col"><h5>La Revista</h5><ul>
+        <li><a href="edicion.html">Edición actual</a></li>
+        <li><a href="archivo.html">Archivo</a></li>
+        <li><a href="sobre.html">Nosotros</a></li>
+      </ul></div>
+      <div class="footer-col"><h5>Secciones</h5><ul><li id="footer-secs-dyn"></li></ul></div>
+      <div class="footer-col"><h5>Contacto</h5><ul>
+        <li><a href="https://instagram.com/laenbajada" target="_blank" class="js-footer-ig">Instagram</a></li>
+        <li><a href="mailto:contacto@laenbajada.com" class="js-footer-email">contacto@laenbajada.com</a></li>
+      </ul></div>
+      <div class="footer-col"><h5>Redes</h5>
+        <div class="footer-redes" id="footer-redes-wrap"></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="js-footer-copy">© 2025 La Enbajada</span>
+    </div>
+  </div>
+</footer>
+<!-- ══ MODAL BUSCADOR FULLSCREEN ══ -->
+<div class="search-modal" id="search-modal" role="dialog" aria-modal="true" aria-label="Buscador">
+  <div class="search-modal-header">
+    <div class="search-modal-logo">La Enbajada</div>
+    <button class="search-modal-close" onclick="closeSearch()" aria-label="Cerrar buscador">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      Cerrar
+    </button>
+  </div>
+  <div class="search-modal-input-area">
+    <div class="search-modal-row">
+      <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-modal-input" id="search-modal-input" type="search" placeholder="Buscar artículos…" autocomplete="off" oninput="_searchModal(this.value)" onkeydown="_searchModalKey(event)" aria-label="Buscar artículos">
+    </div>
+    <div class="search-modal-hint" id="search-modal-hint">Escribe para buscar</div>
+  </div>
+  <div class="search-modal-results" id="search-modal-results"></div>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+/* ── ARTÍCULOS LEÍDOS ── */
+const _LEIDOS_KEY = 'le_leidos';
+function _marcarLeido(id) {
+  try {
+    const leidos = JSON.parse(localStorage.getItem(_LEIDOS_KEY) || '[]');
+    if (!leidos.includes(id)) { leidos.push(id); localStorage.setItem(_LEIDOS_KEY, JSON.stringify(leidos)); }
+  } catch(e) {}
+}
+function _esLeido(id) {
+  try { return JSON.parse(localStorage.getItem(_LEIDOS_KEY) || '[]').includes(id); } catch(e) { return false; }
+}
+function _marcarLeidosEnGrid(selector) {
+  try {
+    const leidos = JSON.parse(localStorage.getItem(_LEIDOS_KEY) || '[]');
+    if (!leidos.length) return;
+    document.querySelectorAll(selector).forEach(card => {
+      const href = card.getAttribute('href') || '';
+      const match = leidos.some(id => href.includes(id));
+      if (match) card.classList.add('art-leido');
+    });
+  } catch(e) {}
+}
+</script>
+<script>
+/* ══ secciones.html — La Enbajada v8 ══ */
+let _allArts = [];
+let _secciones = [];
+let _secActual = '';
+const POR_PAG = 12;
+let _page = 0;
+
+function articuloUrl(a) {
+  if (a.slug) return 'articulo.html?slug=' + encodeURIComponent(a.slug);
+  var _s = (a.titulo || '').toLowerCase().normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return 'articulo.html?slug=' + _s;
+}
+
+/* Header scroll */
+(()=>{ const h=document.getElementById('site-header'); window.addEventListener('scroll',()=>h?.classList.toggle('scrolled',window.scrollY>20),{passive:true}); })();
+
+/* ── BUSCADOR FULLSCREEN ESTILO ATMOS ── */
+function openSearch(){const modal=document.getElementById('search-modal');const input=document.getElementById('search-modal-input');modal.classList.add('open');document.body.style.overflow='hidden';document.getElementById('search-icon-btn').setAttribute('aria-expanded','true');setTimeout(()=>input?.focus(),80);}
+function closeSearch(){const modal=document.getElementById('search-modal');const input=document.getElementById('search-modal-input');const hint=document.getElementById('search-modal-hint');const res=document.getElementById('search-modal-results');modal.classList.remove('open');document.body.style.overflow='';document.getElementById('search-icon-btn').setAttribute('aria-expanded','false');if(input)input.value='';if(hint)hint.textContent='Escribe para buscar';if(res)res.innerHTML='';}
+function _searchModalKey(e){if(e.key==='Escape')closeSearch();}
+let _smTimer=null;function _searchModal(q){clearTimeout(_smTimer);_smTimer=setTimeout(()=>_doSearchModal(q),240);}
+async function _doSearchModal(q){const hint=document.getElementById('search-modal-hint');const res=document.getElementById('search-modal-results');if(!res)return;const v=(q||'').trim();if(v.length<2){if(hint)hint.textContent='Escribe para buscar';res.innerHTML='';return;}if(hint)hint.textContent='Buscando…';const arts=await DB.buscar(v).catch(()=>[]);if(!arts.length){if(hint)hint.textContent=`Sin resultados para "${v}"`;res.innerHTML=`<div class="search-modal-empty">No encontramos nada para <em>"${v}"</em></div>`;return;}if(hint)hint.textContent=`${arts.length} resultado${arts.length!==1?'s':''} encontrado${arts.length!==1?'s':''}`;res.innerHTML=`<div class="search-results-grid">${arts.map(a=>`<a class="search-result-card" href="${articuloUrl(a)}" onclick="closeSearch()"><div class="search-result-img">${a.imagen_url?`<img src="${a.imagen_url}" alt="${a.titulo}" loading="lazy">`:''}<div class="search-result-img-ov"><div class="search-result-cat">${a.seccion_tag||'La Enbajada'}</div></div></div><div class="search-result-titulo">${a.titulo}</div><div class="search-result-meta">${a.autor||''} · N.º ${a.numero_id||''}</div></a>`).join('')}</div>`;}
+document.getElementById('search-modal')?.addEventListener('click',function(e){if(e.target===this)closeSearch();});
+function toggleMenu(){const h=document.getElementById('site-header'),m=document.getElementById('mobile-menu'),b=document.getElementById('hamburger-btn'),o=m.classList.toggle('open');h.classList.toggle('menu-open',o);b.setAttribute('aria-expanded',o);document.body.style.overflow=o?'hidden':'';}
+document.addEventListener('click',e=>{const h=document.getElementById('site-header');if(h&&!h.contains(e.target)){document.getElementById('mobile-menu')?.classList.remove('open');h.classList.remove('menu-open');document.body.style.overflow='';}});
+
+/* Tabs de navegación */
+function _renderNavBar() {
+  const bar = document.getElementById('sec-nav-bar'); if (!bar) return;
+  /* Solo mostrar secciones que tienen artículos publicados */
+  const seccionesConArts = _secciones.filter(s =>
+    _allArts.some(a => normTag(a.seccion_tag) === normTag(s.tag))
+  );
+  /* Si ninguna sección de la BD matchea, construir desde los tags de los artículos */
+  const secsARenderizar = seccionesConArts.length ? seccionesConArts : _secsDeArts(_allArts);
+
+  bar.innerHTML = secsARenderizar.map(s => {
+    const cnt = _allArts.filter(a => normTag(a.seccion_tag) === normTag(s.tag)).length;
+    return `<a class="sec-nav-tab ${normTag(s.tag)===normTag(_secActual)?'activo':''}"
+      href="?sec=${normTag(s.tag)}" data-tag="${normTag(s.tag)}"
+      onclick="cambiarSec(event,'${normTag(s.tag)}')">
+      ${s.nombre}
+      <span class="tab-cnt">${cnt}</span>
+    </a>`;
+  }).join('');
+}
+
+/* ── LLENAR NAV CON SECCIONES REALES DE SUPABASE ── */
+function _renderNavSecs(secs, paginaActual) {
+  /* Desktop nav — insertar <a> después del span placeholder y eliminarlo */
+  const navDyn = document.getElementById('nav-secs-dyn');
+  if (navDyn) {
+    secs.forEach(s => {
+      const a = document.createElement('a');
+      a.href = 'secciones.html?sec=' + normTag(s.tag);
+      a.textContent = s.nombre;
+      if (normTag(s.tag) === normTag(_secActual)) a.className = 'nav-activo';
+      navDyn.parentNode.insertBefore(a, navDyn);
+    });
+    navDyn.remove();
+  }
+
+  /* Mobile menu */
+  const mmDyn = document.getElementById('mm-secs-dyn');
+  if (mmDyn) {
+    mmDyn.innerHTML = secs.map(s =>
+      '<a href="secciones.html?sec=' + normTag(s.tag) + '">' + s.nombre + '</a>'
+    ).join('');
+  }
+
+  /* Footer — reemplazar el <ul> completo */
+  const ftDyn = document.getElementById('footer-secs-dyn');
+  if (ftDyn) {
+    const ul = ftDyn.closest('ul');
+    if (ul) {
+      ul.innerHTML = secs.map(s =>
+        '<li><a href="secciones.html?sec=' + normTag(s.tag) + '">' + s.nombre + '</a></li>'
+      ).join('');
+    }
+  }
+}
+
+/* Construir secciones desde los artículos cuando _secciones está vacío o no matchea */
+function _secsDeArts(arts) {
+  const vistas = new Map();
+  arts.forEach(a => {
+    const t = normTag(a.seccion_tag);
+    if (!vistas.has(t)) {
+      const fromDB = _secciones.find(s => normTag(s.tag) === t);
+      vistas.set(t, { tag: t, nombre: fromDB ? fromDB.nombre : (a.seccion_tag || t) });
+    }
+  });
+  const orden = _secciones.map(s => normTag(s.tag));
+  return [...vistas.values()].sort((a, b) => {
+    const ia = orden.indexOf(a.tag), ib = orden.indexOf(b.tag);
+    if (ia === -1 && ib === -1) return 0;
+    if (ia === -1) return 1; if (ib === -1) return -1;
+    return ia - ib;
+  });
+}
+
+/* Cambiar sección */
+function cambiarSec(e, tag) {
+  e.preventDefault();
+  _secActual = tag;
+  _page = 0;
+  history.pushState(null,'',`?sec=${tag}`);
+  _renderPage();
+  /* Actualizar nav-activo del header */
+  document.querySelectorAll('.nav-left a, .mobile-menu a').forEach(a => {
+    const href = a.getAttribute('href') || '';
+    const isThisSec = href.includes('secciones.html?sec=') && href.includes(tag);
+    a.classList.toggle('nav-activo', isThisSec);
+  });
+  window.scrollTo({ top: document.getElementById('sec-nav-bar')?.offsetTop - 80 || 0, behavior: 'smooth' });
+}
+
+/* Helper: tag → nombre visible */
+function _tagANombre(tag) {
+  const sec = _secciones.find(s => normTag(s.tag) === normTag(tag));
+  return sec?.nombre || tag;
+}
+
+/* Render artículos de la sección activa */
+function _renderPage() {
+  const sec = _secciones.find(s => normTag(s.tag) === normTag(_secActual));
+  const artsDeEsta = _allArts.filter(a => normTag(a.seccion_tag) === normTag(_secActual));
+  const inicio = _page * POR_PAG;
+  const pagina = artsDeEsta.slice(inicio, inicio + POR_PAG);
+
+  /* Nombre limpio sin prefijo "La " */
+  const nombre = sec?.nombre || _secActual;
+
+  /* Hero */
+  const h1 = document.getElementById('sec-h1');
+  if (h1) h1.innerHTML = `<em>${nombre}</em>`;
+  const deco = document.getElementById('sec-hero-deco');
+  if (deco) deco.textContent = nombre;
+  const sub = document.getElementById('sec-sub');
+  if (sub) sub.textContent = sec?.descripcion || '';
+  const eyebrow = document.getElementById('sec-eyebrow-txt');
+  if (eyebrow) eyebrow.textContent = `La Enbajada · ${nombre}`;
+
+  /* Cabecera activa */
+  const actNombre = document.getElementById('sec-active-nombre');
+  if (actNombre) actNombre.innerHTML = `<em>${nombre}</em>`;
+
+  /* Hacer visibles hero y cabecera tras actualizar el DOM */
+  requestAnimationFrame(() => {
+    const heroInner = document.getElementById('sec-hero-inner');
+    const hdr = document.getElementById('sec-active-hdr');
+    if (heroInner) heroInner.style.opacity = '1';
+    if (hdr) hdr.style.opacity = '1';
+  });
+
+  /* Actualizar tabs */
+  document.querySelectorAll('.sec-nav-tab').forEach(t => {
+    t.classList.toggle('activo', normTag(t.dataset.tag) === normTag(_secActual));
+  });
+
+  /* SEO dinámico */
+  aplicarSEO({
+    titulo: `${nombre} — La Enbajada`,
+    desc: sec?.descripcion || `Artículos de ${nombre} en La Enbajada.`,
+  });
+
+  /* Artículos */
+  const cont = document.getElementById('sec-art-container');
+  if (!cont) return;
+  if (!pagina.length) {
+    cont.innerHTML = `<div class="sec-empty"><div class="sec-empty-ic">📰</div><h3>Sin artículos en esta sección</h3><p>Esta sección aún no tiene piezas publicadas.</p></div>`;
+    if (document.getElementById('sec-paginacion')) document.getElementById('sec-paginacion').innerHTML = '';
+    return;
+  }
+
+  cont.innerHTML = `<div class="curatia-grid">
+    ${pagina.map(a => `
+      <a class="curatia-card" href="${articuloUrl(a)}">
+        <div class="curatia-img">${a.imagen_url?`<img src="${a.imagen_url}" alt="${a.titulo}" loading="lazy">`:'<div class="ph"></div>'}</div>
+        <div class="curatia-body">
+          <div class="curatia-tipo">${_tagANombre(a.seccion_tag)}</div>
+          <div class="curatia-titulo">${a.titulo}</div>
+          ${a.subtitulo?`<div class="curatia-desc">${a.subtitulo}</div>`:''}
+          <div class="curatia-meta">${a.autor||''}${a.numero_id?` · N.º ${a.numero_id}`:''}</div>
+        </div>
+      </a>`).join('')}
+  </div>`;
+
+  /* Paginación */
+  const pag = document.getElementById('sec-paginacion');
+  const totalPags = Math.ceil(artsDeEsta.length / POR_PAG);
+  if (pag) {
+    pag.innerHTML = totalPags > 1 ? `
+      <div class="sec-pag">
+        <button class="sec-pag-btn ${_page===0?'disabled':''}" onclick="_irPag(${_page-1})">← Anterior</button>
+        <span class="sec-pag-info">Página ${_page+1} de ${totalPags}</span>
+        <button class="sec-pag-btn ${_page>=totalPags-1?'disabled':''}" onclick="_irPag(${_page+1})">Siguiente →</button>
+      </div>` : '';
+  }
+}
+
+function _irPag(p) {
+  _page = p;
+  _renderPage();
+  window.scrollTo({ top: 0, behavior:'smooth' });
+}
+
+/* Normalización de seccion_tag */
+function normTag(v) {
+  if (!v) return 'la-cronica';
+  const s = String(v).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/#/g,'').replace(/\s+/g,'-').trim();
+  const aliases = { 'cronica':'la-cronica','conversacion':'la-conversacion','curatia':'la-curaturia','curaturia':'la-curaturia','la-curatia':'la-curaturia','la-curaturia':'la-curaturia','la-cronica':'la-cronica','la-conversacion':'la-conversacion' };
+  return aliases[s] || s;
+}
+
+async function init() {
+  await initSite();
+  const params = new URLSearchParams(location.search);
+
+  const [secs, arts] = await Promise.all([
+    DB.getSecciones().catch(() => []),
+    DB.getArticulos().then(a => a.filter(x => x.estado === 'publicado')).catch(() => []),
+  ]);
+
+  /* Fuente de verdad 100% Supabase.
+     Si DB.getSecciones() retorna vacío (edge case), construimos
+     las secciones desde los propios artículos — nunca hardcodeamos tags. */
+  _secciones = secs.length ? secs : _secsDeArts(arts);
+  _allArts   = arts;
+
+  /* Sección inicial: buscar el tag del parámetro ?sec= en las secciones reales.
+     Si no coincide exactamente, buscar por normTag para tolerar aliases.
+     Si no hay parámetro, usar la primera sección con artículos. */
+  const secParam = (params.get('sec') || '').trim();
+  const secMatch = _secciones.find(s =>
+    normTag(s.tag) === normTag(secParam) ||
+    s.tag === secParam ||
+    s.nombre.toLowerCase() === secParam.toLowerCase()
+  );
+  const primeraSec = _secciones.find(s =>
+    arts.some(a => normTag(a.seccion_tag) === normTag(s.tag))
+  );
+  _secActual = secMatch
+    ? normTag(secMatch.tag)
+    : (primeraSec ? normTag(primeraSec.tag) : '');
+
+  /* Llenar nav con secciones reales — DESPUÉS de definir _secActual
+     para que el tab activo quede marcado correctamente */
+  _renderNavSecs(_secciones, _secActual);
+
+  _renderNavBar();
+  _renderPage();
+  observeReveal();
+
+  setTimeout(() => _marcarLeidosEnGrid('a[href*="articulo"]'), 400);
+}
+
+/* Manejar navegación del historial */
+window.addEventListener('popstate', () => {
+  const p = new URLSearchParams(location.search);
+  _secActual = normTag(p.get('sec') || (_secciones[0]?.tag || ''));
+  _page = 0;
+  _renderPage();
+  document.querySelectorAll('.sec-nav-tab').forEach(t => {
+    t.classList.toggle('activo', normTag(t.dataset.tag) === normTag(_secActual));
+  });
+});
+
+init();
+</script>
+<script src="assets/tracking.js"></script>
+</body>
+</html>

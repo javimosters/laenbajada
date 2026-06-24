@@ -1,0 +1,57 @@
+# ══════════════════════════════════════════════════════════
+#  La Enbajada — Netlify Headers v3
+#  Seguridad reforzada — actualizado junio 2026
+# ══════════════════════════════════════════════════════════
+
+# ── Global — todos los recursos ──
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+# ── HTML público — siempre fresco + CSP ──
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://pkilwzcypcyhxjuknkho.supabase.co wss://pkilwzcypcyhxjuknkho.supabase.co https://api.resend.com; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
+
+# ── Raíz ──
+/
+  Cache-Control: public, max-age=0, must-revalidate
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://pkilwzcypcyhxjuknkho.supabase.co wss://pkilwzcypcyhxjuknkho.supabase.co; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+
+# ── Admin — máxima restricción ──
+/admin.html
+  Cache-Control: no-store, no-cache, must-revalidate, private
+  Pragma: no-cache
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://pkilwzcypcyhxjuknkho.supabase.co wss://pkilwzcypcyhxjuknkho.supabase.co https://api.resend.com; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+
+# ── JS y CSS — caché larga (1 año) ──
+/assets/*.js
+  Cache-Control: public, max-age=31536000, immutable
+  X-Content-Type-Options: nosniff
+
+/assets/*.css
+  Cache-Control: public, max-age=31536000, immutable
+  X-Content-Type-Options: nosniff
+
+# ── Imágenes ──
+/assets/*.png
+  Cache-Control: public, max-age=604800
+/assets/*.jpg
+  Cache-Control: public, max-age=604800
+/assets/*.webp
+  Cache-Control: public, max-age=604800
+/assets/*.svg
+  Cache-Control: public, max-age=604800
+
+# ── SEO ──
+/robots.txt
+  Cache-Control: public, max-age=86400
+/sitemap.xml
+  Cache-Control: public, max-age=86400

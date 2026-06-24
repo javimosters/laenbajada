@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#0C0B09">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editor — La Enbajada</title>
+  <meta name="robots" content="index, follow">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+
+/* ── RESPONSIVE BASE — Fixes globales ── */
+*, *::before, *::after { box-sizing: border-box }
+html { overflow-x: hidden; scroll-behavior: smooth }
+body { overflow-x: hidden; -webkit-text-size-adjust: 100% }
+img, video, svg { max-width: 100%; height: auto; display: block }
+table { width: 100%; border-collapse: collapse }
+input, textarea, select, button { max-width: 100% }
+/* ══ EDITOR PERFIL ══ */
+.ed-hero { background:var(--negro); padding:clamp(72px,10vw,130px) var(--pad) clamp(40px,6vw,64px); position:relative; overflow:hidden; border-bottom:1px solid rgba(255,255,255,.07); }
+.ed-hero-accent { position:absolute; left:0; top:0; bottom:0; width:3px; background:linear-gradient(to bottom,var(--azul),transparent); }
+.ed-hero-inner { max-width:900px; position:relative; z-index:1; display:flex; align-items:flex-start; gap:clamp(20px,4vw,48px); flex-wrap:wrap; }
+.ed-hero-foto { width:clamp(80px,12vw,140px); height:clamp(80px,12vw,140px); border-radius:50%; object-fit:cover; border:3px solid rgba(255,255,255,.12); flex-shrink:0; }
+.ed-hero-ph { width:clamp(80px,12vw,140px); height:clamp(80px,12vw,140px); border-radius:50%; background:linear-gradient(135deg,#060e1f,#004AAD); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:clamp(28px,5vw,52px); font-weight:700; color:rgba(255,255,255,.82); border:3px solid rgba(255,255,255,.08); flex-shrink:0; }
+.ed-hero-info { flex:1; min-width:200px; }
+.ed-hero-kicker { font-family:var(--ui); font-size:8.5px; font-weight:700; letter-spacing:.28em; text-transform:uppercase; color:var(--azul); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.ed-hero-kicker::before { content:''; display:block; width:18px; height:1px; background:var(--azul); }
+.ed-hero-nombre { font-family:var(--serif); font-size:clamp(32px,6vw,80px); font-weight:700; color:#fff; letter-spacing:-.04em; line-height:.92; margin-bottom:8px; }
+.ed-hero-nombre em { font-style:italic; color:rgba(255,255,255,.82); }
+.ed-hero-cargo { font-family:var(--ui); font-size:9.5px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.38); margin-bottom:14px; }
+.ed-hero-bio { font-family:var(--body); font-size:clamp(14px,1.8vw,17px); font-style:italic; color:rgba(255,255,255,.5); line-height:1.75; max-width:520px; margin-bottom:18px; }
+.ed-hero-links { display:flex; gap:8px; flex-wrap:wrap; }
+.ed-hero-link { display:inline-flex; align-items:center; gap:6px; font-family:var(--ui); font-size:9px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.45); border:1px solid rgba(255,255,255,.12); padding:7px 14px; text-decoration:none; transition:all .18s; }
+.ed-hero-link:hover { color:#fff; border-color:rgba(255,255,255,.4); }
+.ed-hero-stats { display:flex; gap:28px; padding-top:18px; border-top:1px solid rgba(255,255,255,.07); flex-wrap:wrap; }
+.ed-stat { display:flex; flex-direction:column; gap:3px; }
+.ed-stat-val { font-family:var(--serif); font-size:clamp(22px,4vw,36px); font-weight:700; color:#fff; line-height:1; }
+.ed-stat-lbl { font-family:var(--ui); font-size:8px; font-weight:600; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.32); }
+
+/* Artículos del editor */
+.ed-arts { max-width:1200px; margin:0 auto; padding:clamp(44px,6vw,72px) var(--pad); }
+.ed-arts-hdr { display:flex; align-items:baseline; justify-content:space-between; gap:14px; flex-wrap:wrap; padding-bottom:16px; margin-bottom:clamp(24px,3.5vw,40px); border-bottom:1.5px solid var(--bd2); }
+.ed-arts-titulo { font-family:var(--serif); font-size:clamp(24px,4vw,42px); font-weight:700; letter-spacing:-.02em; }
+.ed-arts-titulo em { font-style:italic; color:var(--t1); }
+.ed-arts-cnt { font-family:var(--ui); font-size:11px; color:var(--t4); letter-spacing:.08em; }
+/* Última card sola en su fila ocupa todo el ancho */
+@media(min-width:960px) {
+  .ed-arts-grid-inner .ed-art-card:last-child:nth-child(3n+1) { grid-column:1/-1; max-width:33.33%; }
+  .ed-arts-grid-inner .ed-art-card:last-child:nth-child(3n+2) { grid-column:span 2; }
+}
+@media(min-width:500px) and (max-width:959px) {
+  .ed-arts-grid-inner .ed-art-card:last-child:nth-child(2n+1) { grid-column:1/-1; max-width:50%; }
+}
+/* Grid artículos del editor — sin background, gap con borde propio */
+.ed-arts-grid-inner { display:grid; grid-template-columns:1fr; gap:16px; }
+@media(min-width:500px) { .ed-arts-grid-inner { grid-template-columns:repeat(2,1fr); } }
+@media(min-width:960px) { .ed-arts-grid-inner { grid-template-columns:repeat(3,1fr); } }
+.ed-art-card { background:var(--surface); border:1px solid var(--bd); display:flex; flex-direction:column; text-decoration:none; color:var(--t1); transition:background .18s, border-color .2s; overflow:hidden; }
+.ed-art-card:hover { background:var(--paper2); border-color:var(--bd2); transform:translateY(-3px); box-shadow:0 8px 28px rgba(0,74,173,.10); }
+.ed-art-card-img { aspect-ratio:3/2; overflow:hidden; background:linear-gradient(160deg,#0a1628,#004AAD); flex-shrink:0; }
+.ed-art-card-img img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 7s var(--ease); }
+.ed-art-card:hover .ed-art-card-img img { transform:scale(1.04); }
+.ed-art-card-body { padding:16px 18px 20px; display:flex; flex-direction:column; gap:7px; flex:1; }
+.ed-art-card-cat { font-family:var(--ui); font-size:8px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--azul); display:flex; align-items:center; gap:6px; }
+.ed-art-card-cat::before { content:''; display:block; width:10px; height:1px; background:var(--azul); }
+.ed-art-card-titulo { font-family:var(--serif); font-size:clamp(15px,1.8vw,19px); font-weight:700; font-style:italic; line-height:1.15; color:var(--t1); transition:color .18s; }
+.ed-art-card:hover .ed-art-card-titulo { color:var(--azul); }
+.ed-art-card-sub { font-family:var(--ui); font-size:12px; font-weight:500; color:var(--t2); line-height:1.5; }
+.ed-art-card-meta { font-family:var(--ui); font-size:9px; color:var(--t4); letter-spacing:.06em; margin-top:auto; padding-top:10px; border-top:1px solid var(--bd); }
+
+/* ── MODAL BUSCADOR ESTILO ATMOS ── */
+.search-modal { position:fixed; inset:0; z-index:9000; background:var(--bg); display:flex; flex-direction:column; opacity:0; pointer-events:none; transition:opacity .22s var(--ease); }
+.search-modal.open { opacity:1; pointer-events:all; }
+.search-modal-header { display:flex; align-items:center; justify-content:space-between; padding:0 var(--pad); height:64px; flex-shrink:0; border-bottom:1px solid var(--bd); }
+.search-modal-logo { font-family:var(--serif); font-size:20px; font-weight:700; color:var(--t1); letter-spacing:.01em; }
+.search-modal-close { display:flex; align-items:center; gap:8px; font-family:var(--ui); font-size:9px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--t3); background:none; border:none; cursor:pointer; transition:color .18s; }
+.search-modal-close:hover { color:var(--t1); }
+.search-modal-input-area { padding:clamp(28px,4vw,52px) var(--pad) clamp(20px,3vw,36px); border-bottom:1px solid var(--bd); flex-shrink:0; }
+.search-modal-row { display:flex; align-items:center; gap:16px; border-bottom:2px solid var(--azul); padding-bottom:12px; }
+.search-modal-row svg { color:var(--azul); flex-shrink:0; }
+.search-modal-input { font-family:var(--serif); font-size:clamp(28px,5vw,52px); font-weight:400; letter-spacing:-.02em; color:var(--t1); background:none; border:none; outline:none; width:100%; line-height:1; }
+.search-modal-input::placeholder { color:var(--t4); }
+.search-modal-hint { font-family:var(--ui); font-size:9px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--t3); margin-top:14px; min-height:16px; }
+.search-modal-results { flex:1; overflow-y:auto; padding:clamp(20px,3vw,36px) var(--pad) clamp(28px,4vw,48px); scrollbar-width:thin; scrollbar-color:var(--bd2) transparent; }
+.search-modal-results::-webkit-scrollbar { width:4px; }
+.search-modal-results::-webkit-scrollbar-thumb { background:var(--bd2); border-radius:2px; }
+.search-results-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(14px,2vw,24px); }
+@media(max-width:900px) { .search-results-grid { grid-template-columns:repeat(3,1fr); } }
+@media(max-width:600px) { .search-results-grid { grid-template-columns:repeat(2,1fr); } }
+.search-result-card { text-decoration:none; color:var(--t1); display:flex; flex-direction:column; gap:10px; transition:opacity .18s; }
+.search-result-card:hover { opacity:.75; }
+.search-result-img { aspect-ratio:3/4; overflow:hidden; background:linear-gradient(160deg,#0a1628,#004AAD); position:relative; border-radius:2px; }
+.search-result-img img { width:100%; height:100%; object-fit:cover; display:block; }
+.search-result-img-ov { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,.55) 0%,transparent 50%); display:flex; align-items:flex-end; padding:10px 12px; }
+.search-result-cat { font-family:var(--ui); font-size:8px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.8); }
+.search-result-titulo { font-family:var(--serif); font-size:clamp(13px,1.4vw,16px); font-weight:600; line-height:1.25; color:var(--t1); }
+.search-result-meta { font-family:var(--ui); font-size:9px; color:var(--t3); letter-spacing:.04em; }
+.search-modal-empty { padding:48px 0; text-align:center; font-family:var(--serif); font-size:clamp(18px,2vw,24px); font-style:italic; color:var(--t3); }
+html.dark .search-modal { background:var(--bg); }
+
+/* ── FOOTER FULL-WIDTH ── */
+.site-footer { width:100%; box-sizing:border-box; }
+.footer-inner { max-width:1600px; margin:0 auto; }
+
+/* ── RESPONSIVE EDITOR ── */
+
+/* Desktop grande — ≥1400px */
+@media(min-width:1400px) {
+  .ed-arts { max-width:1440px; }
+}
+
+/* Tablet — 480-767px */
+@media(min-width:480px) and (max-width:767px) {
+  .ed-hero-nombre { font-size:clamp(30px,6vw,52px) !important; }
+  .ed-hero-inner { gap:clamp(16px,3vw,28px); }
+  .ed-arts-grid-inner { grid-template-columns:repeat(2,1fr); }
+}
+
+/* Móvil grande — ≤700px */
+@media(max-width:700px) {
+  .ed-hero-inner { gap:clamp(14px,3vw,24px); }
+  .ed-hero-nombre { font-size:clamp(28px,7vw,48px) !important; }
+  .ed-hero-bio { font-size:clamp(13px,3.5vw,15px); }
+  .ed-hero-stats { gap:20px; }
+  /* Footer 2 columnas en tablet */
+  .footer-cols { grid-template-columns:repeat(2,1fr) !important; }
+}
+
+/* Móvil — ≤479px */
+@media(max-width:479px) {
+  /* Hero: foto centrada arriba, info debajo */
+  .ed-hero-inner { flex-direction:column; align-items:center; text-align:center; gap:16px; }
+  .ed-hero-kicker { justify-content:center; }
+  .ed-hero-kicker::before { display:none; }
+  .ed-hero-nombre { font-size:clamp(26px,8vw,40px) !important; }
+  .ed-hero-bio { font-size:clamp(13px,4vw,15px); max-width:100%; }
+  .ed-hero-links { justify-content:center; }
+  .ed-hero-stats { justify-content:center; gap:20px; }
+  .ed-arts-hdr { flex-direction:column; gap:6px; }
+  .ed-arts-titulo { font-size:clamp(22px,7vw,32px) !important; }
+  .ed-arts { padding:clamp(28px,5vw,44px) var(--pad); }
+  /* Boletín en columna */
+  .boletin-form { flex-direction:column; }
+  .boletin-btn { width:100%; padding:13px 16px; }
+  /* Footer 1 columna */
+  .footer-cols { grid-template-columns:1fr !important; }
+}
+
+/* Pantalla muy pequeña — ≤360px */
+@media(max-width:360px) {
+  .ed-hero { padding:clamp(52px,10vw,72px) 16px clamp(24px,5vw,36px); }
+  .ed-hero-nombre { font-size:clamp(22px,9vw,34px) !important; }
+  .ed-hero-bio { display:none; }
+  .ed-hero-foto, .ed-hero-ph { width:72px !important; height:72px !important; }
+  .ed-arts-titulo { font-size:clamp(20px,8vw,28px) !important; }
+}
+</style>
+</head>
+<body>
+<noscript>
+  <style>body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#F7F4EE;font-family:Georgia,serif;text-align:center;padding:40px}</style>
+  <div style="max-width:480px;margin:auto">
+    <div style="font-size:48px;margin-bottom:16px">📰</div>
+    <h1 style="font-size:28px;font-weight:700;margin-bottom:12px;letter-spacing:-.02em">La Enbajada requiere JavaScript</h1>
+    <p style="color:#6C6760;line-height:1.7;font-style:italic">Para disfrutar la revista cultural del Caribe colombiano, por favor activa JavaScript en tu navegador.</p>
+    <a href="https://laenbajada.com" style="display:inline-block;margin-top:24px;background:#004AAD;color:#fff;padding:12px 28px;font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;text-decoration:none">Ir al inicio</a>
+  </div>
+</noscript>
+<a href="#main-content" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo-wrap"><img src="assets/logo.png" alt="" class="logo-img" onerror="this.style.display='none'"><div class="logo-text-group"><span class="logo-name js-logo-name">La Enbajada</span><span class="logo-tag js-logo-tag">Aterrizamos la Cultura</span></div></a>
+    <nav class="nav-left" id="nav-secciones" aria-label="Navegación principal">
+      <a href="index.html">Inicio</a>
+      <a href="edicion.html">Edición actual</a>
+      <span id="nav-secs-dyn"></span>
+      <a href="archivo.html">Archivo</a>
+      <a href="sobre.html">Nosotros</a>
+    </nav>
+    <div class="header-spacer"></div>
+    <nav class="nav-right">
+      <div class="nav-search-wrap" id="search-wrap"><button class="nav-search-icon" id="search-icon-btn" onclick="openSearch()" aria-label="Buscar" aria-expanded="false"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button></div>
+      <a class="nav-ig-btn js-footer-ig" href="https://instagram.com/laenbajada" target="_blank" rel="noopener" aria-label="Instagram"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+      <a href="index.html#sec-boletin" class="nav-cta">Suscribirse<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      <button class="hamburger" id="hamburger-btn" onclick="toggleMenu()" aria-label="Menú"><div class="hamburger-icon"><span></span><span></span><span></span></div></button>
+    </nav>
+  </div>
+  <nav class="mobile-menu" id="mobile-menu">
+    <a href="index.html">Inicio</a>
+    <a href="edicion.html">Edición actual</a><div class="mm-sep"></div>
+    <div class="mm-sep"></div><a href="archivo.html">Archivo</a><a href="sobre.html">Nosotros</a>
+    <div class="mm-sep"></div><a href="index.html#sec-boletin" class="mm-cta">Suscribirse →</a>
+  </nav>
+</header>
+
+<main id="main-content">
+  <div class="ed-hero">
+    <div class="ed-hero-accent"></div>
+    <div class="ed-hero-inner">
+      <div id="ed-foto-wrap"></div>
+      <div class="ed-hero-info">
+        <div class="ed-hero-kicker">La Enbajada · Autor</div>
+        <h1 class="ed-hero-nombre" id="ed-nombre">Cargando…</h1>
+        <div class="ed-hero-cargo" id="ed-cargo" style="display:none"></div>
+        <p class="ed-hero-bio" id="ed-bio" style="display:none"></p>
+        <div class="ed-hero-links" id="ed-links"></div>
+        <div class="ed-hero-stats" id="ed-stats"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ed-arts">
+    <div class="ed-arts-hdr">
+      <h2 class="ed-arts-titulo">Artículos de <em id="ed-nombre-hdr">este editor</em></h2>
+      <span id="ed-arts-cnt" class="ed-arts-cnt"></span>
+    </div>
+    <div class="ed-arts reveal" id="ed-arts-grid-wrap">
+      <div id="ed-arts-grid">
+        <div style="padding:40px;text-align:center;color:var(--t4);font-family:var(--ui);font-size:11px;letter-spacing:.12em;text-transform:uppercase">Cargando artículos…</div>
+      </div>
+    </div>
+  </div>
+
+  <section class="boletin-wrap" id="sec-boletin">
+    <div class="boletin-deco" aria-hidden="true">@</div>
+    <div class="boletin-inner">
+      <div class="boletin-col-left">
+        <div class="boletin-kicker">Boletín editorial</div>
+        <h2 class="boletin-titulo js-boletin-titulo">Recibe cada número en tu correo</h2>
+        <p class="boletin-texto js-boletin-texto">La Enbajada llega a tu bandeja cuando hay algo que vale la pena leer.</p>
+      </div>
+      <div class="boletin-col-right">
+        <div class="boletin-form">
+          <input class="boletin-input" type="email" id="boletin-email" placeholder="tu@correo.com" autocomplete="email">
+          <button class="boletin-btn" onclick="suscribirse()">Suscribirse</button>
+        </div>
+        <p class="boletin-feedback" id="boletin-feedback"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand-row">
+      <div class="footer-brand js-footer-brand">La Enbajada</div>
+      <div class="footer-tagline js-footer-tagline">Aterrizamos la Cultura</div>
+      <p class="footer-desc js-footer-desc"></p>
+    </div>
+    <div class="footer-cols">
+      <div class="footer-col"><h5>La Revista</h5><ul>
+        <li><a href="edicion.html">Edición actual</a></li>
+        <li><a href="archivo.html">Archivo</a></li>
+        <li><a href="sobre.html">Nosotros</a></li>
+      </ul></div>
+      <div class="footer-col"><h5>Secciones</h5><ul><li id="footer-secs-dyn"></li></ul></div>
+      <div class="footer-col"><h5>Contacto</h5><ul>
+        <li><a href="https://instagram.com/laenbajada" target="_blank" rel="noopener noreferrer"class="js-footer-ig">Instagram</a></li>
+        <li><a href="mailto:contacto@laenbajada.com" class="js-footer-email">contacto@laenbajada.com</a></li>
+      </ul></div>
+      <div class="footer-col"><h5>Redes</h5>
+        <div class="footer-redes" id="footer-redes-wrap"></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="js-footer-copy">© 2025 La Enbajada</span>
+    </div>
+  </div>
+</footer>
+<!-- ══ MODAL BUSCADOR FULLSCREEN ══ -->
+<div class="search-modal" id="search-modal" role="dialog" aria-modal="true" aria-label="Buscador">
+  <div class="search-modal-header">
+    <div class="search-modal-logo">La Enbajada</div>
+    <button class="search-modal-close" onclick="closeSearch()" aria-label="Cerrar buscador">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      Cerrar
+    </button>
+  </div>
+  <div class="search-modal-input-area">
+    <div class="search-modal-row">
+      <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-modal-input" id="search-modal-input" type="search" placeholder="Buscar artículos…" autocomplete="off" oninput="_searchModal(this.value)" onkeydown="_searchModalKey(event)" aria-label="Buscar artículos">
+    </div>
+    <div class="search-modal-hint" id="search-modal-hint">Escribe para buscar</div>
+  </div>
+  <div class="search-modal-results" id="search-modal-results"></div>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+
+/* ── Sanitize XSS — escapar datos de BD antes de innerHTML ── */
+function _esc(s){
+  if(s===null||s===undefined) return '';
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#x27;')
+    .replace(/\//g,'&#x2F;');
+}
+
+function articuloUrl(a) {
+  if (a.slug) return 'articulo.html?slug=' + encodeURIComponent(a.slug);
+  var _s = (a.titulo || '').toLowerCase().normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return 'articulo.html?slug=' + _s;
+}
+(()=>{const h=document.getElementById('site-header');window.addEventListener('scroll',()=>h?.classList.toggle('scrolled',window.scrollY>20),{passive:true});})();
+
+/* ── BUSCADOR FULLSCREEN ESTILO ATMOS ── */
+function openSearch(){const modal=document.getElementById('search-modal');const input=document.getElementById('search-modal-input');modal.classList.add('open');document.body.style.overflow='hidden';document.getElementById('search-icon-btn').setAttribute('aria-expanded','true');setTimeout(()=>input?.focus(),80);}
+function closeSearch(){const modal=document.getElementById('search-modal');const input=document.getElementById('search-modal-input');const hint=document.getElementById('search-modal-hint');const res=document.getElementById('search-modal-results');modal.classList.remove('open');document.body.style.overflow='';document.getElementById('search-icon-btn').setAttribute('aria-expanded','false');if(input)input.value='';if(hint)hint.textContent='Escribe para buscar';if(res)res.innerHTML='';}
+function _searchModalKey(e){if(e.key==='Escape')closeSearch();}
+let _smTimer=null;function _searchModal(q){clearTimeout(_smTimer);_smTimer=setTimeout(()=>_doSearchModal(q),240);}
+async function _doSearchModal(q){const hint=document.getElementById('search-modal-hint');const res=document.getElementById('search-modal-results');if(!res)return;const v=(q||'').trim();if(v.length<2){if(hint)hint.textContent='Escribe para buscar';res.innerHTML='';return;}if(hint)hint.textContent='Buscando…';const arts=await DB.buscar(v).catch(()=>[]);if(!arts.length){if(hint)hint.textContent=`Sin resultados para "${v}"`;res.innerHTML=`<div class="search-modal-empty">No encontramos nada para <em>"${v}"</em></div>`;return;}if(hint)hint.textContent=`${arts.length} resultado${arts.length!==1?'s':''} encontrado${arts.length!==1?'s':''}`;res.innerHTML=`<div class="search-results-grid">${arts.map(a=>`<a class="search-result-card" href="${articuloUrl(a)}" onclick="closeSearch()"><div class="search-result-img">${a.imagen_url?`<img src="${_esc(a.imagen_url)}" alt="${_esc(a.titulo)}" loading="lazy">`:''}<div class="search-result-img-ov"><div class="search-result-cat">${a.seccion_tag||'La Enbajada'}</div></div></div><div class="search-result-titulo">${a.titulo}</div><div class="search-result-meta">${a.autor||''} · N.º ${_esc(String(a.numero_id||''))}</div></a>`).join('')}</div>`;}
+document.getElementById('search-modal')?.addEventListener('click',function(e){if(e.target===this)closeSearch();});
+
+function toggleMenu(){const h=document.getElementById('site-header'),m=document.getElementById('mobile-menu'),b=document.getElementById('hamburger-btn'),o=m.classList.toggle('open');h.classList.toggle('menu-open',o);b.setAttribute('aria-expanded',o);document.body.style.overflow=o?'hidden':'';}
+document.addEventListener('click',e=>{const h=document.getElementById('site-header');if(h&&!h.contains(e.target)){document.getElementById('mobile-menu')?.classList.remove('open');h.classList.remove('menu-open');document.body.style.overflow='';}});
+
+
+function _renderNavSecs(secs) {
+  const navDyn = document.getElementById('nav-secs-dyn');
+  if (navDyn) {
+    secs.forEach(s => {
+      const a = document.createElement('a');
+      a.href = 'secciones.html?sec=' + normTag(s.tag);
+      a.textContent = s.nombre;
+      navDyn.parentNode.insertBefore(a, navDyn);
+    });
+    navDyn.remove();
+  }
+  const mmDyn = document.getElementById('mm-secs-dyn');
+  if (mmDyn) {
+    mmDyn.innerHTML = secs.map(s =>
+      '<a href="secciones.html?sec=' + normTag(s.tag) + '">' + s.nombre + '</a>'
+    ).join('');
+  }
+  const ftDyn = document.getElementById('footer-secs-dyn');
+  if (ftDyn) {
+    const ul = ftDyn.closest('ul');
+    if (ul) ul.innerHTML = secs.map(s =>
+      '<li><a href="secciones.html?sec=' + normTag(s.tag) + '">' + s.nombre + '</a></li>'
+    ).join('');
+  }
+}
+
+function normTag(v) {
+  if (!v) return 'la-cronica';
+  const s = String(v).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/#/g,'').replace(/\s+/g,'-').trim();
+  const aliases = { 'cronica':'la-cronica','conversacion':'la-conversacion','curatia':'la-curaturia','curaturia':'la-curaturia','la-curatia':'la-curaturia','la-curaturia':'la-curaturia','la-cronica':'la-cronica','la-conversacion':'la-conversacion' };
+  return aliases[s] || s;
+}
+
+async function init(){
+  await initSite();
+  const _secsNav = await DB.getSecciones().catch(() => []);
+  _renderNavSecs(_secsNav);
+  const params=new URLSearchParams(location.search);
+  const slug=params.get('slug');
+  if(!slug){window.location.href='sobre.html';return;}
+
+  const eds=await SB.select('editores',`slug=eq.${encodeURIComponent(slug)}&activo=eq.true`).catch(()=>[]);
+  const ed=eds?.[0];
+  if(!ed){window.location.href='sobre.html';return;}
+
+  const init_=(n)=>(n||'?').split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
+  const _esc=(s)=>s==null?'':String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+
+  /* Foto */
+  const fw=document.getElementById('ed-foto-wrap');
+  if(fw)fw.innerHTML=ed.foto_url?`<img class="ed-hero-foto" src="${_esc(ed.foto_url)}" alt="${_esc(ed.nombre)}" loading="eager">`:`<div class="ed-hero-ph">${_esc(init_(ed.nombre))}</div>`;
+
+  /* Info */
+  const hn=document.getElementById('ed-nombre');if(hn){const parts=(ed.nombre||'').split(' ');hn.innerHTML=_esc(parts.slice(0,-1).join(' '))+' <em>'+_esc(parts[parts.length-1])+'</em>';}
+  const hc=document.getElementById('ed-cargo');if(hc&&ed.cargo){hc.textContent=ed.cargo;hc.style.display='';}
+  const hb=document.getElementById('ed-bio');if(hb&&ed.bio){hb.textContent=ed.bio;hb.style.display='';}
+
+  /* Links */
+  const hl=document.getElementById('ed-links');
+  if(hl){let lhtml='';if(ed.email)lhtml+=`<a class="ed-hero-link" href="mailto:${_esc(ed.email)}">✉ Email</a>`;if(ed.redes&&Array.isArray(ed.redes))ed.redes.forEach(r=>{if(r.url)lhtml+=`<a class="ed-hero-link" href="${_esc(r.url)}" target="_blank" rel="noopener noreferrer">${_esc(r.plataforma||'→')}</a>`;});hl.innerHTML=lhtml;}
+
+  /* Artículos */
+  const allArts=await DB.getPublicados();
+  const arts=allArts.filter(a=>a.editor_id===ed.id);
+  const pubCnt=arts.filter(a=>a.estado==='publicado').length;
+
+  const hdr=document.getElementById('ed-nombre-hdr');if(hdr)hdr.textContent=ed.nombre.split(' ')[0];
+  const cnt=document.getElementById('ed-arts-cnt');if(cnt)cnt.textContent=`${arts.length} artículo${arts.length!==1?'s':''}`;
+
+  /* Stats */
+  const hs=document.getElementById('ed-stats');
+  if(hs)hs.innerHTML=`<div class="ed-stat"><div class="ed-stat-val">${arts.length}</div><div class="ed-stat-lbl">Artículos</div></div><div class="ed-stat"><div class="ed-stat-val">${pubCnt}</div><div class="ed-stat-lbl">Publicados</div></div>`;
+
+  /* FIX: grid sin background gris + return removido para que SEO y animaciones siempre corran */
+  const grid=document.getElementById('ed-arts-grid');
+  if(grid){
+    if(!arts.length){
+      grid.innerHTML='<div style="padding:48px;text-align:center;color:var(--t4);font-family:var(--ui);font-size:11px;letter-spacing:.12em;text-transform:uppercase">Sin artículos publicados aún.</div>';
+    } else {
+      grid.innerHTML=`<div class="ed-arts-grid-inner">${arts.map(a=>`
+        <a class="ed-art-card" href="${_esc(articuloUrl(a))}">
+          <div class="ed-art-card-img">${a.imagen_url?`<img src="${_esc(a.imagen_url)}" alt="${_esc(a.titulo)}" loading="lazy">`:'<div class="ph"></div>'}</div>
+          <div class="ed-art-card-body">
+            <div class="ed-art-card-cat">${_esc(normTag(a.seccion_tag||a.tipo||''))}</div>
+            <div class="ed-art-card-titulo">${_esc(a.titulo)}</div>
+            ${a.subtitulo?`<div class="ed-art-card-sub">${_esc(a.subtitulo)}</div>`:''}
+            <div class="ed-art-card-meta">${a.numero_id?`N.º ${_esc(String(a.numero_id))}`:''}</div>
+          </div>
+        </a>`).join('')}
+      </div>`;
+    }
+  }
+
+  aplicarSEO({titulo:`${ed.nombre} — La Enbajada`,desc:ed.bio||`Artículos de ${ed.nombre} en La Enbajada.`});
+  observeReveal();
+}
+init();
+</script>
+<script src="assets/tracking.js"></script>
+</body>
+</html>
