@@ -1,6 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
    La Enbajada — netlify/edge-functions/og.js
-   Sirve OG tags dinámicos desde Supabase para todos los visitantes.
    ══════════════════════════════════════════════════════════════ */
 
 const SUPA_URL = 'https://pkilwzcypcyhxjuknkho.supabase.co';
@@ -15,7 +14,6 @@ export default async (request, context) => {
   const slug = url.searchParams.get('slug') || url.searchParams.get('s') || '';
   const id   = url.searchParams.get('id') || '';
 
-  // Sin slug ni id → dejar pasar el archivo estático normal
   if (!slug && !id) return context.next();
 
   const filter = slug
@@ -77,9 +75,10 @@ ${imgTags}
     return new Response(html, {
       status: 200,
       headers: {
-        'content-type':  'text/html; charset=UTF-8',
-        'cache-control': 'public, max-age=3600',
-        'x-robots-tag':  'index, follow',
+        'content-type':   'text/html; charset=UTF-8',
+        'cache-control':  'no-store',
+        'x-robots-tag':   'index, follow',
+        'accept-ranges':  'none',
       },
     });
 
