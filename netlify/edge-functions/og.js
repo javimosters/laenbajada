@@ -1,18 +1,27 @@
-/* ══════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════════
    La Enbajada — netlify/edge-functions/og.js
-   ══════════════════════════════════════════════════════════════ */
+   Intercepta bots de redes sociales en /articulo.html y sirve
+   un HTML mínimo con OG tags rellenos desde Supabase.
+   ══════════════════════════════════════════════════════════════════════ */
 
 const SUPA_URL = 'https://pkilwzcypcyhxjuknkho.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraWx3emN5cGN5aHhqdWtua2hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNDE1NTksImV4cCI6MjA5MDgxNzU1OX0.fAhepDbj2p1JEbHzZvD1ZqwAK95OskE-CRxF4gqgIrg';
+
+const BOT_UA = /facebookexternalhit|Facebot|Twitterbot|WhatsApp|TelegramBot|LinkedInBot|Slackbot|Discordbot|Pinterest|Googlebot|bingbot|Applebot|vkShare|redditbot|W3C_Validator/i;
 
 function esc(str) {
   return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 export default async (request, context) => {
+  const ua = request.headers.get('user-agent') || '';
+
+  // Usuarios normales → archivo estático sin cambios
+  if (!BOT_UA.test(ua)) return context.next();
+
   const url  = new URL(request.url);
   const slug = url.searchParams.get('slug') || url.searchParams.get('s') || '';
-  const id   = url.searchParams.get('id') || '';
+  const id   = url.searchParams.get('id')   || '';
 
   if (!slug && !id) return context.next();
 
@@ -66,19 +75,15 @@ ${imgTags}
 <meta name="twitter:description"     content="${esc(desc)}">
 <link rel="canonical"                href="${esc(artUrl)}">
 </head>
-<body>
-<script>window.location.href = "${esc(artUrl)}";</script>
-<p><a href="${esc(artUrl)}">${esc(art.titulo || 'Ver artículo')}</a></p>
-</body>
+<body><p><a href="${esc(artUrl)}">${esc(art.titulo || 'Ver artículo')}</a></p></body>
 </html>`;
 
     return new Response(html, {
       status: 200,
       headers: {
-        'content-type':   'text/html; charset=UTF-8',
-        'cache-control':  'no-store',
-        'x-robots-tag':   'index, follow',
-        'accept-ranges':  'none',
+        'content-type':  'text/html; charset=UTF-8',
+        'cache-control': 'public, max-age=3600',
+        'x-robots-tag':  'index, follow',
       },
     });
 
