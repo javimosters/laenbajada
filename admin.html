@@ -1753,6 +1753,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
       </div>
 
       <input type="hidden" id="f-art-id">
+      <input type="hidden" id="f-art-slug">
     </div><!-- /tab-nuevo -->
 
     <!-- ════════ TAB: CARRUSEL ════════ -->
@@ -1989,23 +1990,8 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
             <label class="fl" for="sobre-titulo">Título</label>
             <input class="fi" type="text" id="sobre-titulo" placeholder="Sobre La Enbajada" style="font-family:var(--serif);font-size:16px;font-weight:700">
           </div>
-          <div class="fg">
-            <label class="fl">Imagen de cabecera</label>
-            <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap">
-              <div class="up-area" id="sobre-img-area" style="flex:0 0 auto;width:140px;padding:16px" onclick="g('sobre-img-file').click()">
-                <div class="up-icon">🖼</div>
-                <div class="up-txt" style="font-size:11px">Imagen</div>
-              </div>
-              <div class="up-prev" id="sobre-img-prev" style="display:none">
-                <img id="sobre-img-el" src="" alt="" style="max-height:100px;border-radius:3px">
-                <button class="up-rm" onclick="quitarImgSobre()">✕</button>
-              </div>
-              <input class="fi" type="url" id="sobre-img-url" placeholder="O pega una URL…"
-                style="flex:2;min-width:200px" oninput="prevImgSobre(this.value)">
-            </div>
-            <input type="file" id="sobre-img-file" accept="image/*" style="display:none" onchange="cargarImgSobre(this)">
-            <input type="hidden" id="sobre-img-data">
-          </div>
+          <input type="hidden" id="sobre-img-data">
+          <input type="hidden" id="sobre-img-url">
           <div class="fg">
             <label class="fl" for="sobre-cuerpo">Texto de presentación</label>
             <textarea class="fta" id="sobre-cuerpo" style="min-height:180px;font-family:var(--serif);font-size:15px;line-height:1.8"
@@ -3517,10 +3503,22 @@ async function guardarArt(estadoOverride) {
     const _mapSecFallback = { cronica:'la-cronica', conversacion:'la-conversacion', curatia:'la-curatia', 'la-cronica':'la-cronica', 'la-conversacion':'la-conversacion', 'la-curatia':'la-curatia', 'la-curaturia':'la-curaturia' };
     const seccionTag = (g('f-seccion')?.value || '').replace(/#/g,'').trim() || _mapSecFallback[_tipoActual] || 'la-cronica';
 
+    /* Generar slug limpio desde el título */
+    const _slugFromTitulo = (t) => (t||'').toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+
+    /* Conservar slug existente si ya es válido */
+    const _slugExistente = g('f-art-slug')?.value?.trim();
+    const _slugFinal = (_slugExistente && /^[a-z0-9-]+$/.test(_slugExistente))
+      ? _slugExistente
+      : _slugFromTitulo(titulo);
+
     const artData = {
       numero_id: numId,
       tipo: _tipoActual,
       titulo,
+      slug: _slugFinal,
       subtitulo:   g('f-subtitulo')?.value?.trim()  || null,
       extracto:    g('f-extracto')?.value?.trim()   || null,
       autor:       g('f-autor')?.value?.trim()       || 'Redacción La Enbajada',
@@ -3646,6 +3644,7 @@ function selTipoSec(tag, nombre, btn) {
 
 function limpiarForm() {
   if (g('f-art-id'))    g('f-art-id').value    = '';
+  if (g('f-art-slug'))  g('f-art-slug').value  = '';
   if (g('f-titulo'))    g('f-titulo').value    = '';
   if (g('f-subtitulo')) { g('f-subtitulo').value = ''; _contarSub(g('f-subtitulo')); }
   if (g('f-extracto'))  g('f-extracto').value  = '';
@@ -3690,6 +3689,7 @@ async function cargarArtForm(id) {
     limpiarFormSilencioso();
 
     g('f-art-id').value = a.id;
+    if (g('f-art-slug')) g('f-art-slug').value = a.slug || '';
     g('f-titulo').value = a.titulo || '';
     if (g('f-subtitulo')) {
       g('f-subtitulo').value = a.subtitulo || '';

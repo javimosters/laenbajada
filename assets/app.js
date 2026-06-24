@@ -180,14 +180,13 @@ const DB = {
 
   /* ── Configuración ──────────────────────────────────────────── */
   async getConfig() {
-    /* localStorage: persiste entre sesiones — 5 min TTL, stale-while-revalidate */
+    /* Caché en memoria: 30 segundos TTL para reflejar cambios rápido */
     try {
       const sc = localStorage.getItem('_lae_cfg');
       if (sc) {
         const { data, ts } = JSON.parse(sc);
         const age = Date.now() - ts;
-        if (age < 300000) { _cache.config = data; return data; }
-        if (data) { _cache.config = data; this._refreshConfig(); return data; }
+        if (age < 30000) { _cache.config = data; return data; }
       }
     } catch(e) {}
     if (_cache.config) return _cache.config;
@@ -248,6 +247,7 @@ const DB = {
     if (patch.sobre)     merged.sobre     = { ...(cfg.sobre     || {}), ...patch.sobre };
     if (patch.index_cfg) merged.index_cfg = { ...(cfg.index_cfg || {}), ...patch.index_cfg };
     _cache.config = null;
+    try { localStorage.removeItem('_lae_cfg'); } catch(e) {}
 
     /* Solo enviamos las columnas que existen en la tabla */
     const payload = {
@@ -1130,6 +1130,8 @@ function _initSectionBullets(secciones) {
    INIT PÚBLICO
    ══════════════════════════════════════════════════════════════ */
 async function initSite() {
+  /* Limpiar caché viejo de config — siempre leer de Supabase */
+  try { localStorage.removeItem('_lae_cfg'); } catch(e) {}
   insertarModal();
   await aplicarSite();
   requestAnimationFrame(() => {
