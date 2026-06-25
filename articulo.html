@@ -544,7 +544,7 @@ html.dark .search-modal { background:var(--bg); }
 
 <header class="site-header" id="site-header">
   <div class="header-inner">
-    <a href="index.html" class="logo-wrap">
+    <a href="/" class="logo-wrap">
       <img src="/assets/logo.png" alt="" class="logo-img" onerror="this.style.display='none'">
       <div class="logo-text-group">
         <span class="logo-name js-logo-name">La Enbajada</span>
@@ -552,11 +552,11 @@ html.dark .search-modal { background:var(--bg); }
       </div>
     </a>
     <nav class="nav-left">
-      <a href="index.html">Inicio</a>
-      <a href="edicion.html" id="nav-edicion">Edición actual</a>
+      <a href="/">Inicio</a>
+      <a href="/edicion.html" id="nav-edicion">Edición actual</a>
       <span id="nav-secs-dyn"></span>
-      <a href="archivo.html">Archivo</a>
-      <a href="sobre.html">Nosotros</a>
+      <a href="/archivo.html">Archivo</a>
+      <a href="/sobre.html">Nosotros</a>
     </nav>
     <div class="header-spacer"></div>
     <nav class="nav-right">
@@ -568,22 +568,22 @@ html.dark .search-modal { background:var(--bg); }
       <a class="nav-ig-btn js-footer-ig" href="https://instagram.com/laenbajada" target="_blank" rel="noopener" aria-label="Instagram">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
       </a>
-      <a href="index.html#sec-boletin" class="nav-cta">Suscribirse<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      <a href="/#sec-boletin" class="nav-cta">Suscribirse<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
       <button class="hamburger" id="hamburger-btn" onclick="toggleMenu()" aria-label="Menú">
         <div class="hamburger-icon"><span></span><span></span><span></span></div>
       </button>
     </nav>
   </div>
   <nav class="mobile-menu" id="mobile-menu">
-    <a href="index.html">Inicio</a>
-    <a href="edicion.html">Edición actual</a>
+    <a href="/">Inicio</a>
+    <a href="/edicion.html">Edición actual</a>
     <div class="mm-sep"></div>
     <div id="mm-secs-dyn"></div>
     <div class="mm-sep"></div>
-    <a href="archivo.html">Archivo</a>
-    <a href="sobre.html">Nosotros</a>
+    <a href="/archivo.html">Archivo</a>
+    <a href="/sobre.html">Nosotros</a>
     <div class="mm-sep"></div>
-    <a href="index.html#sec-boletin" class="mm-cta">Suscribirse →</a>
+    <a href="/#sec-boletin" class="mm-cta">Suscribirse →</a>
   </nav>
 </header>
 
@@ -604,7 +604,7 @@ html.dark .search-modal { background:var(--bg); }
   <!-- BARRA HERRAMIENTAS -->
   <div class="art-tools-bar" id="art-tools-bar">
     <div class="art-tools-left">
-      <a class="art-tool-btn" id="btn-volver" href="edicion.html">← Volver</a>
+      <a class="art-tool-btn" id="btn-volver" href="/edicion.html">← Volver</a>
       <button class="art-tool-btn" id="btn-toc" onclick="toggleTOC()">☰ Índice</button>
     </div>
   </div>
@@ -614,9 +614,9 @@ html.dark .search-modal { background:var(--bg); }
     <!-- PRINCIPAL -->
     <article class="art-main" id="art-main">
       <nav class="art-breadcrumb" aria-label="Ruta">
-        <a href="index.html">Inicio</a>
+        <a href="/">Inicio</a>
         <span>›</span>
-        <a id="bc-sec" href="secciones.html">Secciones</a>
+        <a id="bc-sec" href="/secciones/">Secciones</a>
         <span>›</span>
         <span class="art-breadcrumb-cur" id="bc-titulo">—</span>
       </nav>
@@ -692,9 +692,9 @@ html.dark .search-modal { background:var(--bg); }
     </div>
     <div class="footer-cols">
       <div class="footer-col"><h5>La Revista</h5><ul>
-        <li><a href="edicion.html">Edición actual</a></li>
-        <li><a href="archivo.html">Archivo</a></li>
-        <li><a href="sobre.html">Nosotros</a></li>
+        <li><a href="/edicion.html">Edición actual</a></li>
+        <li><a href="/archivo.html">Archivo</a></li>
+        <li><a href="/sobre.html">Nosotros</a></li>
       </ul></div>
       <div class="footer-col"><h5>Secciones</h5><ul><li id="footer-secs-dyn"></li></ul></div>
       <div class="footer-col"><h5>Contacto</h5><ul>
@@ -745,8 +745,7 @@ html.dark .search-modal { background:var(--bg); }
 /* ── HELPERS ── */
 function articuloUrl(a) {
   if (!a) return '/';
-  const slug = a.slug || (a.titulo || '').toLowerCase().normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const slug = a.slug || (a.titulo || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   return slug ? `/historias/${slug}` : `/articulo.html?id=${encodeURIComponent(a.id)}`;
 }
 function editorUrl(ed) {
@@ -986,7 +985,7 @@ function _renderNavSecs(secs) {
   if (navDyn) {
     secs.forEach(s => {
       const a = document.createElement('a');
-      a.href = 'secciones.html?sec=' + normTag(s.tag);
+      a.href = '/secciones/' + normTag(s.tag);
       a.textContent = s.nombre;
       navDyn.parentNode.insertBefore(a, navDyn);
     });
@@ -994,13 +993,13 @@ function _renderNavSecs(secs) {
   }
   const mmDyn = document.getElementById('mm-secs-dyn');
   if (mmDyn) mmDyn.innerHTML = secs.map(s =>
-    '<a href="secciones.html?sec=' + normTag(s.tag) + '">' + s.nombre + '</a>'
+    '<a href="/secciones/' + normTag(s.tag) + '">' + s.nombre + '</a>'
   ).join('');
   const ftDyn = document.getElementById('footer-secs-dyn');
   if (ftDyn) {
     const ul = ftDyn.closest('ul');
     if (ul) ul.innerHTML = secs.map(s =>
-      '<li><a href="secciones.html?sec=' + normTag(s.tag) + '">' + s.nombre + '</a></li>'
+      '<li><a href="/secciones/' + normTag(s.tag) + '">' + s.nombre + '</a></li>'
     ).join('');
   }
 }
@@ -1019,9 +1018,12 @@ async function init() {
   const params = new URLSearchParams(location.search);
 
   /* URL: ?slug=valor · también soporta ?s=slug y ?id=uuid */
-  /* También soporta legacy: ?id=xxx&s=slug */
+  /* También soporta URL limpia: /historias/slug */
   let artId   = params.get('id') || null;
-  const slug  = params.get('slug') || params.get('s') || params.get('') || null;
+  const pathSlug = location.pathname.startsWith('/historias/')
+    ? location.pathname.replace('/historias/', '').replace(/\/$/, '')
+    : null;
+  const slug  = params.get('slug') || params.get('s') || params.get('') || pathSlug || null;
   const isPreview = params.get('preview') === '1';
 
   /* Si no hay ID, buscar por slug en todos los artículos */
@@ -1031,17 +1033,17 @@ async function init() {
     if (match) artId = match.id;
   }
 
-  if (!artId) { window.location.href = '404.html'; return; }
+  if (!artId) { window.location.href = '/404.html'; return; }
 
   const [a, todosLosArts] = await Promise.all([
     DB.getArticulo(artId),
     DB.getPublicados(),
   ]);
-  if (!a) { window.location.href = '404.html'; return; }
+  if (!a) { window.location.href = '/404.html'; return; }
 
   /* URL canónica: solo slug, sin id */
-  const cleanSlug = a.slug || _normalizeSlug(a.titulo);
-  const cleanUrl  = `/historias/${cleanSlug}`;
+  const cleanSlug = _normalizeSlug(a.titulo);
+  const cleanUrl  = 'articulo.html?slug=' + cleanSlug;
   history.replaceState(null, '', cleanUrl);
 
   /* Registrar visita (solo si no es preview del admin) */
@@ -1059,30 +1061,6 @@ async function init() {
   const canonicalHref = `https://laenbajada.com/historias/${encodeURIComponent(cleanSlug)}`;
   if (canonical) canonical.href = canonicalHref;
 
-  /* JSON-LD structured data para Google */
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "headline": a.titulo || '',
-    "description": a.subtitulo || a.extracto || '',
-    "image": a.imagen_url ? [a.imagen_url] : [],
-    "author": { "@type": "Person", "name": a.autor || 'La Enbajada' },
-    "publisher": {
-      "@type": "Organization",
-      "name": "La Enbajada",
-      "url": "https://laenbajada.com",
-      "logo": { "@type": "ImageObject", "url": "https://laenbajada.com/assets/logo.png" }
-    },
-    "datePublished": a.fecha_publicacion || a.created_at || '',
-    "dateModified": a.updated_at || a.created_at || '',
-    "url": canonicalHref,
-    "mainEntityOfPage": { "@type": "WebPage", "@id": canonicalHref }
-  };
-  const ldScript = document.createElement('script');
-  ldScript.type = 'application/ld+json';
-  ldScript.textContent = JSON.stringify(jsonLd);
-  document.head.appendChild(ldScript);
-
   /* HERO */
   if (a.imagen_url) {
     document.getElementById('art-hero-bg').innerHTML = `<img src="${a.imagen_url}" alt="${a.titulo}" loading="eager">`;
@@ -1090,7 +1068,7 @@ async function init() {
   const tagRow = document.getElementById('art-hero-tag');
   if (tagRow) {
     const secTag = normTag(a.seccion_tag||'');
-    const secUrl = `secciones.html?sec=${secTag}`;
+    const secUrl = `/secciones/${secTag}`;
     tagRow.innerHTML = `<a class="art-hero-tag-pill" href="${secUrl}">${a.seccion_tag||a.tipo||'La Enbajada'}</a>
       ${a.numero_id?`<span class="art-hero-tag-sep">·</span><span class="art-hero-num">N.º ${a.numero_id}</span>`:''}`;
   }
@@ -1104,14 +1082,14 @@ async function init() {
   const bcTit = document.getElementById('bc-titulo');
   if (bcSec) {
     const secTag = normTag(a.seccion_tag||'');
-    bcSec.href = `secciones.html?sec=${secTag}`;
+    bcSec.href = `/secciones/${secTag}`;
     bcSec.textContent = normTag(a.seccion_tag) || 'Secciones';
   }
   if (bcTit) bcTit.textContent = a.titulo.length > 40 ? a.titulo.slice(0,40)+'…' : a.titulo;
 
   /* Botón volver */
   const btnVolver = document.getElementById('btn-volver');
-  if (btnVolver && a.numero_id) btnVolver.href = `edicion.html?num=${a.numero_id}`;
+  if (btnVolver && a.numero_id) btnVolver.href = `/ediciones/${a.numero_id}`;
 
   /* Editor */
   let ed = null;
