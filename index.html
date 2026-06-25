@@ -554,9 +554,9 @@ function _esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
 
 /* URL artículo */
 function articuloUrl(a){
-  if(a.slug) return 'articulo.html?slug='+encodeURIComponent(a.slug);
-  var s=(a.titulo||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  return 'articulo.html?slug='+s;
+  if(!a) return '/';
+  var slug=a.slug||(a.titulo||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  return slug ? '/historias/'+slug : '/articulo.html?id='+encodeURIComponent(a.id);
 }
 
 /* Nombre de sección */
@@ -583,11 +583,11 @@ function closeMobileMenu(){
 /* Nav secciones dinámico */
 function _renderNavSecs(secs){
   var navDyn=document.getElementById('nav-secs-dyn');
-  if(navDyn){secs.forEach(function(s){var a=document.createElement('a');a.href='secciones.html?sec='+normTag(s.tag);a.textContent=s.nombre;navDyn.parentNode.insertBefore(a,navDyn)});navDyn.remove()}
+  if(navDyn){secs.forEach(function(s){var a=document.createElement('a');a.href='/secciones/'+normTag(s.tag);a.textContent=s.nombre;navDyn.parentNode.insertBefore(a,navDyn)});navDyn.remove()}
   var mm=document.getElementById('mm-secs-dyn');
-  if(mm) mm.innerHTML=secs.map(function(s){return '<a href="secciones.html?sec='+normTag(s.tag)+'" onclick="closeMobileMenu()">'+_esc(s.nombre)+'</a>'}).join('');
+  if(mm) mm.innerHTML=secs.map(function(s){return '<a href="/secciones/'+normTag(s.tag)+'" onclick="closeMobileMenu()">'+_esc(s.nombre)+'</a>'}).join('');
   var ft=document.getElementById('footer-secs-dyn');
-  if(ft){var ul=ft.closest('ul');if(ul) ul.innerHTML=secs.map(function(s){return '<li><a href="secciones.html?sec='+normTag(s.tag)+'">'+_esc(s.nombre)+'</a></li>'}).join('')}
+  if(ft){var ul=ft.closest('ul');if(ul) ul.innerHTML=secs.map(function(s){return '<li><a href="/secciones/'+normTag(s.tag)+'">'+_esc(s.nombre)+'</a></li>'}).join('')}
 }
 
 /* Buscador */
@@ -647,7 +647,7 @@ async function _renderHero(cfg,numActivo,secciones,pubs){
     if(ghost) ghost.textContent=np;
     var edbarL=document.getElementById('idx-hero-edbar-left');
     if(edbarL) edbarL.textContent='Edición N.º '+numActivo.id+(numActivo.titulo?' · '+numActivo.titulo:'');
-    ['mm-edicion','nav-edicion'].forEach(function(id){var el=document.getElementById(id);if(el) el.href='edicion.html?num='+numActivo.id});
+    ['mm-edicion','nav-edicion'].forEach(function(id){var el=document.getElementById(id);if(el) el.href='/ediciones/'+numActivo.id});
   }
 
   if(!portada) return null;
@@ -671,7 +671,7 @@ async function _renderHero(cfg,numActivo,secciones,pubs){
   var secNombre=_secNombre(portada.seccion_tag,secciones);
   var tagEl=document.getElementById('idx-hero-tag');
   if(tagEl){
-    var secUrl='secciones.html?sec='+normTag(portada.seccion_tag||'');
+    var secUrl='/secciones/'+normTag(portada.seccion_tag||'');
     var numPart=portada.numero_id?'<span class="idx-hero-tag-sep">·</span><span class="idx-hero-tag-num">N.º '+_esc(String(portada.numero_id))+'</span>':'';
     tagEl.innerHTML='<a class="idx-hero-tag-pill" href="'+secUrl+'" onclick="event.stopPropagation()">'+_esc(secNombre)+'</a>'+numPart;
   }

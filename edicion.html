@@ -301,7 +301,7 @@ html.dark .search-modal { background: var(--bg); }
     </a>
     <nav class="nav-left">
       <a href="index.html">Inicio</a>
-      <a href="edicion.html" class="nav-activo">Edición actual</a>
+      <a href="/edicion.html" class="nav-activo">Edición actual</a>
       <!-- secciones dinámicas -->
       <span id="nav-secs-dyn"></span>
       <a href="archivo.html">Archivo</a>
@@ -325,7 +325,7 @@ html.dark .search-modal { background: var(--bg); }
   </div>
   <nav class="mobile-menu" id="mobile-menu">
     <a href="index.html">Inicio</a>
-    <a href="edicion.html" class="nav-activo">Edición actual</a>
+    <a href="/edicion.html" class="nav-activo">Edición actual</a>
     <div class="mm-sep"></div>
     <div id="mm-secs-dyn"></div>
     <div class="mm-sep"></div>
@@ -416,7 +416,7 @@ html.dark .search-modal { background: var(--bg); }
     </div>
     <div class="footer-cols">
       <div class="footer-col"><h5>La Revista</h5><ul>
-        <li><a href="edicion.html">Edición actual</a></li>
+        <li><a href="/edicion.html">Edición actual</a></li>
         <li><a href="archivo.html">Archivo</a></li>
         <li><a href="sobre.html">Nosotros</a></li>
       </ul></div>
@@ -507,10 +507,9 @@ function _marcarLeidosEnGrid(selector) {
 let _SECCIONES = [];  /* Se llena en init() desde Supabase */
 
 function articuloUrl(a) {
-  if (a.slug) return 'articulo.html?slug=' + encodeURIComponent(a.slug);
-  var _s = (a.titulo || '').toLowerCase().normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  return 'articulo.html?slug=' + _s;
+  if (!a) return '/';
+  var slug = a.slug || (a.titulo||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  return slug ? '/historias/' + slug : '/articulo.html?id=' + encodeURIComponent(a.id);
 }
 
 (()=>{ const h=document.getElementById('site-header'); window.addEventListener('scroll',()=>h?.classList.toggle('scrolled',window.scrollY>20),{passive:true}); })();
@@ -661,7 +660,7 @@ function _renderArtsFilter(tag, arts) {
       return `<div class="ed-sec-bloque" id="bloque-${sec.tag}">
         <div class="ed-sec-hdr">
           <div class="ed-sec-nombre"><em>${sec.nombre}</em></div>
-          <a href="secciones.html?sec=${sec.tag}" class="ed-sec-ver">Ver todo</a>
+          <a href="/secciones/${sec.tag}" class="ed-sec-ver">Ver todo</a>
         </div>
         <div class="curatia-grid">${secArts.map(a => renderCuratiaCard(a)).join('')}</div>
       </div>`;
@@ -696,7 +695,7 @@ function _renderNavSecs(secs, paginaActual) {
   if (navDyn) {
     secs.forEach(s => {
       const a = document.createElement('a');
-      a.href = 'secciones.html?sec=' + normTag(s.tag);
+      a.href = '/secciones/' + normTag(s.tag);
       a.textContent = s.nombre;
       navDyn.parentNode.insertBefore(a, navDyn);
     });
@@ -707,7 +706,7 @@ function _renderNavSecs(secs, paginaActual) {
   const mmDyn = document.getElementById('mm-secs-dyn');
   if (mmDyn) {
     mmDyn.innerHTML = secs.map(s =>
-      '<a href="secciones.html?sec=' + normTag(s.tag) + '">' + s.nombre + '</a>'
+      '<a href="/secciones/' + normTag(s.tag) + '">' + s.nombre + '</a>'
     ).join('');
   }
 
@@ -717,7 +716,7 @@ function _renderNavSecs(secs, paginaActual) {
     const ul = ftDyn.closest('ul');
     if (ul) {
       ul.innerHTML = secs.map(s =>
-        '<li><a href="secciones.html?sec=' + normTag(s.tag) + '">' + s.nombre + '</a></li>'
+        '<li><a href="/secciones/' + normTag(s.tag) + '">' + s.nombre + '</a></li>'
       ).join('');
     }
   }
@@ -782,9 +781,9 @@ async function init() {
     document.getElementById('ed-nav-center').textContent = `N.º ${String(num.id).padStart(2,'0')}`;
     const prevEl = document.getElementById('ed-nav-prev');
     const nextEl = document.getElementById('ed-nav-next');
-    if (prev) { prevEl.href=`edicion.html?num=${prev.id}`; document.getElementById('ed-nav-prev-tit').textContent=prev.titulo; }
+    if (prev) { prevEl.href=`/ediciones/${prev.id}`; document.getElementById('ed-nav-prev-tit').textContent=prev.titulo; }
     else prevEl.style.opacity='0.2';
-    if (next) { nextEl.href=`edicion.html?num=${next.id}`; document.getElementById('ed-nav-next-tit').textContent=next.titulo; }
+    if (next) { nextEl.href=`/ediciones/${next.id}`; document.getElementById('ed-nav-next-tit').textContent=next.titulo; }
     else nextEl.style.opacity='0.2';
   }
 

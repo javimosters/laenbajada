@@ -744,10 +744,10 @@ html.dark .search-modal { background:var(--bg); }
 
 /* ── HELPERS ── */
 function articuloUrl(a) {
-  if (a.slug) return 'articulo.html?slug=' + encodeURIComponent(a.slug);
-  var _s = (a.titulo || '').toLowerCase().normalize('NFD')
+  if (!a) return '/';
+  const slug = a.slug || (a.titulo || '').toLowerCase().normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  return 'articulo.html?slug=' + _s;
+  return slug ? `/historias/${slug}` : `/articulo.html?id=${encodeURIComponent(a.id)}`;
 }
 function editorUrl(ed) {
   return `editor.html?slug=${ed.slug||ed.id}`;
@@ -782,7 +782,7 @@ function _normalizeSlug(s) {
         "url": "https://laenbajada.com",
         "logo": { "@type": "ImageObject", "url": "https://laenbajada.com/assets/logo.png" }
       },
-      "mainEntityOfPage": { "@type": "WebPage", "@id": window.location.href },
+      "mainEntityOfPage": { "@type": "WebPage", "@id": `https://laenbajada.com/historias/${(a.slug||'')}` },
       "inLanguage": "es-CO",
       "isPartOf": { "@type": "Periodical", "name": "La Enbajada" }
     };
@@ -1040,8 +1040,8 @@ async function init() {
   if (!a) { window.location.href = '404.html'; return; }
 
   /* URL canónica: solo slug, sin id */
-  const cleanSlug = _normalizeSlug(a.titulo);
-  const cleanUrl  = 'articulo.html?slug=' + cleanSlug;
+  const cleanSlug = a.slug || _normalizeSlug(a.titulo);
+  const cleanUrl  = `/historias/${cleanSlug}`;
   history.replaceState(null, '', cleanUrl);
 
   /* Registrar visita (solo si no es preview del admin) */
@@ -1056,7 +1056,32 @@ async function init() {
   /* SEO */
   aplicarSEO({ titulo: a.titulo, desc: a.subtitulo || a.extracto || '', imagen: a.imagen_url || '', type: 'article' });
   const canonical = document.getElementById('canonical');
-  if (canonical) canonical.href = `https://laenbajada.com/articulo.html?slug=${encodeURIComponent(a.slug||a.id)}`;
+  const canonicalHref = `https://laenbajada.com/historias/${encodeURIComponent(cleanSlug)}`;
+  if (canonical) canonical.href = canonicalHref;
+
+  /* JSON-LD structured data para Google */
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": a.titulo || '',
+    "description": a.subtitulo || a.extracto || '',
+    "image": a.imagen_url ? [a.imagen_url] : [],
+    "author": { "@type": "Person", "name": a.autor || 'La Enbajada' },
+    "publisher": {
+      "@type": "Organization",
+      "name": "La Enbajada",
+      "url": "https://laenbajada.com",
+      "logo": { "@type": "ImageObject", "url": "https://laenbajada.com/assets/logo.png" }
+    },
+    "datePublished": a.fecha_publicacion || a.created_at || '',
+    "dateModified": a.updated_at || a.created_at || '',
+    "url": canonicalHref,
+    "mainEntityOfPage": { "@type": "WebPage", "@id": canonicalHref }
+  };
+  const ldScript = document.createElement('script');
+  ldScript.type = 'application/ld+json';
+  ldScript.textContent = JSON.stringify(jsonLd);
+  document.head.appendChild(ldScript);
 
   /* HERO */
   if (a.imagen_url) {

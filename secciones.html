@@ -227,7 +227,7 @@ html.dark .search-modal { background:var(--bg); }
     </a>
     <nav class="nav-left">
       <a href="index.html">Inicio</a>
-      <a href="edicion.html">Edición actual</a>
+      <a href="/edicion.html">Edición actual</a>
       <!-- secciones dinámicas —la activa se marca en JS -->
       <span id="nav-secs-dyn"></span>
       <a href="archivo.html">Archivo</a>
@@ -251,7 +251,7 @@ html.dark .search-modal { background:var(--bg); }
   </div>
   <nav class="mobile-menu" id="mobile-menu">
     <a href="index.html">Inicio</a>
-    <a href="edicion.html">Edición actual</a>
+    <a href="/edicion.html">Edición actual</a>
     <div class="mm-sep"></div>
     <div id="mm-secs-dyn"></div>
     <div class="mm-sep"></div>
@@ -297,7 +297,7 @@ html.dark .search-modal { background:var(--bg); }
     </div>
     <div class="footer-cols">
       <div class="footer-col"><h5>La Revista</h5><ul>
-        <li><a href="edicion.html">Edición actual</a></li>
+        <li><a href="/edicion.html">Edición actual</a></li>
         <li><a href="archivo.html">Archivo</a></li>
         <li><a href="sobre.html">Nosotros</a></li>
       </ul></div>
@@ -368,10 +368,9 @@ const POR_PAG = 12;
 let _page = 0;
 
 function articuloUrl(a) {
-  if (a.slug) return 'articulo.html?slug=' + encodeURIComponent(a.slug);
-  var _s = (a.titulo || '').toLowerCase().normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  return 'articulo.html?slug=' + _s;
+  if (!a) return '/';
+  var slug = a.slug || (a.titulo||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  return slug ? '/historias/' + slug : '/articulo.html?id=' + encodeURIComponent(a.id);
 }
 
 /* Header scroll */
@@ -415,7 +414,7 @@ function _renderNavSecs(secs, paginaActual) {
   if (navDyn) {
     secs.forEach(s => {
       const a = document.createElement('a');
-      a.href = 'secciones.html?sec=' + normTag(s.tag);
+      a.href = '/secciones/' + normTag(s.tag);
       a.textContent = s.nombre;
       if (normTag(s.tag) === normTag(_secActual)) a.className = 'nav-activo';
       navDyn.parentNode.insertBefore(a, navDyn);
@@ -427,7 +426,7 @@ function _renderNavSecs(secs, paginaActual) {
   const mmDyn = document.getElementById('mm-secs-dyn');
   if (mmDyn) {
     mmDyn.innerHTML = secs.map(s =>
-      '<a href="secciones.html?sec=' + normTag(s.tag) + '">' + s.nombre + '</a>'
+      '<a href="/secciones/' + normTag(s.tag) + '">' + s.nombre + '</a>'
     ).join('');
   }
 
@@ -437,7 +436,7 @@ function _renderNavSecs(secs, paginaActual) {
     const ul = ftDyn.closest('ul');
     if (ul) {
       ul.innerHTML = secs.map(s =>
-        '<li><a href="secciones.html?sec=' + normTag(s.tag) + '">' + s.nombre + '</a></li>'
+        '<li><a href="/secciones/' + normTag(s.tag) + '">' + s.nombre + '</a></li>'
       ).join('');
     }
   }
@@ -472,7 +471,7 @@ function cambiarSec(e, tag) {
   /* Actualizar nav-activo del header */
   document.querySelectorAll('.nav-left a, .mobile-menu a').forEach(a => {
     const href = a.getAttribute('href') || '';
-    const isThisSec = href.includes('secciones.html?sec=') && href.includes(tag);
+    const isThisSec = href.includes('/secciones/') && href.includes(tag);
     a.classList.toggle('nav-activo', isThisSec);
   });
   window.scrollTo({ top: document.getElementById('sec-nav-bar')?.offsetTop - 80 || 0, behavior: 'smooth' });

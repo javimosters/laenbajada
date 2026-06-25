@@ -1,23 +1,30 @@
 # ══════════════════════════════════════════════════════════
-#  La Enbajada — Netlify Redirects v2
-#  Actualizado junio 2026
+#  La Enbajada — Netlify Redirects v3
+#  URLs limpias + SEO
 # ══════════════════════════════════════════════════════════
 
-# Consolidar todo el tráfico en el dominio definitivo
+# Consolidar tráfico en dominio definitivo
 http://laenbajada.netlify.app/*   https://laenbajada.com/:splat  301!
 https://laenbajada.netlify.app/*  https://laenbajada.com/:splat  301!
 
-# Bloquear acceso directo a admin desde bots/crawlers comunes
-# (la seguridad real está en Supabase Auth — esto es capa adicional)
-/admin  /admin.html  200
+# ── URLs limpias para artículos ──
+/historias/:slug   /articulo.html?slug=:slug   200
 
-# Rutas limpias sin .html
-/articulo    /articulo.html    301
-/edicion     /edicion.html     301
-/secciones   /secciones.html   301
-/archivo     /archivo.html     301
-/sobre       /sobre.html       301
-/editor      /editor.html      301
+# ── URLs limpias para ediciones ──
+/ediciones/:num    /edicion.html?num=:num       200
 
-# 404 personalizado
-/*           /404.html         404
+# ── URLs limpias para secciones ──
+/secciones/:sec    /secciones.html?sec=:sec     200
+
+# ── Admin ──
+/admin             /admin.html                  200
+
+# ── Rutas sin .html (compatibilidad) ──
+/articulo          /articulo.html               301
+/edicion           /edicion.html                301
+/sobre             /sobre.html                  301
+/archivo           /archivo.html                301
+/editor            /editor.html                 301
+
+# ── 404 ──
+/*                 /404.html                    404

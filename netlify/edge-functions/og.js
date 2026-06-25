@@ -46,7 +46,7 @@ export default async (request, context) => {
     if (!art)   return context.next();
 
     const artSlug = art.slug || art.id;
-    const artUrl  = `https://laenbajada.com/articulo.html?slug=${encodeURIComponent(artSlug)}`;
+    const artUrl  = `https://laenbajada.com/historias/${encodeURIComponent(artSlug)}`;
     const title   = `${art.titulo || 'Artículo'} — La Enbajada`;
     const desc    = art.subtitulo || art.extracto || 'Revista cultural del Caribe colombiano.';
     const image   = art.imagen_url || '';

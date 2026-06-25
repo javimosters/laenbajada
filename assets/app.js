@@ -180,13 +180,14 @@ const DB = {
 
   /* ── Configuración ──────────────────────────────────────────── */
   async getConfig() {
-    /* Caché en memoria: 30 segundos TTL para reflejar cambios rápido */
+    /* localStorage: persiste entre sesiones — 5 min TTL, stale-while-revalidate */
     try {
       const sc = localStorage.getItem('_lae_cfg');
       if (sc) {
         const { data, ts } = JSON.parse(sc);
         const age = Date.now() - ts;
-        if (age < 30000) { _cache.config = data; return data; }
+        if (age < 300000) { _cache.config = data; return data; }
+        if (data) { _cache.config = data; this._refreshConfig(); return data; }
       }
     } catch(e) {}
     if (_cache.config) return _cache.config;
@@ -247,7 +248,6 @@ const DB = {
     if (patch.sobre)     merged.sobre     = { ...(cfg.sobre     || {}), ...patch.sobre };
     if (patch.index_cfg) merged.index_cfg = { ...(cfg.index_cfg || {}), ...patch.index_cfg };
     _cache.config = null;
-    try { localStorage.removeItem('_lae_cfg'); } catch(e) {}
 
     /* Solo enviamos las columnas que existen en la tabla */
     const payload = {
@@ -881,13 +881,25 @@ async function suscribirse() {
 function _artSlug(titulo) {
   return (titulo||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 }
+/* Genera URL limpia para un artículo */
+function articuloUrl(a) {
+  if (!a) return '/';
+  const slug = a.slug || _artSlug(a.titulo || '');
+  return slug ? `/historias/${slug}` : `/articulo.html?id=${encodeURIComponent(a.id)}`;
+}
+/* Genera URL limpia para una edición */
+function edicionUrl(num) {
+  return num ? `/ediciones/${num}` : '/edicion.html';
+}
+/* Genera URL limpia para una sección */
+function seccionUrl(tag) {
+  return tag ? `/secciones/${normTag(tag)}` : '/secciones.html';
+}
 function insertarModal() { /* no-op */ }
 function abrirModal(id) {
   if (!id) return;
-  /* Buscar título en caché para hacer URL amigable */
   const art = Object.values(_cache.articulos).flat().find?.(a => a.id === id);
-  const slug = art ? _artSlug(art.titulo) : '';
-  const href = slug ? `articulo.html?slug=${slug}` : `articulo.html?id=${encodeURIComponent(id)}`;
+  const href = art ? articuloUrl(art) : `articulo.html?id=${encodeURIComponent(id)}`;
   if (document.startViewTransition) {
     document.startViewTransition(() => { window.location.href = href; });
   } else {
@@ -1029,8 +1041,8 @@ function _checkArtParam() {
   const params = new URLSearchParams(location.search);
   /* Legacy: ?art=id → redirect al artículo */
   const artId = params.get('art');
-  if (artId && !location.pathname.includes('articulo')) {
-    window.location.replace(`articulo.html?id=${encodeURIComponent(artId)}`);
+  if (artId && !location.pathname.includes('articulo') && !location.pathname.includes('historias')) {
+    window.location.replace(`/articulo.html?id=${encodeURIComponent(artId)}`);
     return;
   }
   /* Nuevo: ?=slug → ya está en articulo.html, no hacer nada */
@@ -1130,8 +1142,6 @@ function _initSectionBullets(secciones) {
    INIT PÚBLICO
    ══════════════════════════════════════════════════════════════ */
 async function initSite() {
-  /* Limpiar caché viejo de config — siempre leer de Supabase */
-  try { localStorage.removeItem('_lae_cfg'); } catch(e) {}
   insertarModal();
   await aplicarSite();
   requestAnimationFrame(() => {

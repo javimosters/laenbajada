@@ -1,38 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Este archivo es un fallback estático. El sitemap real lo genera
+     netlify/edge-functions/sitemap.js dinámicamente desde Supabase. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-  <!-- Páginas estáticas -->
   <url>
     <loc>https://laenbajada.com/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://laenbajada.com/edicion.html</loc>
+    <loc>https://laenbajada.com/ediciones/01</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://laenbajada.com/secciones.html</loc>
+    <loc>https://laenbajada.com/secciones/la-cronica</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://laenbajada.com/archivo.html</loc>
+    <loc>https://laenbajada.com/secciones/la-conversacion</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://laenbajada.com/secciones/la-curaturia</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://laenbajada.com/archivo</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://laenbajada.com/sobre.html</loc>
+    <loc>https://laenbajada.com/sobre</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
-
-  <!-- Artículos publicados -->
-  <url>
-    <loc>https://laenbajada.com/articulo.html?slug=palenque-la-nacion-dentro-de-una-nacion-ba5f98</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
 </urlset>

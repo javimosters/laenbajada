@@ -16,6 +16,11 @@
   path = "/articulo.html"
   function = "og"
 
+# ── Edge Function: Sitemap dinámico ──
+[[edge_functions]]
+  path = "/sitemap.xml"
+  function = "sitemap"
+
 [[headers]]
   for = "/*"
   [headers.values]

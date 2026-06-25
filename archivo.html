@@ -175,7 +175,7 @@ html.dark .search-modal { background:var(--bg); }
     <a href="index.html" class="logo-wrap"><img src="assets/logo.png" alt="" class="logo-img" onerror="this.style.display='none'"><div class="logo-text-group"><span class="logo-name js-logo-name">La Enbajada</span><span class="logo-tag js-logo-tag">Aterrizamos la Cultura</span></div></a>
     <nav class="nav-left" id="nav-secciones" aria-label="Navegación principal">
       <a href="index.html">Inicio</a>
-      <a href="edicion.html">Edición actual</a>
+      <a href="/edicion.html">Edición actual</a>
       <span id="nav-secs-dyn"></span>
       <a href="archivo.html" class="nav-activo">Archivo</a>
       <a href="sobre.html">Nosotros</a>
@@ -190,7 +190,7 @@ html.dark .search-modal { background:var(--bg); }
   </div>
   <nav class="mobile-menu" id="mobile-menu">
     <a href="index.html">Inicio</a>
-    <a href="edicion.html">Edición actual</a>
+    <a href="/edicion.html">Edición actual</a>
     <div class="mm-sep"></div>
     <div id="mm-secs-dyn"></div>
     <div class="mm-sep"></div>
@@ -252,7 +252,7 @@ html.dark .search-modal { background:var(--bg); }
     </div>
     <div class="footer-cols">
       <div class="footer-col"><h5>La Revista</h5><ul>
-        <li><a href="edicion.html">Edición actual</a></li>
+        <li><a href="/edicion.html">Edición actual</a></li>
         <li><a href="archivo.html">Archivo</a></li>
         <li><a href="sobre.html">Nosotros</a></li>
       </ul></div>
@@ -305,10 +305,9 @@ function _esc(s){
 }
 
 function articuloUrl(a) {
-  if (a.slug) return 'articulo.html?slug=' + encodeURIComponent(a.slug);
-  var _s = (a.titulo || '').toLowerCase().normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  return 'articulo.html?slug=' + _s;
+  if (!a) return '/';
+  var slug = a.slug || (a.titulo||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  return slug ? '/historias/' + slug : '/articulo.html?id=' + encodeURIComponent(a.id);
 }
 (()=>{const h=document.getElementById('site-header');window.addEventListener('scroll',()=>h?.classList.toggle('scrolled',window.scrollY>20),{passive:true});})();
 
@@ -329,7 +328,7 @@ function _renderNavSecs(secs) {
   if (navDyn) {
     secs.forEach(s => {
       const a = document.createElement('a');
-      a.href = 'secciones.html?sec=' + normTag(s.tag);
+      a.href = '/secciones/' + normTag(s.tag);
       a.textContent = s.nombre;
       navDyn.parentNode.insertBefore(a, navDyn);
     });
@@ -338,14 +337,14 @@ function _renderNavSecs(secs) {
   const mmDyn = document.getElementById('mm-secs-dyn');
   if (mmDyn) {
     mmDyn.innerHTML = secs.map(s =>
-      '<a href="secciones.html?sec=' + normTag(s.tag) + '">' + s.nombre + '</a>'
+      '<a href="/secciones/' + normTag(s.tag) + '">' + s.nombre + '</a>'
     ).join('');
   }
   const ftDyn = document.getElementById('footer-secs-dyn');
   if (ftDyn) {
     const ul = ftDyn.closest('ul');
     if (ul) ul.innerHTML = secs.map(s =>
-      '<li><a href="secciones.html?sec=' + normTag(s.tag) + '">' + s.nombre + '</a></li>'
+      '<li><a href="/secciones/' + normTag(s.tag) + '">' + s.nombre + '</a></li>'
     ).join('');
   }
 }
@@ -360,7 +359,7 @@ async function init(){
   /* Números */
   const ng = document.getElementById('arch-num-grid');
   if(ng) {
-    ng.innerHTML=(nums||[]).map(n=>{const isA=n.estado==='activo';const href=n.estado!=='proximo'?`edicion.html?num=${n.id}`:'#';return `<a class="arch-num-card ${n.estado==='proximo'?'proximo':''}" href="${href}"><div class="arch-num-card-img">${n.imagen_url?`<img src="${n.imagen_url}" alt="" loading="lazy">`:'<div class="ph"></div>'}</div><div class="arch-num-card-body"><div class="arch-num-id">N.º ${String(n.id).padStart(2,'0')}</div><div class="arch-num-badge ${isA?'activo':''}">${isA?'● Edición actual':n.estado==='proximo'?'○ Próximamente':'◎ Archivada'}</div><div class="arch-num-card-titulo">${n.titulo}</div>${n.subtitulo?`<div class="arch-num-card-sub">${n.subtitulo}</div>`:''}<div class="arch-num-card-cta">${n.estado!=='proximo'?'Leer edición →':''}</div></div></a>`;}).join('');
+    ng.innerHTML=(nums||[]).map(n=>{const isA=n.estado==='activo';const href=n.estado!=='proximo'?`/ediciones/${n.id}`:'#';return `<a class="arch-num-card ${n.estado==='proximo'?'proximo':''}" href="${href}"><div class="arch-num-card-img">${n.imagen_url?`<img src="${n.imagen_url}" alt="" loading="lazy">`:'<div class="ph"></div>'}</div><div class="arch-num-card-body"><div class="arch-num-id">N.º ${String(n.id).padStart(2,'0')}</div><div class="arch-num-badge ${isA?'activo':''}">${isA?'● Edición actual':n.estado==='proximo'?'○ Próximamente':'◎ Archivada'}</div><div class="arch-num-card-titulo">${n.titulo}</div>${n.subtitulo?`<div class="arch-num-card-sub">${n.subtitulo}</div>`:''}<div class="arch-num-card-cta">${n.estado!=='proximo'?'Leer edición →':''}</div></div></a>`;}).join('');
     /* Ajustar columnas al total real */
     const total = (nums||[]).length;
     if (total === 1) ng.classList.add('cols-1');
