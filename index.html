@@ -696,7 +696,7 @@ async function _renderHero(cfg,numActivo,secciones,pubs){
       var _fotoEl=foto
         ?'<img class="idx-hero-autor-foto" src="'+_esc(foto)+'" alt="'+_esc(_nombre)+'" loading="lazy">'
         :'<div class="idx-hero-autor-ph">'+_init+'</div>';
-      var _inner=_fotoEl+'<div class="idx-hero-autor-info"><span class="idx-hero-autor-nombre">'+_esc(_nombre)+'</span>'+(_num?'<span class="idx-hero-autor-num">N.º '+_esc(String(_num))+(fmtFecha(p)?' · '+fmtFecha(p):'')+'</span>':'')+'</div>';
+      var _inner=_fotoEl+'<div class="idx-hero-autor-info"><span class="idx-hero-autor-nombre">'+_esc(_nombre)+'</span>'+(_num?'<span class="idx-hero-autor-num">N.º '+_esc(String(_num))+(fmtFecha(portada)?' · '+fmtFecha(portada):'')+'</span>':'')+'</div>';
       autEl.innerHTML=slug
         ?'<a class="idx-hero-autor-chip" href="/editor.html?slug='+_esc(slug)+'" onclick="event.stopPropagation()">'+_inner+'</a>'
         :'<span class="idx-hero-autor-chip">'+_inner+'</span>';

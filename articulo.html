@@ -1014,8 +1014,6 @@ function normTag(v) {
 }
 async function init() {
   await initSite();
-  /* _secsNav ya cargado en Promise.all */
-  _renderNavSecs(_secsNav);
 
   const params = new URLSearchParams(location.search);
 
@@ -1052,6 +1050,7 @@ async function init() {
     DB.getSecciones().catch(() => []),
   ]);
   if (!a) { window.location.href = '/404.html'; return; }
+  _renderNavSecs(_secsNav);
 
   /* URL canónica: solo slug, sin id */
   const cleanSlug = a.slug || _normalizeSlug(a.titulo);
