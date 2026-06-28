@@ -393,7 +393,7 @@ const DB = {
   },
   async _fetchArticulos(numero_id, key) {
     if (!key) key = numero_id || 'all';
-    const COLS = 'select=id,titulo,subtitulo,extracto,imagen_url,slug,estado,tipo,seccion_tag,numero_id,orden,autor,editor_id,created_at';
+    const COLS = 'select=id,titulo,subtitulo,extracto,imagen_url,slug,estado,tipo,seccion_tag,numero_id,orden,autor,editor_id,fecha_publicacion,created_at';
     const filter = numero_id
       ? `${COLS}&numero_id=eq.${numero_id}&order=orden.asc,created_at.desc`
       : `${COLS}&order=orden.asc,created_at.desc`;
@@ -416,15 +416,35 @@ const DB = {
       }
     } catch(e) {}
     /* Filtrar publicados directo en Supabase — no bajar borradores al navegador */
-    const COLS = 'select=id,titulo,subtitulo,extracto,imagen_url,slug,estado,tipo,seccion_tag,numero_id,orden,autor,editor_id,created_at';
+    const COLS = 'select=id,titulo,subtitulo,extracto,imagen_url,slug,estado,tipo,seccion_tag,numero_id,orden,autor,editor_id,fecha_publicacion,created_at';
     const ahora = new Date().toISOString();
     const base = numero_id
       ? `${COLS}&numero_id=eq.${numero_id}&estado=eq.publicado&order=orden.asc,created_at.desc`
       : `${COLS}&estado=eq.publicado&order=orden.asc,created_at.desc`;
     const rows = await SB.select('articulos', base);
-    const result = (rows || [])
+    const arts = (rows || [])
       .filter(a => !a.fecha_publicacion || a.fecha_publicacion <= ahora)
       .map(a => ({ ...a, seccion_tag: normTag(a.seccion_tag || a.tipo || '') }));
+
+    /* Resolver nombres reales de editores — una sola query para todos */
+    const editorIds = [...new Set(arts.map(a => a.editor_id).filter(Boolean))];
+    if (editorIds.length) {
+      try {
+        const eds = await SB.select('editores',
+          `id=in.(${editorIds.join(',')})&select=id,nombre,foto_url,slug,cargo`
+        );
+        const edMap = {};
+        (eds || []).forEach(e => { edMap[e.id] = e; });
+        arts.forEach(a => {
+          if (a.editor_id && edMap[a.editor_id]) {
+            a._editor = edMap[a.editor_id];
+            a.autor   = edMap[a.editor_id].nombre || a.autor;
+          }
+        });
+      } catch(e) {}
+    }
+
+    const result = arts;
     try {
       sessionStorage.setItem('_lae_' + key, JSON.stringify({ data: result, ts: Date.now() }));
     } catch(e) {}
@@ -872,7 +892,11 @@ function _artSlug(titulo) {
    Usa fecha_publicacion si existe, si no created_at.
    ═══════════════════════════════════════════════════════════════ */
 function fmtFecha(a, modo = 'corto') {
-  const iso = a?.fecha_publicacion || a?.created_at;
+  /* modo 'largo' = hero artículo → fecha_publicacion
+     modo 'corto' = cards         → created_at        */
+  const iso = modo === 'largo'
+    ? (a?.fecha_publicacion || a?.created_at)
+    : (a?.created_at || a?.fecha_publicacion);
   if (!iso) return '';
   const d = new Date(iso);
   if (isNaN(d)) return '';

@@ -707,7 +707,7 @@ async function _renderHero(cfg,numActivo,secciones,pubs){
     if(portada.editor_id){
       SB.select('editores','id=eq.'+portada.editor_id).then(function(eds){
         var ed=eds&&eds[0]||null;
-        if(ed) _renderChip(ed.foto_url||'', ed.slug||ed.id||'');
+        if(ed){ _nombre=ed.nombre||_nombre; _renderChip(ed.foto_url||'', ed.slug||ed.id||''); }
       }).catch(function(){});
     }
   }
