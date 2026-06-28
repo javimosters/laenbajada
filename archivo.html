@@ -6,12 +6,13 @@
   <meta name="theme-color" content="#0C0B09">
   <link rel="icon" type="image/png" href="/assets/logo.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="canonical" href="https://laenbajada.com/archivo">
   <meta name="description" content="Archivo de todas las ediciones de La Enbajada. Cada número, cada voz del Caribe colombiano.">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Archivo — La Enbajada">
   <meta property="og:description" content="Archivo de todas las ediciones de La Enbajada. Cada número, cada voz del Caribe colombiano.">
   <meta property="og:image" content="https://laenbajada.com/assets/og-image.jpg">
-  <meta property="og:url" content="https://laenbajada.com/">
+  <meta property="og:url" content="https://laenbajada.com/archivo">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Archivo — La Enbajada">
   <meta name="twitter:description" content="Archivo de todas las ediciones de La Enbajada. Cada número, cada voz del Caribe colombiano.">
@@ -157,6 +158,8 @@ html.dark .arch-num-card { background:var(--surface); }
 .search-modal-empty { padding:48px 0; text-align:center; font-family:var(--serif); font-size:clamp(18px,2vw,24px); font-style:italic; color:var(--t3); }
 html.dark .search-modal { background:var(--bg); }
 </style>
+  <link rel="preconnect" href="https://pkilwzcypcyhxjuknkho.supabase.co" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 </head>
 <body>
 <noscript>
@@ -172,32 +175,32 @@ html.dark .search-modal { background:var(--bg); }
 
 <header class="site-header" id="site-header">
   <div class="header-inner">
-    <a href="index.html" class="logo-wrap"><img src="/assets/logo.png" alt="" class="logo-img" onerror="this.style.display='none'"><div class="logo-text-group"><span class="logo-name js-logo-name">La Enbajada</span><span class="logo-tag js-logo-tag">Aterrizamos la Cultura</span></div></a>
+    <a href="/" class="logo-wrap"><img src="/assets/logo.png" alt="" class="logo-img" onerror="this.style.display='none'"><div class="logo-text-group"><span class="logo-name js-logo-name">La Enbajada</span><span class="logo-tag js-logo-tag">Aterrizamos la Cultura</span></div></a>
     <nav class="nav-left" id="nav-secciones" aria-label="Navegación principal">
-      <a href="index.html">Inicio</a>
+      <a href="/">Inicio</a>
       <a href="/edicion.html">Edición actual</a>
       <span id="nav-secs-dyn"></span>
-      <a href="archivo.html" class="nav-activo">Archivo</a>
-      <a href="sobre.html">Nosotros</a>
+      <a href="/archivo.html" class="nav-activo">Archivo</a>
+      <a href="/sobre.html">Nosotros</a>
     </nav>
     <div class="header-spacer"></div>
     <nav class="nav-right">
       <div class="nav-search-wrap" id="search-wrap"><button class="nav-search-icon" id="search-icon-btn" onclick="openSearch()" aria-label="Buscar" aria-expanded="false"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button></div>
       <a class="nav-ig-btn js-footer-ig" href="https://instagram.com/laenbajada" target="_blank" rel="noopener" aria-label="Instagram"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
-      <a href="index.html#sec-boletin" class="nav-cta">Suscribirse<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      <a href="/#sec-boletin" class="nav-cta">Suscribirse<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
       <button class="hamburger" id="hamburger-btn" onclick="toggleMenu()" aria-label="Menú"><div class="hamburger-icon"><span></span><span></span><span></span></div></button>
     </nav>
   </div>
   <nav class="mobile-menu" id="mobile-menu">
-    <a href="index.html">Inicio</a>
+    <a href="/">Inicio</a>
     <a href="/edicion.html">Edición actual</a>
     <div class="mm-sep"></div>
     <div id="mm-secs-dyn"></div>
     <div class="mm-sep"></div>
-    <a href="archivo.html" class="nav-activo">Archivo</a>
-    <a href="sobre.html">Nosotros</a>
+    <a href="/archivo.html" class="nav-activo">Archivo</a>
+    <a href="/sobre.html">Nosotros</a>
     <div class="mm-sep"></div>
-    <a href="index.html#sec-boletin" class="mm-cta">Suscribirse →</a>
+    <a href="/#sec-boletin" class="mm-cta">Suscribirse →</a>
   </nav>
 </header>
 
@@ -253,8 +256,8 @@ html.dark .search-modal { background:var(--bg); }
     <div class="footer-cols">
       <div class="footer-col"><h5>La Revista</h5><ul>
         <li><a href="/edicion.html">Edición actual</a></li>
-        <li><a href="archivo.html">Archivo</a></li>
-        <li><a href="sobre.html">Nosotros</a></li>
+        <li><a href="/archivo.html">Archivo</a></li>
+        <li><a href="/sobre.html">Nosotros</a></li>
       </ul></div>
       <div class="footer-col"><h5>Secciones</h5><ul><li id="footer-secs-dyn"></li></ul></div>
       <div class="footer-col"><h5>Contacto</h5><ul>
@@ -305,9 +308,10 @@ function _esc(s){
 }
 
 function articuloUrl(a) {
-  if (!a) return '/';
-  var slug = a.slug || (a.titulo||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  return slug ? '/historias/' + slug : '/articulo.html?id=' + encodeURIComponent(a.id);
+  if (a.slug) return 'articulo.html?slug=' + encodeURIComponent(a.slug);
+  var _s = (a.titulo || '').toLowerCase().normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return 'articulo.html?slug=' + _s;
 }
 (()=>{const h=document.getElementById('site-header');window.addEventListener('scroll',()=>h?.classList.toggle('scrolled',window.scrollY>20),{passive:true});})();
 

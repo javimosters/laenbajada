@@ -201,6 +201,9 @@ input, textarea, select, button { max-width: 100% }
 .search-modal-empty { padding:48px 0; text-align:center; font-family:var(--serif); font-size:clamp(18px,2vw,24px); font-style:italic; color:var(--t3); }
 html.dark .search-modal { background:var(--bg); }
 </style>
+  <link rel="preconnect" href="https://pkilwzcypcyhxjuknkho.supabase.co" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="canonical" href="https://laenbajada.com/secciones.html">
 </head>
 <body>
 <noscript>
@@ -218,20 +221,20 @@ html.dark .search-modal { background:var(--bg); }
 
 <header class="site-header" id="site-header">
   <div class="header-inner">
-    <a href="index.html" class="logo-wrap">
-      <img src="/assets/logo.png" alt="" class="logo-img" onerror="this.style.display='none'">
+    <a href="/" class="logo-wrap">
+      <img loading="lazy" src="/assets/logo.png" alt="" class="logo-img" onerror="this.style.display='none'">
       <div class="logo-text-group">
         <span class="logo-name js-logo-name">La Enbajada</span>
         <span class="logo-tag js-logo-tag">Aterrizamos la Cultura</span>
       </div>
     </a>
     <nav class="nav-left">
-      <a href="index.html">Inicio</a>
+      <a href="/">Inicio</a>
       <a href="/edicion.html">Edición actual</a>
       <!-- secciones dinámicas —la activa se marca en JS -->
       <span id="nav-secs-dyn"></span>
-      <a href="archivo.html">Archivo</a>
-      <a href="sobre.html">Nosotros</a>
+      <a href="/archivo.html">Archivo</a>
+      <a href="/sobre.html">Nosotros</a>
     </nav>
     <div class="header-spacer"></div>
     <nav class="nav-right">
@@ -243,22 +246,22 @@ html.dark .search-modal { background:var(--bg); }
       <a class="nav-ig-btn js-footer-ig" href="https://instagram.com/laenbajada" target="_blank" rel="noopener" aria-label="Instagram">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
       </a>
-      <a href="index.html#sec-boletin" class="nav-cta">Suscribirse<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      <a href="/#sec-boletin" class="nav-cta">Suscribirse<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
       <button class="hamburger" id="hamburger-btn" onclick="toggleMenu()" aria-label="Menú">
         <div class="hamburger-icon"><span></span><span></span><span></span></div>
       </button>
     </nav>
   </div>
   <nav class="mobile-menu" id="mobile-menu">
-    <a href="index.html">Inicio</a>
+    <a href="/">Inicio</a>
     <a href="/edicion.html">Edición actual</a>
     <div class="mm-sep"></div>
     <div id="mm-secs-dyn"></div>
     <div class="mm-sep"></div>
-    <a href="archivo.html">Archivo</a>
-    <a href="sobre.html">Nosotros</a>
+    <a href="/archivo.html">Archivo</a>
+    <a href="/sobre.html">Nosotros</a>
     <div class="mm-sep"></div>
-    <a href="index.html#sec-boletin" class="mm-cta">Suscribirse →</a>
+    <a href="/#sec-boletin" class="mm-cta">Suscribirse →</a>
   </nav>
 </header>
 
@@ -298,8 +301,8 @@ html.dark .search-modal { background:var(--bg); }
     <div class="footer-cols">
       <div class="footer-col"><h5>La Revista</h5><ul>
         <li><a href="/edicion.html">Edición actual</a></li>
-        <li><a href="archivo.html">Archivo</a></li>
-        <li><a href="sobre.html">Nosotros</a></li>
+        <li><a href="/archivo.html">Archivo</a></li>
+        <li><a href="/sobre.html">Nosotros</a></li>
       </ul></div>
       <div class="footer-col"><h5>Secciones</h5><ul><li id="footer-secs-dyn"></li></ul></div>
       <div class="footer-col"><h5>Contacto</h5><ul>
@@ -368,9 +371,10 @@ const POR_PAG = 12;
 let _page = 0;
 
 function articuloUrl(a) {
-  if (!a) return '/';
-  var slug = a.slug || (a.titulo||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  return slug ? '/historias/' + slug : '/articulo.html?id=' + encodeURIComponent(a.id);
+  if (a.slug) return 'articulo.html?slug=' + encodeURIComponent(a.slug);
+  var _s = (a.titulo || '').toLowerCase().normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return 'articulo.html?slug=' + _s;
 }
 
 /* Header scroll */
@@ -381,7 +385,7 @@ function openSearch(){const modal=document.getElementById('search-modal');const 
 function closeSearch(){const modal=document.getElementById('search-modal');const input=document.getElementById('search-modal-input');const hint=document.getElementById('search-modal-hint');const res=document.getElementById('search-modal-results');modal.classList.remove('open');document.body.style.overflow='';document.getElementById('search-icon-btn').setAttribute('aria-expanded','false');if(input)input.value='';if(hint)hint.textContent='Escribe para buscar';if(res)res.innerHTML='';}
 function _searchModalKey(e){if(e.key==='Escape')closeSearch();}
 let _smTimer=null;function _searchModal(q){clearTimeout(_smTimer);_smTimer=setTimeout(()=>_doSearchModal(q),240);}
-async function _doSearchModal(q){const hint=document.getElementById('search-modal-hint');const res=document.getElementById('search-modal-results');if(!res)return;const v=(q||'').trim();if(v.length<2){if(hint)hint.textContent='Escribe para buscar';res.innerHTML='';return;}if(hint)hint.textContent='Buscando…';const arts=await DB.buscar(v).catch(()=>[]);if(!arts.length){if(hint)hint.textContent=`Sin resultados para "${v}"`;res.innerHTML=`<div class="search-modal-empty">No encontramos nada para <em>"${v}"</em></div>`;return;}if(hint)hint.textContent=`${arts.length} resultado${arts.length!==1?'s':''} encontrado${arts.length!==1?'s':''}`;res.innerHTML=`<div class="search-results-grid">${arts.map(a=>`<a class="search-result-card" href="${articuloUrl(a)}" onclick="closeSearch()"><div class="search-result-img">${a.imagen_url?`<img src="${a.imagen_url}" alt="${a.titulo}" loading="lazy">`:''}<div class="search-result-img-ov"><div class="search-result-cat">${a.seccion_tag||'La Enbajada'}</div></div></div><div class="search-result-titulo">${a.titulo}</div><div class="search-result-meta">${a.autor||''} · N.º ${a.numero_id||''}</div></a>`).join('')}</div>`;}
+async function _doSearchModal(q){const hint=document.getElementById('search-modal-hint');const res=document.getElementById('search-modal-results');if(!res)return;const v=(q||'').trim();if(v.length<2){if(hint)hint.textContent='Escribe para buscar';res.innerHTML='';return;}if(hint)hint.textContent='Buscando…';const arts=await DB.buscar(v).catch(()=>[]);if(!arts.length){if(hint)hint.textContent=`Sin resultados para "${v}"`;res.innerHTML=`<div class="search-modal-empty">No encontramos nada para <em>"${v}"</em></div>`;return;}if(hint)hint.textContent=`${arts.length} resultado${arts.length!==1?'s':''} encontrado${arts.length!==1?'s':''}`;res.innerHTML=`<div class="search-results-grid">${arts.map(a=>`<a class="search-result-card" href="${articuloUrl(a)}" onclick="closeSearch()"><div class="search-result-img">${a.imagen_url?`<img src="${a.imagen_url}" alt="${a.titulo}" loading="lazy">`:''}<div class="search-result-img-ov"><div class="search-result-cat">${a.seccion_tag||'La Enbajada'}</div></div></div><div class="search-result-titulo">${a.titulo}</div><div class="search-result-meta">${a.autor||''} · N.º ${a.numero_id||""}${fmtFecha(a)?' · '+fmtFecha(a):''}</div></a>`).join('')}</div>`;}
 document.getElementById('search-modal')?.addEventListener('click',function(e){if(e.target===this)closeSearch();});
 function toggleMenu(){const h=document.getElementById('site-header'),m=document.getElementById('mobile-menu'),b=document.getElementById('hamburger-btn'),o=m.classList.toggle('open');h.classList.toggle('menu-open',o);b.setAttribute('aria-expanded',o);document.body.style.overflow=o?'hidden':'';}
 document.addEventListener('click',e=>{const h=document.getElementById('site-header');if(h&&!h.contains(e.target)){document.getElementById('mobile-menu')?.classList.remove('open');h.classList.remove('menu-open');document.body.style.overflow='';}});
@@ -543,7 +547,7 @@ function _renderPage() {
           <div class="curatia-tipo">${_tagANombre(a.seccion_tag)}</div>
           <div class="curatia-titulo">${a.titulo}</div>
           ${a.subtitulo?`<div class="curatia-desc">${a.subtitulo}</div>`:''}
-          <div class="curatia-meta">${a.autor||''}${a.numero_id?` · N.º ${a.numero_id}`:''}</div>
+          <div class="curatia-meta">${a.autor||''}${a.numero_id?` · N.º ${a.numero_id}`:''}${fmtFecha(a)?' · '+fmtFecha(a):''}</div>
         </div>
       </a>`).join('')}
   </div>`;
@@ -581,7 +585,7 @@ async function init() {
 
   const [secs, arts] = await Promise.all([
     DB.getSecciones().catch(() => []),
-    DB.getArticulos().then(a => a.filter(x => x.estado === 'publicado')).catch(() => []),
+    DB.getPublicados().catch(() => []),   /* ya filtra publicados en Supabase */
   ]);
 
   /* Fuente de verdad 100% Supabase.

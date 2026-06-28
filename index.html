@@ -10,7 +10,8 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="La Enbajada" id="og-title">
 <meta property="og:description" content="" id="og-desc">
-<meta property="og:image" content="" id="og-image">
+<meta property="og:url" content="https://laenbajada.com/">
+  <meta property="og:image" content="" id="og-image">
 <meta name="theme-color" content="#0C0B09">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://laenbajada.com/" id="canonical">
@@ -358,19 +359,19 @@ input, textarea, select, button { max-width: 100% }
 <!-- ══ HEADER ══ -->
 <header class="site-header" id="site-header">
   <div class="header-inner">
-    <a href="index.html" class="logo-wrap" aria-label="La Enbajada — Inicio">
-      <img src="/assets/logo.png" alt="" class="logo-img" id="site-logo" onerror="this.style.display='none'">
+    <a href="/" class="logo-wrap" aria-label="La Enbajada — Inicio">
+      <img src="/assets/logo.png" alt="" loading="eager" class="logo-img" id="site-logo" onerror="this.style.display='none'">
       <div class="logo-text-group">
         <span class="logo-name js-logo-name"></span>
         <span class="logo-tag js-logo-tag"></span>
       </div>
     </a>
     <nav class="nav-left" id="nav-secciones" aria-label="Navegación principal">
-      <a href="index.html" class="nav-activo">Inicio</a>
-      <a href="edicion.html">Edición actual</a>
+      <a href="/" class="nav-activo">Inicio</a>
+      <a href="/edicion.html">Edición actual</a>
       <span id="nav-secs-dyn"></span>
-      <a href="archivo.html">Archivo</a>
-      <a href="sobre.html">Nosotros</a>
+      <a href="/archivo.html">Archivo</a>
+      <a href="/sobre.html">Nosotros</a>
     </nav>
     <div class="header-spacer"></div>
     <nav class="nav-right" aria-label="Acciones">
@@ -390,13 +391,13 @@ input, textarea, select, button { max-width: 100% }
     </nav>
   </div>
   <nav class="mobile-menu" id="mobile-menu" aria-label="Menú móvil">
-    <a href="index.html" class="nav-activo">Inicio</a>
-    <a href="edicion.html" id="mm-edicion">Edición actual</a>
+    <a href="/" class="nav-activo">Inicio</a>
+    <a href="/edicion.html" id="mm-edicion">Edición actual</a>
     <div class="mm-sep"></div>
     <div id="mm-secs-dyn"></div>
     <div class="mm-sep"></div>
-    <a href="archivo.html">Archivo</a>
-    <a href="sobre.html">Nosotros</a>
+    <a href="/archivo.html">Archivo</a>
+    <a href="/sobre.html">Nosotros</a>
     <div class="mm-sep"></div>
     <a href="#sec-boletin" class="mm-cta" onclick="closeMobileMenu()">Suscribirse →</a>
   </nav>
@@ -454,7 +455,7 @@ input, textarea, select, button { max-width: 100% }
   <section class="idx-numeros" id="sec-numeros" aria-label="Ediciones">
     <div class="idx-num-hdr">
       <h2 class="idx-num-titulo" id="idx-num-titulo"></h2>
-      <a href="archivo.html" class="idx-num-ver">Ver archivo</a>
+      <a href="/archivo.html" class="idx-num-ver">Ver archivo</a>
     </div>
     <div class="idx-num-grid reveal" id="idx-num-grid"></div>
   </section>
@@ -493,9 +494,9 @@ input, textarea, select, button { max-width: 100% }
       <div class="footer-col">
         <h5>La Revista</h5>
         <ul>
-          <li><a href="edicion.html">Edición actual</a></li>
-          <li><a href="archivo.html">Archivo</a></li>
-          <li><a href="sobre.html">Nosotros</a></li>
+          <li><a href="/edicion.html">Edición actual</a></li>
+          <li><a href="/archivo.html">Archivo</a></li>
+          <li><a href="/sobre.html">Nosotros</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -605,7 +606,7 @@ async function _doSearch(q){
   var arts=await DB.buscar(v).catch(function(){return[]});
   if(!arts.length){if(hint)hint.textContent='Sin resultados para "'+_esc(v)+'"';res.innerHTML='<div class="search-modal-empty">No encontramos nada para <em>"'+_esc(v)+'"</em></div>';return}
   if(hint)hint.textContent=arts.length+' resultado'+(arts.length!==1?'s':'');
-  res.innerHTML='<div class="search-results-grid">'+arts.map(function(a){return'<a class="search-result-card" href="'+articuloUrl(a)+'" onclick="closeSearch()"><div class="search-result-img">'+(a.imagen_url?'<img src="'+_esc(a.imagen_url)+'" alt="'+_esc(a.titulo)+'" loading="lazy">':'')+'<div class="search-result-img-ov"><div class="search-result-cat">'+_esc(a.seccion_tag||'')+'</div></div></div><div class="search-result-titulo">'+_esc(a.titulo)+'</div><div class="search-result-meta">'+_esc(a.autor||'')+' · N.º '+(a.numero_id||'')+'</div></a>'}).join('')+'</div>';
+  res.innerHTML='<div class="search-results-grid">'+arts.map(function(a){return'<a class="search-result-card" href="'+articuloUrl(a)+'" onclick="closeSearch()"><div class="search-result-img">'+(a.imagen_url?'<img src="'+_esc(a.imagen_url)+'" alt="'+_esc(a.titulo)+'" loading="lazy">':'')+'<div class="search-result-img-ov"><div class="search-result-cat">'+_esc(a.seccion_tag||'')+'</div></div></div><div class="search-result-titulo">'+_esc(a.titulo)+'</div><div class="search-result-meta">'+_esc(a.autor||'')+' · N.º '+(a.numero_id||'')+(fmtFecha(a)?' · '+fmtFecha(a):'')+' </div></a>'}).join('')+'</div>';
 }
 
 /* ════════════════════════════════════════
@@ -695,9 +696,9 @@ async function _renderHero(cfg,numActivo,secciones,pubs){
       var _fotoEl=foto
         ?'<img class="idx-hero-autor-foto" src="'+_esc(foto)+'" alt="'+_esc(_nombre)+'" loading="lazy">'
         :'<div class="idx-hero-autor-ph">'+_init+'</div>';
-      var _inner=_fotoEl+'<div class="idx-hero-autor-info"><span class="idx-hero-autor-nombre">'+_esc(_nombre)+'</span>'+(_num?'<span class="idx-hero-autor-num">N.º '+_esc(String(_num))+'</span>':'')+'</div>';
+      var _inner=_fotoEl+'<div class="idx-hero-autor-info"><span class="idx-hero-autor-nombre">'+_esc(_nombre)+'</span>'+(_num?'<span class="idx-hero-autor-num">N.º '+_esc(String(_num))+(fmtFecha(p)?' · '+fmtFecha(p):'')+'</span>':'')+'</div>';
       autEl.innerHTML=slug
-        ?'<a class="idx-hero-autor-chip" href="editor.html?slug='+_esc(slug)+'" onclick="event.stopPropagation()">'+_inner+'</a>'
+        ?'<a class="idx-hero-autor-chip" href="/editor.html?slug='+_esc(slug)+'" onclick="event.stopPropagation()">'+_inner+'</a>'
         :'<span class="idx-hero-autor-chip">'+_inner+'</span>';
     };
     /* Render inmediato con lo que tenemos (sin foto aún) */
@@ -750,7 +751,7 @@ function _renderGrid(arts,excluirIds,secciones,maxArts,cols){
       '<div class="idx-art-num">'+_esc(sn)+'</div>'+
       '<h3 class="idx-art-titulo">'+_esc(a.titulo)+'</h3>'+
       (a.subtitulo?'<p class="idx-art-sub">'+_esc(a.subtitulo)+'</p>':'')+
-      '<div class="idx-art-meta">'+_esc(a.autor||'')+(a.numero_id?' <span>·</span> N.º '+(a.numero_id||''):'')+'</div>'+
+      '<div class="idx-art-meta">'+_esc(a.autor||'')+(a.numero_id?' <span>·</span> N.º '+(a.numero_id||''):'')+(fmtFecha(a)?' <span>·</span> '+fmtFecha(a):'')+'</div>'+
       '</div></a>';
   }).join('');
 }
@@ -779,7 +780,7 @@ function _renderNumeros(nums,idxCfg){
   grid.innerHTML=nums.slice(0,6).map(function(n){
     var isActivo=n.id===activo?.id;
     var esNav=n.estado!=='proximo';
-    var href=esNav?'edicion.html?num='+n.id:'#';
+    var href=esNav?'/ediciones/'+n.id:'#';
     var np=String(n.id).padStart(2,'0');
     var imgOk=n.imagen_url&&(n.imagen_url.startsWith('http')||n.imagen_url.startsWith('data:'));
     var eLabel=isActivo?'Edición actual':n.estado==='proximo'?'Próximamente':'Archivada';

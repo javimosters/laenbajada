@@ -275,6 +275,9 @@ input, textarea, select, button { max-width: 100% }
 .search-modal-empty { padding:48px 0; text-align:center; font-family:var(--serif); font-size:clamp(18px,2vw,24px); font-style:italic; color:var(--t3); }
 html.dark .search-modal { background: var(--bg); }
 </style>
+  <link rel="preconnect" href="https://pkilwzcypcyhxjuknkho.supabase.co" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="canonical" href="https://laenbajada.com/edicion.html">
 </head>
 <body>
 <noscript>
@@ -292,20 +295,20 @@ html.dark .search-modal { background: var(--bg); }
 
 <header class="site-header" id="site-header">
   <div class="header-inner">
-    <a href="index.html" class="logo-wrap">
-      <img src="/assets/logo.png" alt="" class="logo-img" onerror="this.style.display='none'">
+    <a href="/" class="logo-wrap">
+      <img loading="lazy" src="/assets/logo.png" alt="" class="logo-img" onerror="this.style.display='none'">
       <div class="logo-text-group">
         <span class="logo-name js-logo-name">La Enbajada</span>
         <span class="logo-tag js-logo-tag">Aterrizamos la Cultura</span>
       </div>
     </a>
     <nav class="nav-left">
-      <a href="index.html">Inicio</a>
+      <a href="/">Inicio</a>
       <a href="/edicion.html" class="nav-activo">Edición actual</a>
       <!-- secciones dinámicas -->
       <span id="nav-secs-dyn"></span>
-      <a href="archivo.html">Archivo</a>
-      <a href="sobre.html">Nosotros</a>
+      <a href="/archivo.html">Archivo</a>
+      <a href="/sobre.html">Nosotros</a>
     </nav>
     <div class="header-spacer"></div>
     <nav class="nav-right">
@@ -317,22 +320,22 @@ html.dark .search-modal { background: var(--bg); }
       <a class="nav-ig-btn js-footer-ig" href="https://instagram.com/laenbajada" target="_blank" rel="noopener" aria-label="Instagram">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
       </a>
-      <a href="index.html#sec-boletin" class="nav-cta">Suscribirse<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      <a href="/#sec-boletin" class="nav-cta">Suscribirse<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
       <button class="hamburger" id="hamburger-btn" onclick="toggleMenu()" aria-label="Menú">
         <div class="hamburger-icon"><span></span><span></span><span></span></div>
       </button>
     </nav>
   </div>
   <nav class="mobile-menu" id="mobile-menu">
-    <a href="index.html">Inicio</a>
+    <a href="/">Inicio</a>
     <a href="/edicion.html" class="nav-activo">Edición actual</a>
     <div class="mm-sep"></div>
     <div id="mm-secs-dyn"></div>
     <div class="mm-sep"></div>
-    <a href="archivo.html">Archivo</a>
-    <a href="sobre.html">Nosotros</a>
+    <a href="/archivo.html">Archivo</a>
+    <a href="/sobre.html">Nosotros</a>
     <div class="mm-sep"></div>
-    <a href="index.html#sec-boletin" class="mm-cta">Suscribirse →</a>
+    <a href="/#sec-boletin" class="mm-cta">Suscribirse →</a>
   </nav>
 </header>
 
@@ -417,8 +420,8 @@ html.dark .search-modal { background: var(--bg); }
     <div class="footer-cols">
       <div class="footer-col"><h5>La Revista</h5><ul>
         <li><a href="/edicion.html">Edición actual</a></li>
-        <li><a href="archivo.html">Archivo</a></li>
-        <li><a href="sobre.html">Nosotros</a></li>
+        <li><a href="/archivo.html">Archivo</a></li>
+        <li><a href="/sobre.html">Nosotros</a></li>
       </ul></div>
       <div class="footer-col"><h5>Secciones</h5><ul><li id="footer-secs-dyn"></li></ul></div>
       <div class="footer-col"><h5>Contacto</h5><ul>
@@ -507,9 +510,10 @@ function _marcarLeidosEnGrid(selector) {
 let _SECCIONES = [];  /* Se llena en init() desde Supabase */
 
 function articuloUrl(a) {
-  if (!a) return '/';
-  var slug = a.slug || (a.titulo||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  return slug ? '/historias/' + slug : '/articulo.html?id=' + encodeURIComponent(a.id);
+  if (a.slug) return 'articulo.html?slug=' + encodeURIComponent(a.slug);
+  var _s = (a.titulo || '').toLowerCase().normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return 'articulo.html?slug=' + _s;
 }
 
 (()=>{ const h=document.getElementById('site-header'); window.addEventListener('scroll',()=>h?.classList.toggle('scrolled',window.scrollY>20),{passive:true}); })();
@@ -565,7 +569,7 @@ async function _doSearchModal(q) {
           </div>
         </div>
         <div class="search-result-titulo">${a.titulo}</div>
-        <div class="search-result-meta">${a.autor || ''} · N.º ${a.numero_id || ''}</div>
+        <div class="search-result-meta">${a.autor || ''} · N.º ${a.numero_id || ''}${fmtFecha(a)?' · '+fmtFecha(a):''}</div>
       </a>`).join('')}
   </div>`;
 }
@@ -583,7 +587,7 @@ function _renderArtCard(a) {
       <div class="ed-art-cat">${a.seccion_tag||''}</div>
       <div class="ed-art-titulo">${a.titulo}</div>
       ${a.subtitulo?`<div class="ed-art-sub">${a.subtitulo}</div>`:''}
-      <div class="ed-art-meta"><span>${a.autor||''}</span></div>
+      <div class="ed-art-meta"><span>${a.autor||''}</span>${fmtFecha(a)?'<span>·</span><span>'+fmtFecha(a)+'</span>':''}</div>
     </div>
   </a>`;
 }
@@ -595,7 +599,7 @@ function _renderConvItem(a) {
       <div class="ed-conv-cat">${a.seccion_tag||''}</div>
       <div class="ed-conv-titulo">${a.titulo}</div>
       ${a.subtitulo?`<div class="ed-conv-sub">${a.subtitulo}</div>`:''}
-      <div class="ed-conv-meta">${a.autor||''}</div>
+      <div class="ed-conv-meta">${a.autor||''}${fmtFecha(a)?' · '+fmtFecha(a):''}</div>
     </div>
   </a>`;
 }
@@ -683,7 +687,7 @@ function renderCuratiaCard(a) {
       <div class="curatia-tipo">${secNombre}</div>
       <div class="curatia-titulo">${a.titulo}</div>
       ${a.subtitulo?`<div class="curatia-desc">${a.subtitulo}</div>`:''}
-      <div class="curatia-meta">${a.autor||''}</div>
+      <div class="curatia-meta">${a.autor||''}${fmtFecha(a)?' · '+fmtFecha(a):''}</div>
     </div>
   </a>`;
 }
@@ -733,9 +737,10 @@ async function init() {
   const params = new URLSearchParams(location.search);
   const numParam = params.get('num');
 
-  const [nums, cfg] = await Promise.all([
+  const [nums, cfg, _artsEdPre] = await Promise.all([
     DB.getNumeros(),
     DB.getConfig(),
+    DB.getPublicados(),   /* precarga artículos en paralelo */
   ]);
 
   const num = numParam ? nums.find(n=>n.id===numParam) : (nums.find(n=>n.estado==='edicion-actual') || nums.find(n=>n.estado==='activo') || nums[0]);

@@ -8,35 +8,18 @@ const SUPA_URL = 'https://pkilwzcypcyhxjuknkho.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraWx3emN5cGN5aHhqdWtua2hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNDE1NTksImV4cCI6MjA5MDgxNzU1OX0.fAhepDbj2p1JEbHzZvD1ZqwAK95OskE-CRxF4gqgIrg';
 
 /* ═══════════════════════════════════════════════════════════════
-   normTag(v) — Normaliza CUALQUIER formato de seccion_tag.
-   Funciona sin importar cómo esté guardado en Supabase:
-     'La-Cronica'  → 'la-cronica'
-     '#la-cronica' → 'la-cronica'
-     'Cronica'     → 'la-cronica'
-     'Curatia'     → 'la-curaturia'   (alias viejo)
-     'Curaturia'   → 'la-curaturia'
-     'la-curatia'  → 'la-curaturia'   (alias viejo con prefijo)
-   REGLA: Siempre comparar con normTag() en AMBOS lados.
+   normTag(v) — Normaliza el formato de seccion_tag.
+   Las secciones son dinámicas (viven en la tabla `secciones`).
+   Solo limpia el formato: minúsculas, sin #, espacios → guiones.
    ═══════════════════════════════════════════════════════════════ */
 function normTag(v) {
-  if (!v) return 'la-cronica';
-  const s = String(v)
+  if (!v) return '';
+  return String(v)
     .toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
     .replace(/#/g,'')
     .replace(/\s+/g,'-')
     .trim();
-  const aliases = {
-    'cronica'       : 'la-cronica',
-    'conversacion'  : 'la-conversacion',
-    'curatia'       : 'la-curaturia',
-    'curaturia'     : 'la-curaturia',
-    'la-curatia'    : 'la-curaturia',
-    'la-curaturia'  : 'la-curaturia',
-    'la-cronica'    : 'la-cronica',
-    'la-conversacion': 'la-conversacion',
-  };
-  return aliases[s] || s;
 }
 
 /* ── Cliente Supabase mínimo (sin SDK — fetch directo) ────────── */
@@ -165,9 +148,6 @@ function _validarArticulo(data) {
   const estadosValidos = ['borrador','publicado','archivado'];
   if (data.estado && !estadosValidos.includes(data.estado))
     errs.push('Estado inválido');
-  const tiposValidos = ['cronica','conversacion','curatia','custom'];
-  if (data.tipo && !tiposValidos.includes(data.tipo))
-    errs.push('Tipo inválido');
   return errs;
 }
 
@@ -329,7 +309,7 @@ const DB = {
       /* ── Misc ── */
       tituloArchivo:      idx.tituloArchivo      || 'Números de La Enbajada',
       tituloConversacion: idx.tituloConversacion || 'Voces de la edición',
-      tagSecBloque:       idx.tagSecBloque       || 'la-conversacion',
+      tagSecBloque:       idx.tagSecBloque       || '',
     };
   },
   async setIndexCfg(idx) {
@@ -346,7 +326,7 @@ const DB = {
     /* BUG FIX: Normalizar tags — quitar # y lowercase */
     const normalized = (rows || []).map(s => ({
       ...s,
-      tag: normTag(s.tag || s.nombre || 'la-cronica'),
+      tag: normTag(s.tag || s.nombre || ''),
     }));
     if (soloActivas) _cache.secciones = normalized;
     return normalized;
@@ -420,28 +400,31 @@ const DB = {
     const rows = await SB.select('articulos', filter);
     const normalized = (rows || []).map(a => ({
       ...a,
-      seccion_tag: normTag(a.seccion_tag || a.tipo || 'la-cronica'),
+      seccion_tag: normTag(a.seccion_tag || a.tipo || ''),
     }));
     _cache.articulos[key] = normalized;
     return _cache.articulos[key];
   },
   async getPublicados(numero_id) {
-    const ahora = new Date().toISOString();
     const key = 'pub_' + (numero_id || 'all');
     /* Caché en sessionStorage — persiste entre páginas en la misma sesión */
     try {
       const cached = sessionStorage.getItem('_lae_' + key);
       if (cached) {
         const { data, ts } = JSON.parse(cached);
-        /* Válido por 5 minutos */
         if (Date.now() - ts < 300000) return data;
       }
     } catch(e) {}
-    const all = await this.getArticulos(numero_id);
-    const result = all.filter(a =>
-      a.estado === 'publicado' &&
-      (!a.fecha_publicacion || a.fecha_publicacion <= ahora)
-    );
+    /* Filtrar publicados directo en Supabase — no bajar borradores al navegador */
+    const COLS = 'select=id,titulo,subtitulo,extracto,imagen_url,slug,estado,tipo,seccion_tag,numero_id,orden,autor,editor_id,created_at';
+    const ahora = new Date().toISOString();
+    const base = numero_id
+      ? `${COLS}&numero_id=eq.${numero_id}&estado=eq.publicado&order=orden.asc,created_at.desc`
+      : `${COLS}&estado=eq.publicado&order=orden.asc,created_at.desc`;
+    const rows = await SB.select('articulos', base);
+    const result = (rows || [])
+      .filter(a => !a.fecha_publicacion || a.fecha_publicacion <= ahora)
+      .map(a => ({ ...a, seccion_tag: normTag(a.seccion_tag || a.tipo || '') }));
     try {
       sessionStorage.setItem('_lae_' + key, JSON.stringify({ data: result, ts: Date.now() }));
     } catch(e) {}
@@ -882,6 +865,24 @@ function _artSlug(titulo) {
   return (titulo||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 }
 /* Genera URL limpia para un artículo */
+/* ═══════════════════════════════════════════════════════════════
+   fmtFecha(iso, modo) — Formatea fecha en español.
+   modo 'largo'  → '12 de junio de 2026'   (artículo hero)
+   modo 'corto'  → '12 jun 2026'            (cards)
+   Usa fecha_publicacion si existe, si no created_at.
+   ═══════════════════════════════════════════════════════════════ */
+function fmtFecha(a, modo = 'corto') {
+  const iso = a?.fecha_publicacion || a?.created_at;
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d)) return '';
+  const opts_base = { timeZone: 'America/Bogota' };
+  if (modo === 'largo') {
+    return d.toLocaleDateString('es-CO', { ...opts_base, day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  return d.toLocaleDateString('es-CO', { ...opts_base, day: 'numeric', month: 'short', year: 'numeric' });
+}
+
 function articuloUrl(a) {
   if (!a) return '/';
   const slug = a.slug || _artSlug(a.titulo || '');

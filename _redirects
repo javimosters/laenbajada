@@ -8,6 +8,7 @@ http://laenbajada.netlify.app/*   https://laenbajada.com/:splat  301!
 https://laenbajada.netlify.app/*  https://laenbajada.com/:splat  301!
 
 # ── URLs limpias para artículos ──
+/secciones/:tag    /secciones.html?sec=:tag    200
 /historias/:slug   /articulo.html?slug=:slug   200
 
 # ── URLs limpias para ediciones ──
@@ -15,6 +16,9 @@ https://laenbajada.netlify.app/*  https://laenbajada.com/:splat  301!
 
 # ── URLs limpias para secciones ──
 /secciones/:sec    /secciones.html?sec=:sec     200
+
+# ── URLs limpias para editores ──
+/editor/:slug      /editor.html?slug=:slug      200
 
 # ── Admin ──
 /admin             /admin.html                  200
