@@ -136,6 +136,10 @@ input, textarea, select, button { max-width: 100% }
 .idx-hero-autor-nombre{font-family:var(--ui);font-size:12px;font-weight:600;color:rgba(242,237,228,.8);letter-spacing:.03em;transition:color .18s}
 .idx-hero-autor-chip:hover .idx-hero-autor-nombre{color:#fff}
 .idx-hero-autor-num{font-family:var(--ui);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(242,237,228,.35)}
+.idx-hero-autor-cargo{font-family:var(--ui);font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(242,237,228,.45)}
+.idx-hero-autor-sep{font-family:var(--ui);font-size:11px;color:rgba(242,237,228,.3);margin:0 6px}
+.idx-hero-autor-fecha{font-family:var(--ui);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(242,237,228,.45)}
+.idx-hero-autor-chip{display:flex;align-items:center;gap:10px}
 .idx-hero-scroll{font-family:var(--ui);font-size:7.5px;font-weight:700;letter-spacing:.20em;text-transform:uppercase;color:rgba(242,237,228,.14);display:flex;align-items:center;gap:8px}
 .idx-hero-scroll::after{content:'↓';font-size:12px}
 /* Número fantasma — detrás, muy sutil */
@@ -691,12 +695,13 @@ async function _renderHero(cfg,numActivo,secciones,pubs){
   if(autEl){
     var _nombre=portada.autor||'';
     var _num=portada.numero_id;
-    var _renderChip=function(foto,slug){
+    var _renderChip=function(foto,slug,cargo){
       var _init=(_nombre||'?').split(' ').map(function(p){return p[0]||''}).join('').slice(0,2).toUpperCase();
       var _fotoEl=foto
         ?'<img class="idx-hero-autor-foto" src="'+_esc(foto)+'" alt="'+_esc(_nombre)+'" loading="lazy">'
         :'<div class="idx-hero-autor-ph">'+_init+'</div>';
-      var _inner=_fotoEl+'<div class="idx-hero-autor-info"><span class="idx-hero-autor-nombre">'+_esc(_nombre)+'</span>'+(_num?'<span class="idx-hero-autor-num">N.º '+_esc(String(_num))+(fmtFecha(portada)?' · '+fmtFecha(portada):'')+'</span>':'')+'</div>';
+      var _fecha=fmtFecha(portada,'largo');
+      var _inner=_fotoEl+'<div class="idx-hero-autor-info"><span class="idx-hero-autor-nombre">'+_esc(_nombre)+'</span>'+(cargo?'<span class="idx-hero-autor-cargo">'+_esc(cargo)+'</span>':'')+' </div>'+(_fecha?'<span class="idx-hero-autor-sep">·</span><span class="idx-hero-autor-fecha">'+_fecha+'</span>':'');
       autEl.innerHTML=slug
         ?'<a class="idx-hero-autor-chip" href="/editor.html?slug='+_esc(slug)+'" onclick="event.stopPropagation()">'+_inner+'</a>'
         :'<span class="idx-hero-autor-chip">'+_inner+'</span>';
@@ -707,7 +712,7 @@ async function _renderHero(cfg,numActivo,secciones,pubs){
     if(portada.editor_id){
       SB.select('editores','id=eq.'+portada.editor_id).then(function(eds){
         var ed=eds&&eds[0]||null;
-        if(ed){ _nombre=ed.nombre||_nombre; _renderChip(ed.foto_url||'', ed.slug||ed.id||''); }
+        if(ed){ _nombre=ed.nombre||_nombre; _renderChip(ed.foto_url||'', ed.slug||ed.id||'', ed.cargo||''); }
       }).catch(function(){});
     }
   }

@@ -409,7 +409,7 @@ const DB = {
     const key = 'pub_' + (numero_id || 'all');
     /* Caché en sessionStorage — persiste entre páginas en la misma sesión */
     try {
-      const cached = sessionStorage.getItem('_lae_' + key);
+      const cached = sessionStorage.getItem('_lae2_' + key);
       if (cached) {
         const { data, ts } = JSON.parse(cached);
         if (Date.now() - ts < 300000) return data;
@@ -446,7 +446,7 @@ const DB = {
 
     const result = arts;
     try {
-      sessionStorage.setItem('_lae_' + key, JSON.stringify({ data: result, ts: Date.now() }));
+      sessionStorage.setItem('_lae2_' + key, JSON.stringify({ data: result, ts: Date.now() }));
     } catch(e) {}
     return result;
   },
