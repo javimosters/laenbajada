@@ -407,6 +407,12 @@ const DB = {
   },
   async getPublicados(numero_id) {
     const key = 'pub_' + (numero_id || 'all');
+    /* Limpiar caches viejos con prefijos anteriores */
+    try {
+      ['_lae_','_lae2_'].forEach(old => {
+        Object.keys(sessionStorage).filter(k=>k.startsWith(old)).forEach(k=>sessionStorage.removeItem(k));
+      });
+    } catch(e) {}
     /* Caché en sessionStorage — persiste entre páginas en la misma sesión */
     try {
       const cached = sessionStorage.getItem('_lae2_' + key);
@@ -896,7 +902,7 @@ function fmtFecha(a, modo = 'corto') {
      modo 'corto' = cards         → created_at        */
   const iso = modo === 'largo'
     ? (a?.fecha_publicacion || a?.created_at)
-    : (a?.created_at || a?.fecha_publicacion);
+    : (a?.fecha_publicacion || a?.created_at);
   if (!iso) return '';
   const d = new Date(iso);
   if (isNaN(d)) return '';
