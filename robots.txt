@@ -5,6 +5,13 @@
 
 User-agent: *
 Allow: /
+Allow: /
+Allow: /secciones/
+Allow: /historias/
+Allow: /sobre/equipo/
+Allow: /ediciones/
+Allow: /archivo
+Allow: /sobre
 Allow: /articulo.html
 Allow: /edicion.html
 Allow: /secciones.html

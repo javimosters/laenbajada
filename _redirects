@@ -1,5 +1,5 @@
 # ══════════════════════════════════════════════════════════
-#  La Enbajada — Netlify Redirects v3
+#  La Enbajada — Netlify Redirects v4
 #  URLs limpias + SEO
 # ══════════════════════════════════════════════════════════
 
@@ -7,28 +7,40 @@
 http://laenbajada.netlify.app/*   https://laenbajada.com/:splat  301!
 https://laenbajada.netlify.app/*  https://laenbajada.com/:splat  301!
 
-# ── URLs limpias para artículos ──
-/secciones/:tag    /secciones.html?sec=:tag    200
-/historias/:slug   /articulo.html?slug=:slug   200
+# ── Archivos .html estáticos — PRIMERO para que no los capture el wildcard ──
+/articulo.html     /articulo.html               200
+/edicion.html      /edicion.html                200
+/secciones.html    /secciones.html              200
+/archivo.html      /archivo.html                200
+/sobre.html        /sobre.html                  200
+/editor.html       /editor.html                 200
+/admin.html        /admin.html                  200
+/404.html          /404.html                    200
+/index.html        /index.html                  200
+
+# ── URLs limpias para artículos: /secciones/{tag}/{slug} ──
+/secciones/:tag/:slug  /articulo.html?slug=:slug&sec=:tag  200
+
+# ── URLs limpias para secciones: /secciones/{tag} ──
+/secciones/:tag    /secciones.html?sec=:tag     200
 
 # ── URLs limpias para ediciones ──
-/ediciones/:num    /edicion.html?num=:num       200
-
-# ── URLs limpias para secciones ──
-/secciones/:sec    /secciones.html?sec=:sec     200
+/ediciones/:num    /edicion.html?num=:num        200
 
 # ── URLs limpias para editores ──
-/editor/:slug      /editor.html?slug=:slug      200
+/sobre/equipo/:slug   /editor.html?slug=:slug   200
+
+# ── Legacy: /historias/:slug ──
+/historias/:slug   /articulo.html?slug=:slug    200
 
 # ── Admin ──
 /admin             /admin.html                  200
 
-# ── Rutas sin .html (compatibilidad) ──
+# ── Rutas sin .html ──
 /articulo          /articulo.html               301
 /edicion           /edicion.html                301
 /sobre             /sobre.html                  301
 /archivo           /archivo.html                301
-/editor            /editor.html                 301
 
 # ── 404 ──
 /*                 /404.html                    404

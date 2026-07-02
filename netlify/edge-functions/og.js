@@ -19,9 +19,20 @@ export default async (request, context) => {
   // Usuarios normales → archivo estático sin cambios
   if (!BOT_UA.test(ua)) return context.next();
 
-  const url  = new URL(request.url);
-  const slug = url.searchParams.get('slug') || url.searchParams.get('s') || '';
-  const id   = url.searchParams.get('id')   || '';
+  const url      = new URL(request.url);
+  const pathname = url.pathname; // ej: /secciones/historias/mi-articulo
+
+  /* Leer slug desde query string (?slug=) o desde pathname (/secciones/:tag/:slug) */
+  let slug = url.searchParams.get('slug') || url.searchParams.get('s') || '';
+  const id = url.searchParams.get('id') || '';
+
+  if (!slug && !id) {
+    /* Intentar extraer slug del pathname /secciones/:tag/:slug */
+    const parts = pathname.split('/').filter(Boolean);
+    if (parts[0] === 'secciones' && parts.length >= 3) {
+      slug = parts[2];
+    }
+  }
 
   if (!slug && !id) return context.next();
 
@@ -31,7 +42,7 @@ export default async (request, context) => {
 
   try {
     const res = await fetch(
-      `${SUPA_URL}/rest/v1/articulos?${filter}&select=titulo,extracto,subtitulo,imagen_url,autor,slug,id&limit=1`,
+      `${SUPA_URL}/rest/v1/articulos?${filter}&select=titulo,extracto,subtitulo,imagen_url,autor,slug,id,seccion_tag&limit=1`,
       {
         headers: {
           apikey:        SUPA_KEY,
@@ -46,7 +57,10 @@ export default async (request, context) => {
     if (!art)   return context.next();
 
     const artSlug = art.slug || art.id;
-    const artUrl  = `https://laenbajada.com/historias/${encodeURIComponent(artSlug)}`;
+    const artTag  = (art.seccion_tag||'').replace(/#/g,'').trim();
+    const artUrl  = artTag
+      ? `https://laenbajada.com/secciones/${artTag}/${encodeURIComponent(artSlug)}`
+      : `https://laenbajada.com/historias/${encodeURIComponent(artSlug)}`;
     const title   = `${art.titulo || 'Artículo'} — La Enbajada`;
     const desc    = art.subtitulo || art.extracto || 'Revista cultural del Caribe colombiano.';
     const image   = art.imagen_url || '';
@@ -92,4 +106,6 @@ ${imgTags}
   }
 };
 
-export const config = { path: '/articulo.html' };
+export const config = {
+  path: ['/articulo.html', '/secciones/:tag/:slug', '/historias/:slug'],
+};

@@ -166,7 +166,7 @@ const DB = {
       if (sc) {
         const { data, ts } = JSON.parse(sc);
         const age = Date.now() - ts;
-        if (age < 300000) { _cache.config = data; return data; }
+        if (age < 60000) { _cache.config = data; return data; }
         if (data) { _cache.config = data; this._refreshConfig(); return data; }
       }
     } catch(e) {}
@@ -228,6 +228,8 @@ const DB = {
     if (patch.sobre)     merged.sobre     = { ...(cfg.sobre     || {}), ...patch.sobre };
     if (patch.index_cfg) merged.index_cfg = { ...(cfg.index_cfg || {}), ...patch.index_cfg };
     _cache.config = null;
+    /* Limpiar localStorage para que el index vea cambios de inmediato */
+    try { localStorage.removeItem('_lae_cfg'); } catch(e) {}
 
     /* Solo enviamos las columnas que existen en la tabla */
     const payload = {
@@ -305,6 +307,7 @@ const DB = {
       metaDesc:       idx.metaDesc    || '',
       /* ── Grid y ticker ── */
       maxArtsGrid:    parseInt(idx.maxArtsGrid || idx.maxarts) || 9,
+      colsGrid:       parseInt(idx.colsGrid)                   || 3,
       maxTicker:      parseInt(idx.maxTicker)                  || 8,
       /* ── Misc ── */
       tituloArchivo:      idx.tituloArchivo      || 'Números de La Enbajada',
@@ -916,7 +919,16 @@ function fmtFecha(a, modo = 'corto') {
 function articuloUrl(a) {
   if (!a) return '/';
   const slug = a.slug || _artSlug(a.titulo || '');
-  return slug ? `/historias/${slug}` : `/articulo.html?id=${encodeURIComponent(a.id)}`;
+  const tag  = normTag(a.seccion_tag || '');
+  if (slug && tag) return `/secciones/${tag}/${slug}`;
+  if (slug)        return `/historias/${slug}`;  /* fallback legacy */
+  return `/articulo.html?id=${encodeURIComponent(a.id)}`;
+}
+
+function editorUrl(e) {
+  if (!e) return '#';
+  const slug = e.slug || e.id || '';
+  return slug ? `/sobre/equipo/${slug}` : '#';
 }
 /* Genera URL limpia para una edición */
 function edicionUrl(num) {

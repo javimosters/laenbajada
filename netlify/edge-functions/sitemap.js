@@ -26,13 +26,13 @@ function url(loc, priority, changefreq, lastmod) {
 export default async (request) => {
   try {
     const [resArts, resSecs, resNums] = await Promise.all([
-      fetch(`${SUPA_URL}/rest/v1/articulos?estado=eq.publicado&select=slug,updated_at,created_at&order=created_at.desc`, {
+      fetch(`${SUPA_URL}/rest/v1/articulos?estado=eq.publicado&select=slug,seccion_tag,updated_at,created_at&order=created_at.desc`, {
         headers: { apikey: SUPA_KEY, Authorization: `Bearer ${SUPA_KEY}` },
       }),
       fetch(`${SUPA_URL}/rest/v1/secciones?activa=eq.true&select=tag`, {
         headers: { apikey: SUPA_KEY, Authorization: `Bearer ${SUPA_KEY}` },
       }),
-      fetch(`${SUPA_URL}/rest/v1/numeros?estado=in.(activo,edicion-actual)&select=id`, {
+      fetch(`${SUPA_URL}/rest/v1/numeros?estado=neq.proximo&select=id`, {
         headers: { apikey: SUPA_KEY, Authorization: `Bearer ${SUPA_KEY}` },
       }),
     ]);
@@ -56,7 +56,11 @@ export default async (request) => {
         .filter(a => a.slug)
         .map(a => {
           const lastmod = (a.updated_at || a.created_at || '').split('T')[0];
-          return url(`https://laenbajada.com/historias/${a.slug}`, '0.9', 'monthly', lastmod);
+          const tag    = (a.seccion_tag || '').replace(/#/g,'').trim();
+          const artUrl = tag
+            ? `https://laenbajada.com/secciones/${tag}/${a.slug}`
+            : `https://laenbajada.com/historias/${a.slug}`;
+          return url(artUrl, '0.9', 'monthly', lastmod);
         }),
     ].join('');
 

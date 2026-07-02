@@ -16,6 +16,19 @@
   path = "/articulo.html"
   function = "og"
 
+[[edge_functions]]
+  path = "/secciones/:tag/:slug"
+  function = "og"
+
+[[edge_functions]]
+  path = "/historias/:slug"
+  function = "og"
+
+# ── OG también para URLs limpias de artículos ──
+[[edge_functions]]
+  path = "/secciones/:tag/:slug"
+  function = "og"
+
 # ── Edge Function: Sitemap dinámico ──
 [[edge_functions]]
   path = "/sitemap.xml"

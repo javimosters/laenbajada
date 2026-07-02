@@ -101,6 +101,10 @@ ul { list-style: none; }
 .site-header .header-inner,
 .boletin-inner,
 .site-footer {
+  width: 100%;
+  box-sizing: border-box;
+}
+.footer-inner {
   max-width: var(--max-wrap);
   margin-left: auto;
   margin-right: auto;

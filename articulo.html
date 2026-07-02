@@ -731,7 +731,7 @@ html.dark .search-modal { background:var(--bg); }
   <div class="search-modal-results" id="search-modal-results"></div>
 </div>
 
-<script src="/assets/app.js?v=ba655f45"></script>
+<script src="/assets/app.js?v=86c552e1"></script>
 <script>
   /* OG image dinámica */
   function _setOGImage(url) {
@@ -751,7 +751,8 @@ function articuloUrl(a) {
   return slug ? `/historias/${slug}` : `/articulo.html?id=${encodeURIComponent(a.id)}`;
 }
 function editorUrl(ed) {
-  return `editor.html?slug=${ed.slug||ed.id}`;
+  const slug = ed.slug || ed.id || '';
+  return slug ? `/sobre/equipo/${slug}` : '#';
 }
 function _slugInit(nombre) {
   return (nombre||'?').split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
@@ -1020,12 +1021,22 @@ async function init() {
   /* URL: ?slug=valor · también soporta ?s=slug y ?id=uuid */
   /* También soporta URL limpia: /historias/slug */
   let artId   = params.get('id') || null;
-  const pathSlug = location.pathname.startsWith('/historias/')
-    ? location.pathname.replace('/historias/', '').replace(/\/$/, '')
-    : null;
+  /* Soportar /historias/:slug y /secciones/:tag/:slug */
+  let pathSlug = null;
+  if (location.pathname.startsWith('/historias/')) {
+    pathSlug = location.pathname.replace('/historias/', '').replace(/\/$/, '');
+  } else if (location.pathname.startsWith('/secciones/')) {
+    const parts = location.pathname.split('/').filter(Boolean);
+    if (parts.length >= 3) pathSlug = parts[2]; /* /secciones/:tag/:slug */
+  }
   const slug  = params.get('slug') || params.get('s') || params.get('') || pathSlug || null;
   const isPreview = params.get('preview') === '1';
 
+  /* Leer también el tag de sección desde la URL limpia /secciones/:tag/:slug */
+  const pathParts = location.pathname.split('/').filter(Boolean);
+  if (pathParts[0] === 'secciones' && pathParts.length >= 3 && !slug) {
+    slug = pathParts[2];
+  }
   /* Si no hay ID, buscar por slug directo en Supabase */
   if (!artId && slug) {
     const porSlug = await SB.select('articulos',
@@ -1054,7 +1065,9 @@ async function init() {
 
   /* URL canónica: solo slug, sin id */
   const cleanSlug = a.slug || _normalizeSlug(a.titulo);
-  history.replaceState(null, '', `/historias/${cleanSlug}`);
+  const cleanTag  = (a.seccion_tag || '').replace(/#/g,'').trim();
+  const cleanUrl  = cleanTag ? `/secciones/${cleanTag}/${cleanSlug}` : `/historias/${cleanSlug}`;
+  history.replaceState(null, '', cleanUrl);
 
   /* Registrar visita (solo si no es preview del admin) */
   if (!isPreview) {
@@ -1068,7 +1081,7 @@ async function init() {
   /* SEO */
   aplicarSEO({ titulo: a.titulo, desc: a.subtitulo || a.extracto || '', imagen: a.imagen_url || '', type: 'article' });
   const canonical = document.getElementById('canonical');
-  const canonicalHref = `https://laenbajada.com/historias/${encodeURIComponent(cleanSlug)}`;
+  const canonicalHref = cleanTag ? `https://laenbajada.com/secciones/${cleanTag}/${encodeURIComponent(cleanSlug)}` : `https://laenbajada.com/historias/${encodeURIComponent(cleanSlug)}`;
   if (canonical) canonical.href = canonicalHref;
 
   /* HERO */

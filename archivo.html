@@ -66,6 +66,8 @@ input, textarea, select, button { max-width: 100% }
 .arch-num-id { font-family:var(--mono,monospace); font-size:11px; font-weight:700; color:var(--azul); letter-spacing:.1em; }
 .arch-num-badge { font-family:var(--ui); font-size:8px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--t4); }
 .arch-num-badge.activo { color:var(--azul); }
+.arch-num-badge.edicion-actual { color:var(--azul); font-weight:800; }
+.arch-num-badge.archivado { color:var(--t4); opacity:.6; }
 .arch-num-card-titulo { font-family:var(--serif); font-size:clamp(15px,2vw,19px); font-weight:700; line-height:1.15; color:var(--t1); }
 .arch-num-card-sub { font-family:var(--body); font-size:12.5px; font-style:italic; color:var(--t2); line-height:1.5; }
 .arch-num-card-cta { margin-top:auto; font-family:var(--ui); font-size:9px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--azul); }
@@ -292,7 +294,7 @@ html.dark .search-modal { background:var(--bg); }
   <div class="search-modal-results" id="search-modal-results"></div>
 </div>
 
-<script src="/assets/app.js?v=ba655f45"></script>
+<script src="/assets/app.js?v=86c552e1"></script>
 <script>
 
 /* ── Sanitize XSS — escapar datos de BD antes de innerHTML ── */
@@ -308,10 +310,12 @@ function _esc(s){
 }
 
 function articuloUrl(a) {
-  if (a.slug) return 'articulo.html?slug=' + encodeURIComponent(a.slug);
-  var _s = (a.titulo || '').toLowerCase().normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  return 'articulo.html?slug=' + _s;
+  var slug = a.slug || (a.titulo||'').toLowerCase().normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  var tag  = (a.seccion_tag||'').replace(/#/g,'').trim();
+  if (slug && tag) return '/secciones/' + tag + '/' + slug;
+  if (slug)        return '/historias/' + slug;
+  return '/';
 }
 (()=>{const h=document.getElementById('site-header');window.addEventListener('scroll',()=>h?.classList.toggle('scrolled',window.scrollY>20),{passive:true});})();
 
@@ -363,7 +367,17 @@ async function init(){
   /* Números */
   const ng = document.getElementById('arch-num-grid');
   if(ng) {
-    ng.innerHTML=(nums||[]).map(n=>{const isA=n.estado==='activo';const href=n.estado!=='proximo'?`/ediciones/${n.id}`:'#';return `<a class="arch-num-card ${n.estado==='proximo'?'proximo':''}" href="${href}"><div class="arch-num-card-img">${n.imagen_url?`<img src="${n.imagen_url}" alt="" loading="lazy">`:'<div class="ph"></div>'}</div><div class="arch-num-card-body"><div class="arch-num-id">N.º ${String(n.id).padStart(2,'0')}</div><div class="arch-num-badge ${isA?'activo':''}">${isA?'● Edición actual':n.estado==='proximo'?'○ Próximamente':'◎ Archivada'}</div><div class="arch-num-card-titulo">${n.titulo}</div>${n.subtitulo?`<div class="arch-num-card-sub">${n.subtitulo}</div>`:''}<div class="arch-num-card-cta">${n.estado!=='proximo'?'Leer edición →':''}</div></div></a>`;}).join('');
+    ng.innerHTML=(nums||[]).map(n=>{
+  const href       = n.estado!=='proximo' ? `/ediciones/${n.id}` : '#';
+  const badge      = n.estado==='edicion-actual' ? '● Edición actual'
+                   : n.estado==='activo'          ? '● Activa'
+                   : n.estado==='proximo'         ? '○ Próximamente'
+                   : n.estado==='archivado'       ? '◎ Archivada'
+                   : '';
+  const badgeCls   = n.estado==='edicion-actual' ? 'edicion-actual'
+                   : n.estado==='activo'          ? 'activo'
+                   : n.estado==='archivado'       ? 'archivado' : '';
+  return `<a class="arch-num-card ${n.estado==='proximo'?'proximo':''}" href="${href}"><div class="arch-num-card-img">${n.imagen_url?`<img src="${n.imagen_url}" alt="" loading="lazy">`:'<div class="ph"></div>'}</div><div class="arch-num-card-body"><div class="arch-num-id">N.º ${String(n.id).padStart(2,'0')}</div><div class="arch-num-badge ${badgeCls}">${badge}</div><div class="arch-num-card-titulo">${n.titulo}</div>${n.subtitulo?`<div class="arch-num-card-sub">${n.subtitulo}</div>`:''}<div class="arch-num-card-cta">${n.estado!=='proximo'?'Leer edición →':''}</div></div></a>`;}).join('');
     /* Ajustar columnas al total real */
     const total = (nums||[]).length;
     if (total === 1) ng.classList.add('cols-1');

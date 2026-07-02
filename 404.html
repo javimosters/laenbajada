@@ -352,7 +352,7 @@ html.dark .search-modal { background:var(--bg); }
   <div class="search-modal-results" id="search-modal-results"></div>
 </div>
 
-<script src="/assets/app.js?v=ba655f45"></script>
+<script src="/assets/app.js?v=86c552e1"></script>
 <script>
 /* ── ARTÍCULOS LEÍDOS ── */
 const _LEIDOS_KEY = 'le_leidos';
@@ -379,10 +379,12 @@ function _marcarLeidosEnGrid(selector) {
 </script>
 <script>
 function articuloUrl(a) {
-  if (a.slug) return 'articulo.html?slug=' + encodeURIComponent(a.slug);
-  var _s = (a.titulo || '').toLowerCase().normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  return 'articulo.html?slug=' + _s;
+  var slug = a.slug || (a.titulo||'').toLowerCase().normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  var tag  = (a.seccion_tag||'').replace(/#/g,'').trim();
+  if (slug && tag) return '/secciones/' + tag + '/' + slug;
+  if (slug)        return '/historias/' + slug;
+  return '/';
 }
 (()=>{const h=document.getElementById('site-header');window.addEventListener('scroll',()=>h?.classList.toggle('scrolled',window.scrollY>20),{passive:true});})();
 

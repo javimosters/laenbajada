@@ -19,7 +19,7 @@
 <!-- Preconexión temprana a Supabase — elimina DNS+TCP+TLS en el primer fetch -->
 <link rel="preconnect" href="https://pkilwzcypcyhxjuknkho.supabase.co" crossorigin>
 <!-- Preload de app.js — empieza a descargarlo mientras se parsea el head -->
-<link rel="preload" href="/assets/app.js?v=ba655f45" as="script">
+<link rel="preload" href="/assets/app.js?v=a50d39e7" as="script">
 <link rel="stylesheet" href="/assets/styles.css">
 <style>
 
@@ -544,7 +544,7 @@ input, textarea, select, button { max-width: 100% }
   <div class="search-modal-results" id="search-modal-results"></div>
 </div>
 
-<script src="/assets/app.js?v=ba655f45"></script>
+<script src="/assets/app.js?v=a50d39e7"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════
    La Enbajada — index.html v11
@@ -703,7 +703,7 @@ async function _renderHero(cfg,numActivo,secciones,pubs){
       var _fecha=fmtFecha(portada,'largo');
       var _inner=_fotoEl+'<div class="idx-hero-autor-info"><span class="idx-hero-autor-nombre">'+_esc(_nombre)+'</span>'+(cargo?'<span class="idx-hero-autor-cargo">'+_esc(cargo)+'</span>':'')+' </div>'+(_fecha?'<span class="idx-hero-autor-sep">·</span><span class="idx-hero-autor-fecha">'+_fecha+'</span>':'');
       autEl.innerHTML=slug
-        ?'<a class="idx-hero-autor-chip" href="/editor.html?slug='+_esc(slug)+'" onclick="event.stopPropagation()">'+_inner+'</a>'
+        ?'<a class="idx-hero-autor-chip" href="/sobre/equipo/'+_esc(slug)+'" onclick="event.stopPropagation()">'+_inner+'</a>'
         :'<span class="idx-hero-autor-chip">'+_inner+'</span>';
     };
     /* Render inmediato con lo que tenemos (sin foto aún) */

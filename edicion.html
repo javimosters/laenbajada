@@ -468,7 +468,7 @@ html.dark .search-modal { background: var(--bg); }
   <div class="search-modal-results" id="search-modal-results"></div>
 </div>
 
-<script src="/assets/app.js?v=ba655f45"></script>
+<script src="/assets/app.js?v=86c552e1"></script>
 <script>
 /* ── ARTÍCULOS LEÍDOS ── */
 const _LEIDOS_KEY = 'le_leidos';
@@ -510,10 +510,12 @@ function _marcarLeidosEnGrid(selector) {
 let _SECCIONES = [];  /* Se llena en init() desde Supabase */
 
 function articuloUrl(a) {
-  if (a.slug) return 'articulo.html?slug=' + encodeURIComponent(a.slug);
-  var _s = (a.titulo || '').toLowerCase().normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  return 'articulo.html?slug=' + _s;
+  var slug = a.slug || (a.titulo||'').toLowerCase().normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  var tag  = (a.seccion_tag||'').replace(/#/g,'').trim();
+  if (slug && tag) return '/secciones/' + tag + '/' + slug;
+  if (slug)        return '/historias/' + slug;
+  return '/';
 }
 
 (()=>{ const h=document.getElementById('site-header'); window.addEventListener('scroll',()=>h?.classList.toggle('scrolled',window.scrollY>20),{passive:true}); })();
@@ -735,7 +737,10 @@ function normTag(v) {
 async function init() {
   await initSite();
   const params = new URLSearchParams(location.search);
-  const numParam = params.get('num');
+  /* Soportar tanto ?num= como /ediciones/:num */
+  const pathParts = location.pathname.split('/').filter(Boolean);
+  const numParam  = params.get('num') ||
+    (pathParts[0] === 'ediciones' && pathParts[1] ? pathParts[1] : null);
 
   const [nums, cfg, _artsEdPre] = await Promise.all([
     DB.getNumeros(),
@@ -764,7 +769,9 @@ async function init() {
 
   /* Artículos de esta edición + secciones reales de Supabase en paralelo */
   const [arts, secsDB] = await Promise.all([
-    DB.getArticulos().then(a => a.filter(x => x.numero_id === num.id && x.estado === 'publicado')).catch(() => []),
+    SB.select('articulos',
+      `numero_id=eq.${encodeURIComponent(num.id)}&estado=eq.publicado&select=id,titulo,subtitulo,extracto,imagen_url,slug,estado,tipo,seccion_tag,numero_id,orden,autor,editor_id,fecha_publicacion,created_at&order=orden.asc,fecha_publicacion.desc`
+    ).then(rows => (rows||[]).map(a=>({...a, seccion_tag:(a.seccion_tag||'').replace(/#/g,'').trim(), autor: a.autor||''}))).catch(() => []),
     DB.getSecciones().catch(() => []),
   ]);
 

@@ -302,10 +302,12 @@ function _esc(s){
 }
 
 function articuloUrl(a) {
-  if (a.slug) return 'articulo.html?slug=' + encodeURIComponent(a.slug);
-  var _s = (a.titulo || '').toLowerCase().normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  return 'articulo.html?slug=' + _s;
+  var slug = a.slug || (a.titulo||'').toLowerCase().normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  var tag  = (a.seccion_tag||'').replace(/#/g,'').trim();
+  if (slug && tag) return '/secciones/' + tag + '/' + slug;
+  if (slug)        return '/historias/' + slug;
+  return '/';
 }
 (()=>{const h=document.getElementById('site-header');window.addEventListener('scroll',()=>h?.classList.toggle('scrolled',window.scrollY>20),{passive:true});})();
 
@@ -359,8 +361,16 @@ async function init(){
   const _secsNav = await DB.getSecciones().catch(() => []);
   _renderNavSecs(_secsNav);
   const params=new URLSearchParams(location.search);
-  const slug=params.get('slug');
-  if(!slug){window.location.href='sobre.html';return;}
+  /* Soportar tanto ?slug= como /sobre/equipo/slug */
+  const pathParts = location.pathname.split('/').filter(Boolean);
+  const slug = params.get('slug') ||
+    (pathParts[0]==='sobre' && pathParts[1]==='equipo' ? pathParts[2] : null);
+  if(!slug){window.location.href='/sobre.html';return;}
+
+  /* Actualizar URL a la nueva forma canónica */
+  if (slug && !location.pathname.includes('/sobre/equipo/')) {
+    history.replaceState(null, '', `/sobre/equipo/${slug}`);
+  }
 
   const eds=await SB.select('editores',`slug=eq.${encodeURIComponent(slug)}&activo=eq.true`).catch(()=>[]);
   const ed=eds?.[0];
@@ -382,10 +392,12 @@ async function init(){
   const hl=document.getElementById('ed-links');
   if(hl){let lhtml='';if(ed.email)lhtml+=`<a class="ed-hero-link" href="mailto:${_esc(ed.email)}">✉ Email</a>`;if(ed.redes&&Array.isArray(ed.redes))ed.redes.forEach(r=>{if(r.url)lhtml+=`<a class="ed-hero-link" href="${_esc(r.url)}" target="_blank" rel="noopener noreferrer">${_esc(r.plataforma||'→')}</a>`;});hl.innerHTML=lhtml;}
 
-  /* Artículos */
-  const allArts=await DB.getPublicados();
-  const arts=allArts.filter(a=>a.editor_id===ed.id);
-  const pubCnt=arts.filter(a=>a.estado==='publicado').length;
+  /* Artículos — buscar directo en Supabase por editor_id para no depender de caché */
+  const allArts = await SB.select('articulos',
+    `editor_id=eq.${ed.id}&estado=eq.publicado&select=id,titulo,subtitulo,extracto,imagen_url,slug,estado,tipo,seccion_tag,numero_id,orden,autor,editor_id,fecha_publicacion,created_at&order=fecha_publicacion.desc`
+  ).catch(()=>[]);
+  const arts    = (allArts||[]).map(a=>({...a, seccion_tag:(a.seccion_tag||'').replace(/#/g,'').trim()}));
+  const pubCnt  = arts.filter(a=>a.estado==='publicado').length;
 
   const hdr=document.getElementById('ed-nombre-hdr');if(hdr)hdr.textContent=ed.nombre.split(' ')[0];
   const cnt=document.getElementById('ed-arts-cnt');if(cnt)cnt.textContent=`${arts.length} artículo${arts.length!==1?'s':''}`;

@@ -2,7 +2,6 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-  <meta name="robots" content="noindex, nofollow, noarchive">
 <link rel="icon" type="image/png" href="assets/logo.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel Editorial — La Enbajada</title>
@@ -1506,11 +1505,8 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
             <div class="fr fr-2">
               <div class="fg">
                 <label class="fl" for="f-fecha">Fecha de publicación</label>
-                <div style="display:flex;gap:8px;align-items:center">
-                  <input class="fi" type="datetime-local" id="f-fecha" style="flex:1">
-                  <button type="button" class="ab ab-sm" onclick="g('f-fecha').value=new Date().toISOString().slice(0,16)" title="Usar fecha y hora actual">Hoy</button>
-                </div>
-                <div class="fh">Se asigna automáticamente al publicar. Puedes programar una fecha futura.</div>
+                <input class="fi" type="datetime-local" id="f-fecha">
+                <div class="fh">Opcional. Si no se define, se publica de inmediato.</div>
               </div>
               <div class="fg">
                 <label class="fl" for="f-orden">Orden de aparición</label>
@@ -1607,7 +1603,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
                 <div class="up-txt">Clic para seleccionar imagen · JPG, PNG, WebP</div>
               </div>
               <div class="up-prev" id="up-prev-img">
-                <img loading="lazy" id="up-img" src="" alt="">
+                <img id="up-img" src="" alt="">
                 <button class="up-rm" onclick="quitarImgArt()" type="button">✕</button>
               </div>
               <input type="file" id="up-file-img" accept="image/*" style="display:none" onchange="cargarImgArt(this)">
@@ -1873,6 +1869,13 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
               <label class="fl" for="ed-cargo">Cargo o rol</label>
               <input class="fi" type="text" id="ed-cargo" placeholder="Ej: Cronista, Colaboradora, Editor jefe">
             </div>
+            <div class="fg" style="max-width:160px">
+              <label class="fl" for="ed-orden">Orden de aparición</label>
+              <input class="fi" type="number" id="ed-orden" min="1" max="99" value="1" style="text-align:center;font-size:18px;font-weight:700">
+              <div class="fh">1 = primero en el equipo</div>
+            </div>
+            <div class="fg" style="display:none"><!-- placeholder --></div
+            </div>
           </div>
           <div class="fr fr-2" style="margin-top:12px">
             <div class="fg">
@@ -1897,7 +1900,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
                 <div class="up-txt" style="font-size:11px">Subir foto · JPG, PNG</div>
               </div>
               <div class="up-prev" id="up-prev-ed" style="display:none;position:relative">
-                <img loading="lazy" id="up-ed-img" src="" alt="" style="max-height:120px;width:120px;object-fit:cover;border-radius:50%;display:block">
+                <img id="up-ed-img" src="" alt="" style="max-height:120px;width:120px;object-fit:cover;border-radius:50%;display:block">
                 <button class="up-rm" onclick="quitarFotoEd()" style="position:absolute;top:0;right:0">✕</button>
               </div>
               <input type="file" id="up-file-ed" accept="image/*" style="display:none" onchange="cargarFotoEd(this)">
@@ -1997,34 +2000,9 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
           <input type="hidden" id="sobre-img-data">
           <input type="hidden" id="sobre-img-url">
           <div class="fg">
-            <label class="fl">Imagen de cabecera</label>
-            <div id="sobre-img-area" style="cursor:pointer;border:1.5px dashed var(--bd);border-radius:8px;padding:20px;text-align:center;color:var(--t4);font-size:12px" onclick="document.getElementById('sobre-img-input').click()">
-              Clic para subir imagen de cabecera
-            </div>
-            <div id="sobre-img-prev" style="display:none;position:relative">
-              <img loading="lazy" id="sobre-img-el" src="" style="width:100%;max-height:220px;object-fit:cover;border-radius:8px;border:1px solid var(--bd)">
-              <button type="button" class="ab ab-sm" onclick="quitarImgSobre()" style="position:absolute;top:8px;right:8px">✕ Quitar</button>
-            </div>
-            <input type="file" id="sobre-img-input" accept="image/*" style="display:none" onchange="cargarImgSobre(this)">
-          </div>
-          <div class="fg">
-            <label class="fl" for="sobre-tagline">Tagline (subtítulo del hero)</label>
-            <input class="fi" type="text" id="sobre-tagline" placeholder="Revista cultural del Caribe colombiano">
-          </div>
-          <div class="fg">
             <label class="fl" for="sobre-cuerpo">Texto de presentación</label>
             <textarea class="fta" id="sobre-cuerpo" style="min-height:180px;font-family:var(--serif);font-size:15px;line-height:1.8"
               placeholder="La Enbajada es una revista cultural del Caribe colombiano…"></textarea>
-          </div>
-          <div class="fg">
-            <label class="fl" for="sobre-cita">Cita destacada (opcional)</label>
-            <textarea class="fta" id="sobre-cita" style="min-height:72px;font-family:var(--serif);font-style:italic;font-size:15px"
-              placeholder="«Una frase que defina la revista.»"></textarea>
-          </div>
-          <div class="fg">
-            <label class="fl" for="sobre-texto2">Texto de cierre (opcional)</label>
-            <textarea class="fta" id="sobre-texto2" style="min-height:100px;font-family:var(--serif);line-height:1.8"
-              placeholder="Un párrafo final sobre la revista…"></textarea>
           </div>
         </div>
       </div>
@@ -2161,13 +2139,10 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
                 style="max-width:100px;font-size:20px;font-weight:700;font-family:var(--serif);text-align:center"
                 oninput="if(g('maxarts-hint'))g('maxarts-hint').textContent='⚠ Guarda para aplicar'">
             </div>
-            <div class="fg" style="margin:0;min-width:160px">
-              <label class="fl" for="idx-colsgrid">Columnas del grid</label>
-              <input class="fi" type="number" id="idx-colsgrid" min="2" max="4" value="3"
-                style="max-width:80px;font-size:16px;font-weight:700;text-align:center">
-              <div class="fh">2 = amplio · 3 = estándar · 4 = compacto</div>
-            </div>
             <div style="font-size:11px;color:var(--or,#d97706);font-weight:700;min-height:14px;margin-top:4px" id="maxarts-hint"></div>
+            <div style="font-size:12px;color:var(--t3);line-height:1.65;max-width:320px">
+              Cuántas columnas tiene el grid de artículos en la portada. 2 = más grande y espacioso · 3 = estándar · 4 = compacto.
+            </div>
           </div>
         </div>
       </div>
@@ -2207,10 +2182,6 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
             <input class="fi" type="text" id="idx-btn-bol" placeholder="Suscribirse"
               oninput="g('boletin-prev-btn').textContent=this.value||this.placeholder"
               style="max-width:200px">
-          </div>
-          <div class="fg">
-            <label class="fl" for="idx-nota-bol">Nota debajo del formulario</label>
-            <input class="fi" type="text" id="idx-nota-bol" placeholder="Solo enviamos cuando hay un número nuevo.">
           </div>
         </div>
         <!-- Preview en vivo -->
@@ -2472,7 +2443,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
               </div>
               <div class="fg" style="flex:1;min-width:200px;margin:0">
                 <label class="fl">URL del artículo principal (portada)</label>
-                <input class="fi" type="url" id="bol-url" placeholder="https://laenbajada.com/historias/slug-del-articulo" style="font-size:12px">
+                <input class="fi" type="url" id="bol-url" placeholder="https://laenbajada.com/articulo.html?slug=…" style="font-size:12px">
               </div>
             </div>
           </div>
@@ -2880,12 +2851,6 @@ function _invalidarCache() {
   if (typeof DB !== 'undefined' && typeof DB.invalidarCache === 'function') {
     DB.invalidarCache();
   }
-  /* Limpiar caché de sessionStorage para que el lector vea cambios de inmediato */
-  try {
-    Object.keys(sessionStorage).forEach(k => {
-      if (k.startsWith('_lae_')) sessionStorage.removeItem(k);
-    });
-  } catch(e) {}
 }
 
 /* ── Sidebar ── */
@@ -3310,7 +3275,7 @@ async function updateStats() {
         if (!secs.length) {
           dashGrid.innerHTML = '<div style="color:var(--t4);font-size:13px;font-style:italic">Sin secciones activas</div>';
         } else {
-          const iconosSec = {}; /* iconos dinámicos según sección — sin aliases hardcodeados */
+          const iconosSec = { 'la-cronica':'📜', 'la-conversacion':'🎙', 'la-curaturia':'♦', 'la-curatia':'♦' };
           dashGrid.innerHTML = secs.map(s => {
             const tag = (s.tag||'').replace(/^#/,'');
             const ic = iconosSec[tag] || '◈';
@@ -3404,7 +3369,13 @@ async function cargarArticulos() {
         secLabels[t] = s.nombre;
       });
     } catch(_) {}
-    /* secLabels cargado dinámicamente desde secciones — sin fallbacks hardcodeados */
+    /* Fallbacks por si acaso */
+    if (!secLabels['la-cronica'])      secLabels['la-cronica']      = 'La Crónica';
+    if (!secLabels['la-conversacion']) secLabels['la-conversacion'] = 'La Conversación';
+    if (!secLabels['la-curaturia'])    secLabels['la-curaturia']    = 'La Curaturía';
+    if (!secLabels['la-curatia'])      secLabels['la-curatia']      = 'La Curaturía';
+    secLabels['cronica']      = secLabels['la-cronica'];
+    secLabels['conversacion'] = secLabels['la-conversacion'];
     secLabels['curatia']      = secLabels['la-curaturia'];
 
     tbody.innerHTML = arts.map(a => {
@@ -3413,7 +3384,7 @@ async function cargarArticulos() {
       const isPub    = a.estado === 'publicado';
       return `
       <tr>
-        <td>${a.imagen_url ? `<img loading="lazy" class="t-thumb" src="${a.imagen_url}" alt="">` : '<div class="t-thumb-ph"></div>'}</td>
+        <td>${a.imagen_url ? `<img class="t-thumb" src="${a.imagen_url}" alt="">` : '<div class="t-thumb-ph"></div>'}</td>
         <td class="t-titulo-c">
           <div class="t-titulo">${a.titulo || 'Sin título'}</div>
           ${a.subtitulo ? `<div class="t-sub">${a.subtitulo.slice(0,80)}${a.subtitulo.length>80?'…':''}</div>` : ''}
@@ -3481,8 +3452,13 @@ function selTipo(tipo, btn) {
   if (bloquesWrap) bloquesWrap.style.display = isCuratia ? 'none' : '';
 
   /* BUG FIX: Sincronizar campo oculto seccion_tag — SIEMPRE, no solo si existe mapSeccion */
-  /* mapSeccion eliminado — seccion_tag viene limpio de la BD */
   const mapSeccion = {
+    'cronica'         : 'la-cronica',
+    'conversacion'    : 'la-conversacion',
+    'curatia'         : 'la-curatia',
+    'la-cronica'      : 'la-cronica',
+    'la-conversacion' : 'la-conversacion',
+    'la-curatia'      : 'la-curatia',
     'la-curaturia'    : 'la-curaturia',
   };
   const secTag = mapSeccion[tipo] || tipo;
@@ -3531,8 +3507,8 @@ async function guardarArt(estadoOverride) {
        BUG FIX: el seccion_tag estaba vacío para conversacion y curatia
        porque el hidden f-seccion no se llenaba si no se pasaba por el paso 0 */
     /* seccionTag: primero f-seccion (llenado dinámicamente), luego mapa de fallback */
-    /* seccion_tag viene siempre de f-seccion — las secciones son dinámicas */
-    const seccionTag = (g('f-seccion')?.value || '').replace(/#/g,'').trim() || _tipoActual || '';
+    const _mapSecFallback = { cronica:'la-cronica', conversacion:'la-conversacion', curatia:'la-curatia', 'la-cronica':'la-cronica', 'la-conversacion':'la-conversacion', 'la-curatia':'la-curatia', 'la-curaturia':'la-curaturia' };
+    const seccionTag = (g('f-seccion')?.value || '').replace(/#/g,'').trim() || _mapSecFallback[_tipoActual] || 'la-cronica';
 
     /* Generar slug limpio desde el título */
     const _slugFromTitulo = (t) => (t||'').toLowerCase()
@@ -3559,15 +3535,7 @@ async function guardarArt(estadoOverride) {
       estado:      estadoOverride || g('f-estado')?.value || 'borrador',
       es_portada:  g('f-portada')?.checked || false,
       orden:       parseInt(g('f-orden')?.value) || 0,
-      /* Si se publica por primera vez y no tiene fecha, asignar ahora */
-      fecha_publicacion: (() => {
-        const fVal = g('f-fecha')?.value;
-        const estadoFinal = estadoOverride || g('f-estado')?.value || 'borrador';
-        /* Guardar con offset Colombia (UTC-5) para que la hora sea la local */
-        if (fVal) return new Date(fVal).toISOString();
-        if (estadoFinal === 'publicado') return new Date().toISOString();
-        return null;
-      })(),
+      fecha_publicacion: g('f-fecha')?.value ? new Date(g('f-fecha').value).toISOString() : null,
     };
 
     const artId = g('f-art-id')?.value;
@@ -3695,7 +3663,7 @@ function limpiarForm() {
   if (g('f-orden'))     g('f-orden').value     = '0';
   if (g('f-estado'))    g('f-estado').value    = 'borrador';
   if (g('f-fecha'))     g('f-fecha').value     = '';
-  if (g('f-seccion'))   g('f-seccion').value   = '';
+  if (g('f-seccion'))   g('f-seccion').value   = 'la-cronica';
   _bloques = []; _curatiaItems = [];
   wSetHTML('');
   renderBloques(); renderCuratiaAdmin();
@@ -3739,12 +3707,7 @@ async function cargarArtForm(id) {
     g('f-portada').checked = a.es_portada || false;
     g('f-orden').value = a.orden ?? 0;
     if (a.estado && g('f-estado')) g('f-estado').value = a.estado;
-    if (a.fecha_publicacion && g('f-fecha')) {
-      /* datetime-local espera hora local — el browser hace la conversión UTC→local */
-      const d = new Date(a.fecha_publicacion);
-      const pad = n => String(n).padStart(2,'0');
-      g('f-fecha').value = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-    }
+    if (a.fecha_publicacion && g('f-fecha')) g('f-fecha').value = a.fecha_publicacion.slice(0,16);
 
     /* Imagen */
     if (a.imagen_url) {
@@ -3758,24 +3721,17 @@ async function cargarArtForm(id) {
     await rellenarNumerosSelect('f-numero');
     if (a.numero_id && g('f-numero')) g('f-numero').value = a.numero_id;
     await cargarEditoresEnSelector();
-    /* Asignar después de cargar opciones para evitar race condition */
-    if (a.editor_id && g('f-editor-id')) {
-      g('f-editor-id').value = a.editor_id;
-      /* Si el valor no se aplicó (editor no encontrado), limpiar */
-      if (g('f-editor-id').value !== a.editor_id) {
-        g('f-editor-id').value = '';
-        console.warn('Editor no encontrado en la lista:', a.editor_id);
-      }
-    }
+    if (a.editor_id && g('f-editor-id')) g('f-editor-id').value = a.editor_id;
 
     /* BUG FIX: Restaurar tipo/sección correctamente
        1. _tipoActual = tipo del artículo (cronica, conversacion, curatia)
        2. f-seccion   = seccion_tag del artículo (la-cronica, la-conversacion, etc.)
        3. Resaltar la tarjeta correcta en el paso 0 */
-    _tipoActual = a.tipo || '';
+    _tipoActual = a.tipo || 'cronica';
 
-    /* seccion_tag real — secciones son dinámicas, no hay fallback hardcodeado */
-    const secTagReal = (a.seccion_tag || '').replace(/#/g,'');
+    /* seccion_tag real del artículo */
+    const mapSeccionFallback = { cronica:'la-cronica', conversacion:'la-conversacion', curatia:'la-curatia' };
+    const secTagReal = (a.seccion_tag || mapSeccionFallback[_tipoActual] || 'la-cronica').replace(/#/g,'');
 
     /* Resaltar tarjeta usando seccion_tag (IDs dinámicos) */
     document.querySelectorAll('.tipo-card').forEach(c => c.classList.remove('activo'));
@@ -3917,7 +3873,7 @@ function _renderBloqueHtml(b, i) {
         <label class="fl">URL de la imagen</label>
         <input class="fi" type="url" placeholder="https://…" value="${b.contenido?.url||''}" oninput="_bloques[${i}].contenido.url=this.value;_markDirty()">
       </div>
-      ${b.contenido?.url ? `<img loading="lazy" src="${b.contenido.url}" style="max-height:160px;max-width:100%;border-radius:3px;margin-top:8px;object-fit:cover" onerror="this.style.display='none'">` : ''}
+      ${b.contenido?.url ? `<img src="${b.contenido.url}" style="max-height:160px;max-width:100%;border-radius:3px;margin-top:8px;object-fit:cover" onerror="this.style.display='none'">` : ''}
       <div class="fg" style="margin-top:8px">
         <label class="fl">Pie de foto (opcional)</label>
         <input class="fi" type="text" placeholder="Descripción de la imagen…" value="${b.contenido?.caption||''}" oninput="_bloques[${i}].contenido.caption=this.value;_markDirty()">
@@ -4434,7 +4390,7 @@ function abrirPrev() {
   const html    = wGetHTML();
 
   g('prev-panel-content').innerHTML = `
-    ${imgSrc ? `<img loading="lazy" src="${imgSrc}" style="width:100%;max-height:300px;object-fit:cover;display:block;margin-bottom:24px">` : ''}
+    ${imgSrc ? `<img src="${imgSrc}" style="width:100%;max-height:300px;object-fit:cover;display:block;margin-bottom:24px">` : ''}
     <h1 style="font-family:var(--serif);font-size:clamp(24px,4vw,40px);font-weight:700;line-height:1;letter-spacing:-.02em;margin-bottom:12px;color:var(--t1)">${titulo}</h1>
     ${sub ? `<p style="font-family:var(--serif);font-size:17px;font-style:italic;color:var(--t2);line-height:1.6;border-left:3px solid var(--azul);padding-left:14px;margin-bottom:18px">${sub}</p>` : ''}
     ${autor ? `<div style="font-family:var(--ui);font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--t4);margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid var(--bd)">Por ${autor}</div>` : ''}
@@ -4492,8 +4448,7 @@ function _prevFooter() {
   const desc  = g('ft-desc')?.value  || '';
   const email = g('ft-email')?.value || '';
   const copy  = g('ft-copy')?.value  || '';
-  if (g('fp-tagline')) g('fp-tagline').textContent = 'Aterrizamos la Cultura';
-  if (g('fp-desc'))    g('fp-desc').textContent    = desc;
+  if (g('fp-desc'))  g('fp-desc').textContent  = desc;
   if (g('fp-email')) g('fp-email').textContent = email;
   if (g('fp-copy'))  g('fp-copy').textContent  = copy;
   /* Redes */
@@ -4535,12 +4490,13 @@ async function _cargarFooter() {
 async function _cargarSobre() {
   const cfg = await DB.getConfig();
   const s   = cfg.sobre || {};
-  if (g('sobre-titulo'))  g('sobre-titulo').value  = s.titulo   || '';
-  if (g('sobre-tagline')) g('sobre-tagline').value = s.tagline  || '';
-  if (g('sobre-cuerpo'))  g('sobre-cuerpo').value  = s.texto1   || s.cuerpo || '';
-  if (g('sobre-cita'))    g('sobre-cita').value    = s.cita     || '';
-  if (g('sobre-texto2'))  g('sobre-texto2').value  = s.texto2   || '';
-  /* equipo se carga dinámicamente desde editores — no hay campo de texto */
+  if (g('sobre-titulo')) g('sobre-titulo').value = s.titulo  || '';
+  if (g('sobre-cuerpo')) g('sobre-cuerpo').value = s.texto1  || s.cuerpo || '';
+  if (g('sobre-equipo') && Array.isArray(s.equipo)) g('sobre-equipo').value = s.equipo.join('\n');
+  /* Director editorial */
+  if (g('sobre-editor'))  g('sobre-editor').value  = s.editor  || '';
+  if (g('sobre-cargo'))   g('sobre-cargo').value   = s.cargo   || 'Director Editorial';
+  if (g('sobre-bio'))     g('sobre-bio').value     = s.bio     || '';
   /* Manifiesto */
   if (g('sobre-man-titulo')) g('sobre-man-titulo').value = s.manTitulo || '';
   if (g('sobre-man-texto1')) g('sobre-man-texto1').value = s.manTexto1 || '';
@@ -4551,7 +4507,10 @@ async function _cargarSobre() {
     prevImgSobre(s.imagenUrl);
     if (g('sobre-img-url')) g('sobre-img-url').value = s.imagenUrl.startsWith('data:') ? '' : s.imagenUrl;
   }
-  /* fotoEditor era del director editorial — ahora el equipo viene de editores */
+  if (s.fotoEditor) {
+    prevImgEditor(s.fotoEditor);
+    if (g('sobre-editor-img-url')) g('sobre-editor-img-url').value = s.fotoEditor.startsWith('data:') ? '' : s.fotoEditor;
+  }
 }
 
 /* ── Frase: lee de footer.frase (NO de columna directa) ── */
@@ -4633,13 +4592,10 @@ function addRedSocial() {
 async function guardarFooter() {
   const overlay = g('loading-overlay'); if (overlay) overlay.classList.add('show');
   try {
-    /* Leer footer existente para NO pisar frase, carrusel ni index_cfg */
-    const cfgActual = await DB.getConfig();
-    const ftActual  = cfgActual.footer || {};
+    /* Mantener compatibilidad: instagram como campo plano + array redes */
     const igRed = _redes.find(r => r.plataforma === 'instagram');
     await DB.setConfig({
       footer: {
-        ...ftActual,  /* preservar frase, carrusel, index_cfg y cualquier campo extra */
         email:     g('ft-email')?.value?.trim() || '',
         desc:      g('ft-desc')?.value?.trim()  || '',
         copy:      g('ft-copy')?.value?.trim()  || '',
@@ -4713,25 +4669,25 @@ function quitarImgEditor() {
 async function guardarSobre() {
   const overlay = g('loading-overlay'); if (overlay) overlay.classList.add('show');
   try {
-    /* Leer sobre actual para no pisar campos que no están en el form */
-    const cfgActual = await DB.getConfig();
-    const sobreActual = cfgActual.sobre || {};
-    const imgData  = g('sobre-img-data')?.value;
-    const imgUrl   = g('sobre-img-url')?.value?.trim();
+    const equipo = (g('sobre-equipo')?.value||'').split('\n').map(l=>l.trim()).filter(Boolean);
+    const imgData    = g('sobre-img-data')?.value;
+    const imgUrl     = g('sobre-img-url')?.value?.trim();
+    const edImgData  = g('sobre-editor-img-data')?.value;
+    const edImgUrl   = g('sobre-editor-img-url')?.value?.trim();
     await DB.setConfig({
       sobre: {
-        ...sobreActual,  /* preservar campos extra que pudiera tener */
-        titulo:    g('sobre-titulo')?.value?.trim()    || '',
-        tagline:   g('sobre-tagline')?.value?.trim()   || '',
-        texto1:    g('sobre-cuerpo')?.value?.trim()    || '',
-        cita:      g('sobre-cita')?.value?.trim()      || '',
-        texto2:    g('sobre-texto2')?.value?.trim()    || '',
-        imagenUrl: imgData || imgUrl || sobreActual.imagenUrl || '',
-        manTitulo: g('sobre-man-titulo')?.value?.trim() || '',
-        manTexto1: g('sobre-man-texto1')?.value?.trim() || '',
-        manCita:   g('sobre-man-cita')?.value?.trim()   || '',
-        manTexto2: g('sobre-man-texto2')?.value?.trim() || '',
-        /* El equipo viene de la tabla editores — no se guarda aquí */
+        titulo:     g('sobre-titulo')?.value?.trim() || '',
+        texto1:     g('sobre-cuerpo')?.value?.trim() || '',
+        imagenUrl:  imgData || imgUrl || '',
+        editor:     g('sobre-editor')?.value?.trim() || '',
+        cargo:      g('sobre-cargo')?.value?.trim()  || 'Director Editorial',
+        bio:        g('sobre-bio')?.value?.trim()    || '',
+        fotoEditor: edImgData || edImgUrl || '',
+        manTitulo:  g('sobre-man-titulo')?.value?.trim()  || '',
+        manTexto1:  g('sobre-man-texto1')?.value?.trim()  || '',
+        manCita:    g('sobre-man-cita')?.value?.trim()    || '',
+        manTexto2:  g('sobre-man-texto2')?.value?.trim()  || '',
+        equipo,
       }
     });
     notif('Página Nosotros guardada ✓', 'ok');
@@ -4945,10 +4901,11 @@ async function cargarMetricas() {
       filtro += `&created_at=gte.${d30.toISOString()}`;
     }
 
-    const visitas = await SB.select('visitas', filtro + '&limit=5000').catch(() => null);
+    const visitas = await SB.select('visitas', filtro + '&limit=2000').catch(() => null);
 
     if (!visitas) {
-      const msg = '<div style="padding:24px;text-align:center;color:var(--t3);font-size:13px">La tabla <code style="font-family:var(--mono);background:var(--bg2);padding:1px 5px">visitas</code> no existe aún.</div>';
+      /* Tabla no existe aún */
+      const msg = '<div style="padding:24px;text-align:center;color:var(--t3);font-size:13px">La tabla <code style="font-family:var(--mono);background:var(--bg2);padding:1px 5px">visitas</code> no existe aún. Descarga el SQL de métricas y ejecútalo en Supabase.</div>';
       if (listArts)  listArts.innerHTML  = msg;
       if (listPages) listPages.innerHTML = msg;
       return;
@@ -4983,14 +4940,14 @@ async function cargarMetricas() {
       if (!artsSorted.length) {
         listArts.innerHTML = '<div class="empty"><div class="empty-ic">📰</div><h3>Sin vistas de artículos aún</h3></div>';
       } else {
-        const arts = await SB.select('articulos','select=id,titulo,slug,estado,seccion_tag').catch(()=>[]);
+        const arts = await DB.getArticulos().catch(()=>[]);
         const maxVistas = artsSorted[0]?.[1] || 1;
         listArts.innerHTML = artsSorted.map(([artId, cnt], i) => {
           const art = arts.find(a => a.id === artId);
           const eliminado = !art;
           const titulo = eliminado
             ? `<span style="opacity:.45;font-style:normal;font-size:12px">Artículo eliminado</span> <span style="font-family:var(--mono);font-size:10px;color:var(--t4)">${artId.slice(0,8)}…</span>`
-            : `<a href="${art.slug ? '/historias/'+art.slug : '/articulo.html?id='+artId}" target="_blank" style="color:inherit;text-decoration:none;font-style:italic">${art.titulo}</a>`;
+            : `<a href="articulo.html?id=${artId}" target="_blank" style="color:inherit;text-decoration:none;font-style:italic">${art.titulo}</a>`;
           const secBadge = art?.seccion_tag
             ? `<span style="font-size:9px;font-family:var(--sans);color:var(--azul);background:rgba(0,74,173,.07);padding:1px 7px;border-radius:2px;font-weight:600">${art.seccion_tag}</span>` : '';
           const estadoBadge = art?.estado === 'borrador'
@@ -5151,7 +5108,7 @@ function _renderNumCard(n) {
 
   const imgPreview = imgData
     ? `<div class="up-prev" id="num-up-prev-${n.id}" style="display:flex;position:relative;flex-shrink:0">
-        <img loading="lazy" id="num-up-img-${n.id}" src="${imgData}" alt="" style="max-height:80px;max-width:120px;object-fit:cover;border-radius:3px;display:block">
+        <img id="num-up-img-${n.id}" src="${imgData}" alt="" style="max-height:80px;max-width:120px;object-fit:cover;border-radius:3px;display:block">
         <button class="up-rm" onclick="quitarImgNum('${n.id}')" style="position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:#c0392b;color:#fff;border:none;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700">✕</button>
       </div>
       <div class="up-area" id="num-up-area-${n.id}" style="display:none;flex:0 0 auto;width:110px;padding:14px" onclick="document.getElementById('num-file-${n.id}').click()">
@@ -5161,7 +5118,7 @@ function _renderNumCard(n) {
         <div class="up-icon" style="font-size:16px">📷</div><div class="up-txt" style="font-size:11px">Subir imagen</div>
       </div>
       <div class="up-prev" id="num-up-prev-${n.id}" style="${imgUrl?'display:flex':'display:none'};position:relative;flex-shrink:0">
-        <img loading="lazy" id="num-up-img-${n.id}" src="${imgUrl}" alt="" style="max-height:80px;max-width:120px;object-fit:cover;border-radius:3px;display:block">
+        <img id="num-up-img-${n.id}" src="${imgUrl}" alt="" style="max-height:80px;max-width:120px;object-fit:cover;border-radius:3px;display:block">
         <button class="up-rm" onclick="quitarImgNum('${n.id}')" style="position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:#c0392b;color:#fff;border:none;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700">✕</button>
       </div>`;
 
@@ -5659,7 +5616,7 @@ async function cargarCarrusel() {
       disp.innerHTML = _carruselArts.map(a => {
         const enC = _carruselSel.includes(a.id);
         return `<div class="port-art-row ${enC?'selected':''}" id="pc-${a.id}">
-          ${a.imagen_url?`<img loading="lazy" class="t-thumb" src="${a.imagen_url}" alt="">`:'<div class="t-thumb-ph"></div>'}
+          ${a.imagen_url?`<img class="t-thumb" src="${a.imagen_url}" alt="">`:'<div class="t-thumb-ph"></div>'}
           <div class="t-titulo-c">
             <div class="t-titulo">${a.titulo}</div>
             <div class="t-sub">${a.tipo} · Ed. ${a.numero_id}</div>
@@ -5702,7 +5659,7 @@ function _renderSeleccionados() {
     const a = _carruselArts.find(x => x.id === id) || { titulo: id, imagen_url: null };
     return `<div class="port-sel-row">
       <span class="port-drag-handle">⠿</span>
-      ${a.imagen_url?`<img loading="lazy" class="t-thumb" src="${a.imagen_url}" alt="">`:'<div class="t-thumb-ph"></div>'}
+      ${a.imagen_url?`<img class="t-thumb" src="${a.imagen_url}" alt="">`:'<div class="t-thumb-ph"></div>'}
       <div>
         <div style="font-size:13px;font-weight:600;font-family:var(--serif)">${a.titulo}</div>
         <div style="font-size:10px;color:var(--t4)">Posición ${i+1}</div>
@@ -6266,8 +6223,6 @@ async function cargarIndexCfg() {
     const tickerOn = idx.mostrarTicker !== false;
     _setSwTicker(tickerOn);
     if (g('idx-maxticker')) g('idx-maxticker').value = idx.maxTicker || 8;
-    if (g('idx-colsgrid'))    g('idx-colsgrid').value    = idx.colsGrid    || 3;
-    if (g('idx-nota-bol'))    g('idx-nota-bol').value    = idx.notaBoletin || '';
     if (g('idx-meta-titulo')) { g('idx-meta-titulo').value = idx.metaTitulo || ''; g('seo-char-titulo').textContent = (idx.metaTitulo||'').length; }
     if (g('idx-meta-desc'))   { g('idx-meta-desc').value   = idx.metaDesc   || ''; g('seo-char-desc').textContent   = (idx.metaDesc||'').length; }
     /* Preview boletín */
@@ -6366,10 +6321,6 @@ async function guardarIndexCfg() {
       textoBoletin:   g('idx-txtbol')?.value?.trim()     || null,
       kickerBoletin:  g('idx-kicker-bol')?.value?.trim() || null,
       btnBoletin:     g('idx-btn-bol')?.value?.trim()    || null,
-      /* Grid */
-      colsGrid:       parseInt(g('idx-colsgrid')?.value)  || 3,
-      /* Boletín extra */
-      notaBoletin:    g('idx-nota-bol')?.value?.trim()    || null,
       /* SEO */
       metaTitulo:     g('idx-meta-titulo')?.value?.trim() || null,
       metaDesc:       g('idx-meta-desc')?.value?.trim()   || null,
@@ -6398,7 +6349,7 @@ async function cargarEquipoEnSobre() {
         const init = (ed.nombre||'?').split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
         return `<div style="background:var(--paper,#fff);padding:20px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px">
           ${ed.foto_url
-            ? `<img loading="lazy" src="${ed.foto_url}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--bd)">`
+            ? `<img src="${ed.foto_url}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--bd)">`
             : `<div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--negro),var(--azul));display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:18px;font-weight:900;color:rgba(255,255,255,.82)">${init}</div>`}
           <div>
             <div style="font-family:var(--serif);font-weight:700;font-style:italic;font-size:14px;color:var(--t1)">${ed.nombre}</div>
@@ -6584,7 +6535,7 @@ function _mostrarPanelImagenInline(src, nombreArchivo) {
 
   panel.innerHTML = `
     <div style="font-family:var(--sans,sans-serif);font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--azul)">🖼 Insertar imagen en posición del cursor</div>
-    <img loading="lazy" id="_img-panel-preview" style="width:100%;max-height:150px;object-fit:cover;display:block;border-radius:3px;border:1px solid var(--bd)">
+    <img id="_img-panel-preview" style="width:100%;max-height:150px;object-fit:cover;display:block;border-radius:3px;border:1px solid var(--bd)">
     <div style="display:flex;flex-direction:column;gap:5px">
       <label style="font-family:var(--sans,sans-serif);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--t3)">Descripción / pie de foto <span style="font-weight:400;text-transform:none;letter-spacing:0">(queda pegada a la imagen)</span></label>
       <input id="_img-cap" type="text" placeholder="Ej: Vista aérea del río Magdalena, 2023" style="border:1px solid var(--bd);padding:9px 12px;font-size:13px;font-family:var(--sans,sans-serif);outline:none;color:var(--t1);background:var(--paper,#fff);border-radius:3px">
@@ -6747,7 +6698,7 @@ function _insertarEmbedEditor() {
     html = `<div contenteditable="false" data-embed-type="youtube" data-embed-url="${urlFinal}"
       style="position:relative;margin:24px 0;border-radius:6px;overflow:hidden;cursor:pointer;background:#000;user-select:none"
       onclick="this.innerHTML='<iframe src=\'${urlFinal}?autoplay=1\' style=\'width:100%;aspect-ratio:16/9;border:0;display:block\' allowfullscreen allow=\'autoplay; encrypted-media\'></iframe>';this.style.cursor='default'">
-      <img loading="lazy" src="${thumb}" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;opacity:.85">
+      <img src="${thumb}" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;opacity:.85">
       <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
         <div style="width:64px;height:64px;background:rgba(255,0,0,.9);border-radius:50%;display:flex;align-items:center;justify-content:center">
           <div style="border-style:solid;border-width:12px 0 12px 22px;border-color:transparent transparent transparent #fff;margin-left:5px"></div>
@@ -6861,7 +6812,7 @@ function wSetHTML(html) {
     wrapper.setAttribute('data-embed-type', 'youtube');
     wrapper.setAttribute('data-embed-url', src);
     wrapper.style.cssText = 'position:relative;margin:24px 0;border-radius:6px;overflow:hidden;cursor:pointer;background:#000;user-select:none';
-    wrapper.innerHTML = `<img loading="lazy" src="${thumb}" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;opacity:.85">
+    wrapper.innerHTML = `<img src="${thumb}" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;opacity:.85">
       <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
         <div style="width:64px;height:64px;background:rgba(255,0,0,.9);border-radius:50%;display:flex;align-items:center;justify-content:center">
           <div style="border-style:solid;border-width:12px 0 12px 22px;border-color:transparent transparent transparent #fff;margin-left:5px"></div>
@@ -7040,7 +6991,7 @@ async function cargarEditores() {
       const edJson = JSON.stringify(ed).replace(/"/g, '&quot;');
       return `<div style="display:flex;gap:16px;align-items:flex-start;padding:16px 20px;border-bottom:1px solid var(--bd)">
         ${ed.foto_url
-          ? `<img loading="lazy" src="${ed.foto_url}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;flex-shrink:0">`
+          ? `<img src="${ed.foto_url}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;flex-shrink:0">`
           : `<div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--negro),var(--azul));display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:16px;font-weight:900;color:rgba(255,255,255,.82);flex-shrink:0">${init}</div>`}
         <div style="flex:1;min-width:0">
           <div style="font-family:var(--serif);font-size:15px;font-weight:700;font-style:italic">${ed.nombre}</div>
@@ -7053,18 +7004,12 @@ async function cargarEditores() {
           </div>
         </div>
         <div style="display:flex;gap:6px;flex-shrink:0">
-          <button class="ab ab-s ab-sm" onclick="abrirFormEditorById('${ed.id}')">Editar</button>
+          <button class="ab ab-s ab-sm" onclick="abrirFormEditor('${edJson}')">Editar</button>
           <button class="ab ab-d ab-sm" onclick="eliminarEditor('${ed.id}','${(ed.nombre||'').replace(/'/g,"\\'")}')">✕ Eliminar</button>
         </div>
       </div>`;
     }).join('');
   } catch(e) { wrap.innerHTML = `<div class="empty"><div class="empty-ic">⚠</div><h3>${e.message}</h3></div>`; }
-}
-
-/* Abre el form de editor por ID — evita problemas con JSON inline */
-function abrirFormEditorById(id) {
-  const ed = _editoresData.find(e => e.id === id) || null;
-  abrirFormEditor(ed);
 }
 
 function abrirFormEditor(rawOrNull) {
@@ -7076,6 +7021,7 @@ function abrirFormEditor(rawOrNull) {
   if (g('ed-id'))       g('ed-id').value       = ed?.id       || '';
   if (g('ed-nombre'))   g('ed-nombre').value   = ed?.nombre   || '';
   if (g('ed-cargo'))    g('ed-cargo').value     = ed?.cargo    || '';
+  if (g('ed-orden'))    g('ed-orden').value     = ed?.orden    || 1;
   if (g('ed-slug'))     g('ed-slug').value      = ed?.slug     || '';
   if (g('ed-email'))    g('ed-email').value     = ed?.email    || '';
   if (g('ed-bio'))      g('ed-bio').value       = ed?.bio      || '';
@@ -7119,6 +7065,7 @@ async function guardarEditor() {
       nombre, foto_url: foto, activo: true,
       slug:  _slugify(g('ed-slug')?.value || nombre),
       cargo: (g('ed-cargo')?.value||'').trim() || null,
+      orden: parseInt(g('ed-orden')?.value) || 1,
       email: (g('ed-email')?.value||'').trim() || null,
       bio:   (g('ed-bio')?.value||'').trim()   || null,
     };
@@ -7152,7 +7099,7 @@ async function eliminarEditor(id, nombre) {
 async function cargarEditoresEnSelector() {
   const sel = g('f-editor-id'); if (!sel) return;
   try {
-    const eds = await SB.select('editores', 'activo=eq.true&order=nombre.asc');
+    const eds = await SB.select('editores', 'activo=eq.true&order=orden.asc,nombre.asc');
     _editoresData = eds || [];
     const cur = sel.value;
     sel.innerHTML = '<option value="">— Sin editor vinculado —</option>'
@@ -7162,14 +7109,7 @@ async function cargarEditoresEnSelector() {
 
 function onEditorSelect(edId) {
   const ed = _editoresData.find(e => e.id === edId);
-  if (!ed) return;
-  const autorInput = g('f-autor');
-  if (!autorInput) return;
-  /* Solo autocompletar si está vacío o tenía el valor por defecto */
-  const valActual = autorInput.value.trim();
-  if (!valActual || valActual === 'Redacción La Enbajada') {
-    autorInput.value = ed.nombre;
-  }
+  if (ed && g('f-autor')) g('f-autor').value = ed.nombre;
 }
 
 /* ── Portada (una sola imagen de portada) ── */
@@ -7207,7 +7147,7 @@ function _renderPortadaOpts(arts, selId) {
   wrap.innerHTML = arts.map(a => `
     <div onclick="selPortada('${a.id}')" id="port-row-${a.id}"
       style="display:grid;grid-template-columns:56px 1fr 22px;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--bd);cursor:pointer;background:${a.id===selId?'rgba(0,74,173,.04)':''}">
-      ${a.imagen_url?`<img loading="lazy" src="${a.imagen_url}" style="width:52px;height:36px;object-fit:cover;border-radius:3px">`:'<div style="width:52px;height:36px;background:var(--paper3);border-radius:3px"></div>'}
+      ${a.imagen_url?`<img src="${a.imagen_url}" style="width:52px;height:36px;object-fit:cover;border-radius:3px">`:'<div style="width:52px;height:36px;background:var(--paper3);border-radius:3px"></div>'}
       <div>
         <div style="font-family:var(--serif);font-weight:700;font-style:italic;font-size:13px">${a.titulo}</div>
         <div style="font-size:10px;color:var(--t4);margin-top:2px">${a.tipo||'—'} · Ed. ${a.numero_id}</div>
@@ -7327,7 +7267,7 @@ function irTab(id, btn) {
         </div>
         <div class="sc-body" style="display:flex;gap:16px;align-items:center">
           <div id="portada-actual-ph" style="width:120px;height:80px;background:var(--paper3);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:24px;opacity:.4;flex-shrink:0">🖼</div>
-          <img loading="lazy" id="portada-actual-img" src="" alt="" style="display:none;width:120px;height:80px;object-fit:cover;border-radius:4px;flex-shrink:0">
+          <img id="portada-actual-img" src="" alt="" style="display:none;width:120px;height:80px;object-fit:cover;border-radius:4px;flex-shrink:0">
           <div>
             <div id="portada-actual-titulo" style="font-family:var(--serif);font-size:16px;font-weight:700;font-style:italic;color:var(--t2)">Sin artículo seleccionado</div>
             <div id="portada-actual-meta" style="font-size:11px;color:var(--t4);margin-top:3px">—</div>

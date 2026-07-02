@@ -341,7 +341,7 @@ html.dark .search-modal { background:var(--bg); }
   <div class="search-modal-results" id="search-modal-results"></div>
 </div>
 
-<script src="/assets/app.js?v=ba655f45"></script>
+<script src="/assets/app.js?v=a50d39e7"></script>
 <script>
 
 /* ── Sanitize XSS — escapar datos de BD antes de innerHTML ── */
@@ -357,10 +357,12 @@ function _esc(s){
 }
 
 function articuloUrl(a) {
-  if (a.slug) return 'articulo.html?slug=' + encodeURIComponent(a.slug);
-  var _s = (a.titulo || '').toLowerCase().normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  return 'articulo.html?slug=' + _s;
+  var slug = a.slug || (a.titulo||'').toLowerCase().normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  var tag  = (a.seccion_tag||'').replace(/#/g,'').trim();
+  if (slug && tag) return '/secciones/' + tag + '/' + slug;
+  if (slug)        return '/historias/' + slug;
+  return '/';
 }
 (()=>{const h=document.getElementById('site-header');window.addEventListener('scroll',()=>h?.classList.toggle('scrolled',window.scrollY>20),{passive:true});})();
 
@@ -439,7 +441,7 @@ async function init(){
   /* FIX: equipo — observeReveal() siempre se ejecuta, independiente del resultado */
   const grid=document.getElementById('sobre-equipo-grid');
   const cnt=document.getElementById('sobre-equipo-cnt');
-  const eds=await SB.select('editores','activo=eq.true&order=nombre.asc').catch(()=>[]);
+  const eds=await SB.select('editores','activo=eq.true&order=orden.asc,nombre.asc').catch(()=>[]);
   if(cnt)cnt.textContent=`${(eds||[]).length} colaboradores`;
   if(grid){
     if(!eds?.length){
