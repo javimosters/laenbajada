@@ -1064,17 +1064,12 @@ async function init() {
   _renderNavSecs(_secsNav);
 
   /* URL canónica: solo slug, sin id.
-     FIX: antes, cualquier valor no vacío en seccion_tag (incluso uno viejo
-     como "historias" que no es una sección real) se usaba tal cual para
-     armar /secciones/{tag}/{slug} — por eso salía la URL rara
-     "/secciones/historias/...". Ahora solo se usa /secciones/{tag}/ si el
-     tag es una de las 3 secciones reales; si no, cae a /historias/{slug}. */
-  const VALID_TAGS = ['la-cronica', 'la-conversacion', 'la-curaturia'];
-  const TAG_ALIASES = { 'cronica':'la-cronica','conversacion':'la-conversacion','curatia':'la-curaturia','curaturia':'la-curaturia','la-curatia':'la-curaturia' };
+     NOTA: cualquier seccion_tag no vacío se usa tal cual para /secciones/{tag}/
+     — "historias" y otras secciones dinámicas son válidas, no solo las 3
+     "oficiales" (la-cronica/la-conversacion/la-curaturia). Solo si no hay
+     tag en absoluto se cae a /historias/{slug}. */
   const cleanSlug = a.slug || _normalizeSlug(a.titulo);
-  const rawTag = (a.seccion_tag || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/#/g,'').replace(/\s+/g,'-').trim();
-  const normalizedTag = TAG_ALIASES[rawTag] || rawTag;
-  const cleanTag = VALID_TAGS.includes(normalizedTag) ? normalizedTag : '';
+  const cleanTag  = (a.seccion_tag || '').replace(/#/g,'').trim();
   const cleanUrl  = cleanTag ? `/secciones/${cleanTag}/${cleanSlug}` : `/historias/${cleanSlug}`;
   history.replaceState(null, '', cleanUrl);
 
