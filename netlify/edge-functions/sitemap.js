@@ -56,7 +56,13 @@ export default async (request) => {
         .filter(a => a.slug)
         .map(a => {
           const lastmod = (a.updated_at || a.created_at || '').split('T')[0];
-          const tag    = (a.seccion_tag || '').replace(/#/g,'').trim();
+          /* FIX: mismo criterio que og.js/articulo.html — solo tratar el tag
+             como sección real si es una de las 3 válidas. */
+          const VALID_TAGS = ['la-cronica', 'la-conversacion', 'la-curaturia'];
+          const TAG_ALIASES = { 'cronica':'la-cronica','conversacion':'la-conversacion','curatia':'la-curaturia','curaturia':'la-curaturia','la-curatia':'la-curaturia' };
+          const rawTag = (a.seccion_tag||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/#/g,'').replace(/\s+/g,'-').trim();
+          const normalizedTag = TAG_ALIASES[rawTag] || rawTag;
+          const tag = VALID_TAGS.includes(normalizedTag) ? normalizedTag : '';
           const artUrl = tag
             ? `https://laenbajada.com/secciones/${tag}/${a.slug}`
             : `https://laenbajada.com/historias/${a.slug}`;

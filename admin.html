@@ -4904,6 +4904,7 @@ async function cargarMetricas() {
   if (listPages) listPages.innerHTML = '<div class="empty"><div class="empty-ic">⌛</div><h3>Cargando…</h3></div>';
 
   try {
+    /* Leer visitas desde Supabase — tabla `visitas` */
     const rango = g('met-filtro-rango')?.value || 'todo';
     let filtro = 'order=created_at.desc';
     if (rango === 'hoy') {
@@ -4917,13 +4918,11 @@ async function cargarMetricas() {
       filtro += `&created_at=gte.${d30.toISOString()}`;
     }
 
-    const [visitas, arts] = await Promise.all([
-      SB.select('visitas', filtro + '&limit=5000').catch(() => null),
-      SB.select('articulos', 'select=id,titulo,slug,seccion_tag').catch(() => []),
-    ]);
+    const visitas = await SB.select('visitas', filtro + '&limit=2000').catch(() => null);
 
     if (!visitas) {
-      const msg = '<div style="padding:24px;text-align:center;color:var(--t3);font-size:13px">La tabla <code style="font-family:var(--mono)">visitas</code> no existe aún.</div>';
+      /* Tabla no existe aún */
+      const msg = '<div style="padding:24px;text-align:center;color:var(--t3);font-size:13px">La tabla <code style="font-family:var(--mono);background:var(--bg2);padding:1px 5px">visitas</code> no existe aún. Descarga el SQL de métricas y ejecútalo en Supabase.</div>';
       if (listArts)  listArts.innerHTML  = msg;
       if (listPages) listPages.innerHTML = msg;
       return;
@@ -4932,23 +4931,24 @@ async function cargarMetricas() {
     /* Totales */
     const hoy = new Date(); hoy.setHours(0,0,0,0);
     const d7  = new Date(); d7.setDate(d7.getDate()-7);
-    const total    = visitas.length;
-    const hoyCount = visitas.filter(v => new Date(v.created_at) >= hoy).length;
-    const semCount = visitas.filter(v => new Date(v.created_at) >= d7).length;
-    const uniqArts = new Set(visitas.filter(v=>v.tipo==='articulo').map(v=>v.referencia_id)).size;
-    const uniqSes  = new Set(visitas.map(v=>v.sesion_id).filter(Boolean)).size;
+    const total      = visitas.length;
+    const hoyCount   = visitas.filter(v => new Date(v.created_at) >= hoy).length;
+    const semCount   = visitas.filter(v => new Date(v.created_at) >= d7).length;
+    const uniqArts   = new Set(visitas.filter(v => v.tipo==='articulo').map(v=>v.referencia_id)).size;
 
-    if (g('met-total'))       g('met-total').textContent       = total.toLocaleString('es-CO');
-    if (g('met-hoy'))         g('met-hoy').textContent         = hoyCount;
-    if (g('met-semana'))      g('met-semana').textContent      = semCount.toLocaleString('es-CO');
+    if (g('met-total'))      g('met-total').textContent      = total.toLocaleString('es-CO');
+    if (g('met-hoy'))        g('met-hoy').textContent        = hoyCount;
+    if (g('met-semana'))     g('met-semana').textContent     = semCount.toLocaleString('es-CO');
     if (g('met-arts-vistos')) g('met-arts-vistos').textContent = uniqArts;
-    if (g('met-sesiones'))    g('met-sesiones').textContent    = uniqSes.toLocaleString('es-CO');
-
+    /* Sesiones únicas */
+    const uniqSes = new Set(visitas.map(v => v.sesion_id).filter(Boolean)).size;
+    if (g('met-sesiones'))   g('met-sesiones').textContent   = uniqSes.toLocaleString('es-CO');
+    /* Gráfico de tendencia */
     _renderMetChart(visitas);
 
     /* Artículos más leídos */
     const conteoArts = {};
-    visitas.filter(v=>v.tipo==='articulo'&&v.referencia_id).forEach(v=>{
+    visitas.filter(v => v.tipo === 'articulo' && v.referencia_id).forEach(v => {
       conteoArts[v.referencia_id] = (conteoArts[v.referencia_id]||0) + 1;
     });
     const artsSorted = Object.entries(conteoArts).sort((a,b)=>b[1]-a[1]).slice(0,20);
@@ -4957,28 +4957,31 @@ async function cargarMetricas() {
       if (!artsSorted.length) {
         listArts.innerHTML = '<div class="empty"><div class="empty-ic">📰</div><h3>Sin vistas de artículos aún</h3></div>';
       } else {
-        const maxV = artsSorted[0]?.[1] || 1;
+        const arts = await DB.getArticulos().catch(()=>[]);
+        const maxVistas = artsSorted[0]?.[1] || 1;
         listArts.innerHTML = artsSorted.map(([artId, cnt], i) => {
-          const art = (arts||[]).find(a => a.id === artId);
-          const artUrl = art?.slug && art?.seccion_tag
-            ? `/secciones/${art.seccion_tag}/${art.slug}`
-            : art?.slug ? `/historias/${art.slug}` : null;
-          const titulo = !art
-            ? `<span style="opacity:.45;font-size:12px">Artículo eliminado</span>`
-            : artUrl
-              ? `<a href="${artUrl}" target="_blank" style="color:inherit;text-decoration:none;font-style:italic">${art.titulo}</a>`
-              : `<span style="font-style:italic">${art.titulo}</span>`;
+          const art = arts.find(a => a.id === artId);
+          const eliminado = !art;
+          const titulo = eliminado
+            ? `<span style="opacity:.45;font-style:normal;font-size:12px">Artículo eliminado</span> <span style="font-family:var(--mono);font-size:10px;color:var(--t4)">${artId.slice(0,8)}…</span>`
+            : `<a href="articulo.html?id=${artId}" target="_blank" style="color:inherit;text-decoration:none;font-style:italic">${art.titulo}</a>`;
           const secBadge = art?.seccion_tag
-            ? `<span style="font-size:9px;font-family:var(--ui);color:var(--azul);background:rgba(0,74,173,.07);padding:1px 7px;border-radius:2px;font-weight:600">${art.seccion_tag}</span>` : '';
-          const pct = Math.round(cnt/maxV*100);
-          return `<div style="display:grid;grid-template-columns:22px 1fr 60px;gap:10px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--bd)">
+            ? `<span style="font-size:9px;font-family:var(--sans);color:var(--azul);background:rgba(0,74,173,.07);padding:1px 7px;border-radius:2px;font-weight:600">${art.seccion_tag}</span>` : '';
+          const estadoBadge = art?.estado === 'borrador'
+            ? `<span style="font-size:9px;font-family:var(--sans);color:var(--t3);background:var(--paper2);padding:1px 7px;border-radius:2px">borrador</span>` : '';
+          const pct = Math.round(cnt / maxVistas * 100);
+          return `<div class="met-art-row" data-titulo="${eliminado?'eliminado '+(artId.slice(0,8)):art.titulo}" style="display:grid;grid-template-columns:22px 1fr 60px;gap:10px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--bd);${eliminado?'opacity:.55;background:repeating-linear-gradient(45deg,transparent,transparent 4px,rgba(0,0,0,.02) 4px,rgba(0,0,0,.02) 8px)':''}">
             <div style="font-family:var(--mono);font-size:11px;color:var(--t4);text-align:right">${i+1}</div>
             <div>
-              <div style="font-family:var(--serif);font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">${titulo} ${secBadge}</div>
-              <div style="height:3px;background:var(--bd);border-radius:2px"><div style="height:3px;background:var(--azul);border-radius:2px;width:${pct}%"></div></div>
+              <div style="font-family:var(--serif);font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                ${eliminado ? '🗑 ' : ''}${titulo} ${secBadge} ${estadoBadge}
+              </div>
+              <div style="height:3px;background:var(--bd);border-radius:2px">
+                <div style="height:3px;background:${eliminado?'var(--t4)':'var(--azul)'};border-radius:2px;width:${pct}%;transition:width .6s"></div>
+              </div>
             </div>
             <div style="text-align:right">
-              <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--azul)">${cnt}</div>
+              <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:${eliminado?'var(--t3)':'var(--azul)'}">${cnt}</div>
               <div style="font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4)">vistas</div>
             </div>
           </div>`;
@@ -4986,10 +4989,10 @@ async function cargarMetricas() {
       }
     }
 
-    /* Páginas */
+    /* Páginas del sitio */
     const conteoPages = {};
-    visitas.filter(v=>v.tipo!=='articulo').forEach(v=>{
-      const p = v.pagina||'desconocida';
+    visitas.filter(v => v.tipo !== 'articulo').forEach(v => {
+      const p = v.pagina || 'desconocida';
       conteoPages[p] = (conteoPages[p]||0) + 1;
     });
     const pagesSorted = Object.entries(conteoPages).sort((a,b)=>b[1]-a[1]);
@@ -4998,15 +5001,16 @@ async function cargarMetricas() {
       if (!pagesSorted.length) {
         listPages.innerHTML = '<div class="empty"><div class="empty-ic">◈</div><h3>Sin visitas de páginas aún</h3></div>';
       } else {
-        const maxP = pagesSorted[0]?.[1]||1;
-        const icons = {index:'🏠',secciones:'◈',edicion:'📰',archivo:'◫',sobre:'◑',editor:'◉',articulo:'📄'};
-        listPages.innerHTML = pagesSorted.map(([pag,cnt])=>{
+        const maxP = pagesSorted[0]?.[1] || 1;
+        const icons = { index:'🏠', secciones:'◈', edicion:'📰', archivo:'◫', sobre:'◑', editor:'◉' };
+        listPages.innerHTML = pagesSorted.map(([pag, cnt]) => {
           const pct = Math.round(cnt/maxP*100);
+          const ic  = icons[pag] || '◎';
           return `<div style="display:grid;grid-template-columns:28px 1fr 60px;gap:10px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--bd)">
-            <div style="text-align:center;font-size:14px">${icons[pag]||'◎'}</div>
+            <div style="text-align:center;font-size:14px">${ic}</div>
             <div>
-              <div style="font-family:var(--ui);font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--t1);margin-bottom:4px">${pag}</div>
-              <div style="height:3px;background:var(--bd);border-radius:2px"><div style="height:3px;background:var(--azul);border-radius:2px;width:${pct}%"></div></div>
+              <div style="font-family:var(--ui);font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--t1);margin-bottom:4px">${pag}.html</div>
+              <div style="height:3px;background:var(--bg2);border-radius:2px"><div style="height:3px;background:var(--oro2,#a07840);border-radius:2px;width:${pct}%;transition:width .6s var(--ease)"></div></div>
             </div>
             <div style="text-align:right">
               <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--t2)">${cnt}</div>
@@ -5016,8 +5020,9 @@ async function cargarMetricas() {
         }).join('');
       }
     }
+
   } catch(e) {
-    const msg = `<div style="padding:20px;color:#c0392b;font-size:13px">Error cargando métricas: ${e.message}</div>`;
+    const msg = `<div style="padding:20px;color:#c0392b;font-size:13px">Error: ${e.message}</div>`;
     if (listArts)  listArts.innerHTML  = msg;
     if (listPages) listPages.innerHTML = msg;
   }
@@ -7137,9 +7142,35 @@ async function guardarEditor() {
   if (!nombre) { notif('El nombre es obligatorio','warn'); return; }
   const overlay = g('loading-overlay'); if (overlay) overlay.classList.add('show');
   try {
+    /* ── Foto: subir a Storage solo si es base64 (nueva) ──
+       FIX: antes esto guardaba el base64 directo en foto_url sin subirlo
+       a Storage (a diferencia de artículos y ediciones, que sí lo hacían).
+       Un foto_url en base64 funciona para mostrarla en la propia página,
+       pero no sirve como og:image para los previews de WhatsApp/Facebook,
+       que necesitan una URL http(s) real y descargable. */
     const fotoData = g('ed-foto-data')?.value || '';
-    const fotoUrl  = g('ed-foto-url')?.value?.trim() || '';
-    const foto     = fotoData || fotoUrl || null;
+    let foto = g('ed-foto-url')?.value?.trim() || null;
+    if (fotoData && fotoData.startsWith('data:')) {
+      try {
+        const blob = await fetch(fotoData).then(r => r.blob());
+        const ext  = blob.type.includes('png') ? 'png' : 'jpg';
+        const nombreArchivo = `editores/${Date.now()}.${ext}`;
+        const res = await fetch(`${SUPA_URL}/storage/v1/object/imagenes/${nombreArchivo}`, {
+          method: 'POST',
+          headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}`, 'Content-Type': blob.type, 'x-upsert': 'true' },
+          body: blob,
+        });
+        if (res.ok) {
+          foto = `${SUPA_URL}/storage/v1/object/public/imagenes/${nombreArchivo}`;
+        } else {
+          foto = fotoData; /* fallback: al menos queda visible en el sitio */
+        }
+      } catch(e) {
+        foto = fotoData; /* fallback */
+      }
+    } else if (!foto) {
+      foto = fotoData || null;
+    }
     const payload  = {
       nombre, foto_url: foto, activo: true,
       slug:  _slugify(g('ed-slug')?.value || nombre),
@@ -7157,7 +7188,7 @@ async function guardarEditor() {
 
     /* Reasignar órdenes secuenciales para evitar duplicados y huecos */
     try {
-      const todosEds = await SB.select('editores', 'activo=eq.true&order=orden.asc,created_at.asc');
+      const todosEds = await SB.select('editores', 'activo=eq.true&order=orden.asc,nombre.asc');
       /* Si el editor guardado tiene un orden distinto, insertarlo en esa posición */
       const nuevoOrden = payload.orden;
       const edId = id || null;
@@ -7203,7 +7234,7 @@ let _editoresSelector = [];
 async function cargarEditoresEnSelector() {
   const sel = g('f-editor-id'); if (!sel) return;
   try {
-    const eds = await SB.select('editores', 'activo=eq.true&order=orden.asc,created_at.asc');
+    const eds = await SB.select('editores', 'activo=eq.true&order=orden.asc,nombre.asc');
     _editoresSelector = eds || [];
     const cur = sel.value;
     sel.innerHTML = '<option value="">— Sin editor vinculado —</option>'
