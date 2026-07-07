@@ -10,8 +10,8 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="Edición — La Enbajada">
   <meta property="og:description" content="Edición actual de La Enbajada, la revista cultural del Caribe colombiano. Artículos, historias y conversaciones.">
-  <meta property="og:image" content="https://laenbajada.com/assets/og-image.jpg">
-  <meta property="og:url" content="https://laenbajada.com/">
+  <meta property="og:image" content="https://laenbajada.com/assets/og-image.jpg" id="og-image">
+  <meta property="og:url" content="https://laenbajada.com/" id="og-url">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Edición — La Enbajada">
   <meta name="twitter:description" content="Edición actual de La Enbajada, la revista cultural del Caribe colombiano. Artículos, historias y conversaciones.">
@@ -277,7 +277,7 @@ html.dark .search-modal { background: var(--bg); }
 </style>
   <link rel="preconnect" href="https://pkilwzcypcyhxjuknkho.supabase.co" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-  <link rel="canonical" href="https://laenbajada.com/edicion.html">
+  <link rel="canonical" href="https://laenbajada.com/edicion.html" id="canonical">
 </head>
 <body>
 <noscript>
@@ -754,10 +754,23 @@ async function init() {
     return;
   }
 
+  /* Canonical dinámico: apuntar a la URL limpia de esta edición real
+     (/ediciones/:num) en vez de siempre al genérico /edicion.html —
+     evita que todas las ediciones se canonicalicen entre sí. */
+  const canonicalEl = document.getElementById('canonical');
+  if (canonicalEl) {
+    canonicalEl.href = `https://laenbajada.com/ediciones/${encodeURIComponent(num.id)}`;
+  }
+  const ogUrlEl = document.getElementById('og-url');
+  if (ogUrlEl) {
+    ogUrlEl.setAttribute('content', `https://laenbajada.com/ediciones/${encodeURIComponent(num.id)}`);
+  }
+
   /* Hero */
   if (num.imagen_url) {
     document.getElementById('ed-hero-bg').innerHTML = `<img src="${num.imagen_url}" alt="" loading="eager">`;
   }
+
   const eyebrow = document.getElementById('ed-eyebrow-txt');
   if (eyebrow) eyebrow.textContent = (num.estado==='edicion-actual'||num.estado==='activo') ? 'Edición actual' : `Archivo — N.º ${num.id}`;
   const badge = document.getElementById('ed-num-badge');
@@ -799,7 +812,11 @@ async function init() {
     else nextEl.style.opacity='0.2';
   }
 
-  aplicarSEO({ titulo:`N.º ${num.id} — ${num.titulo} · La Enbajada`, desc: num.subtitulo||'' });
+  /* aplicarSEO ya agrega " — La Enbajada" solo, así que titulo va sin
+     sufijo (antes quedaba "N.º 01 — Título · La Enbajada — La Enbajada").
+     Antes tampoco se pasaba `imagen`, por eso el link preview nunca
+     mostraba la portada real de la edición. */
+  aplicarSEO({ titulo: `N.º ${num.id} — ${num.titulo}`, desc: num.subtitulo || '', imagen: num.imagen_url || '' });
   observeReveal();
 
   /* Marcar artículos leídos */

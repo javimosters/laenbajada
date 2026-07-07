@@ -437,7 +437,7 @@ async function init(){
   await initSite();
   const _secsNav = await DB.getSecciones().catch(() => []);
   _renderNavSecs(_secsNav);
-  aplicarSEO({titulo:'Página no encontrada — La Enbajada',desc:'La dirección que buscas no existe. Vuelve al inicio de La Enbajada.'});
+  aplicarSEO({titulo:'Página no encontrada',desc:'La dirección que buscas no existe. Vuelve al inicio de La Enbajada.'});
   _animarHero();
 
   const arts=(await DB.getPublicados().catch(()=>[])).slice(0,6);

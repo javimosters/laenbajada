@@ -414,18 +414,23 @@ async function init(){
   await initSite();
   const _secsNav = await DB.getSecciones().catch(() => []);
   _renderNavSecs(_secsNav);
-  aplicarSEO({titulo:'Nosotros — La Enbajada',desc:'Quiénes hacemos La Enbajada. Revista cultural del Caribe colombiano.'});
-  /* sobre.html: config sin caché — refleja cambios del admin de inmediato */
-  const[cfgRaw,arts]=await Promise.all([
-    fetch('https://pkilwzcypcyhxjuknkho.supabase.co/rest/v1/configuracion?id=eq.1&select=sobre,nombre,tagline', {
-      headers: {
-        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraWx3emN5cGN5aHhqdWtua2hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNDE1NTksImV4cCI6MjA5MDgxNzU1OX0.fAhepDbj2p1JEbHzZvD1ZqwAK95OskE-CRxF4gqgIrg',
-        'Cache-Control': 'no-cache'
-      }
-    }).then(r=>r.json()).then(rows=>rows[0]||{}),
-    DB.getPublicados()
+  aplicarSEO({titulo:'Nosotros',desc:'Quiénes hacemos La Enbajada. Revista cultural del Caribe colombiano.'});
+
+  /* Antes esta página duplicaba la consulta a `configuracion` con su propio
+     fetch + caché en localStorage aparte (SOBRE_KEY), Y ADEMÁS esperaba a
+     que esa consulta y la de artículos terminaran ANTES de recién pedir los
+     editores — tres viajes de red en cadena en vez de en paralelo. Eso era
+     lo que hacía que la página se sintiera lenta.
+     DB.getConfig() ya tiene su propio caché (localStorage, 5 min,
+     stale-while-revalidate) desde initSite() arriba, así que lo reutilizamos
+     en vez de reinventar la rueda, y las tres consultas van juntas. */
+  const [cfgRaw, arts, eds] = await Promise.all([
+    DB.getConfig(),
+    DB.getPublicados(),
+    SB.select('editores', 'activo=eq.true&order=orden.asc,nombre.asc').catch(() => []),
   ]);
-  const cfg = { ...cfgRaw, sobre: cfgRaw.sobre || {} };
+
+  const cfg = { ...(cfgRaw||{}), sobre: (cfgRaw||{}).sobre || {} };
   const sb = cfg.sobre || {};
 
   const t1=document.getElementById('js-sobre-titulo');if(t1&&sb.titulo)t1.textContent=sb.titulo;
@@ -441,7 +446,6 @@ async function init(){
   /* FIX: equipo — observeReveal() siempre se ejecuta, independiente del resultado */
   const grid=document.getElementById('sobre-equipo-grid');
   const cnt=document.getElementById('sobre-equipo-cnt');
-  const eds=await SB.select('editores','activo=eq.true&order=orden.asc,nombre.asc').catch(()=>[]);
   if(cnt)cnt.textContent=`${(eds||[]).length} colaboradores`;
   if(grid){
     if(!eds?.length){
@@ -450,7 +454,10 @@ async function init(){
       grid.innerHTML=eds.map(ed=>{
         const init=(ed.nombre||'?').split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
         const artsCnt=arts.filter(a=>a.editor_id===ed.id).length;
-        return `<a class="sobre-editor-card" href="/editor.html?slug=${ed.slug||ed.id}">
+        /* FIX: antes apuntaba a /editor.html?slug= (URL vieja) — ahora usa
+           la URL limpia /sobre/equipo/:slug, la misma que indexa Google
+           y que reconoce og.js para el preview con foto real. */
+        return `<a class="sobre-editor-card" href="/sobre/equipo/${encodeURIComponent(ed.slug||ed.id)}">
           ${ed.foto_url?`<img class="sobre-ed-foto" src="${ed.foto_url}" alt="${ed.nombre}" loading="lazy">`:`<div class="sobre-ed-ph">${init}</div>`}
           <div class="sobre-ed-nombre">${ed.nombre}</div>
           ${ed.cargo?`<div class="sobre-ed-cargo">${ed.cargo}</div>`:''}

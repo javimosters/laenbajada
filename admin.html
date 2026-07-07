@@ -2000,9 +2000,32 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
           <input type="hidden" id="sobre-img-data">
           <input type="hidden" id="sobre-img-url">
           <div class="fg">
+            <label class="fl">Imagen de cabecera</label>
+            <div id="sobre-img-area" style="cursor:pointer;border:1.5px dashed var(--bd);border-radius:8px;padding:20px;text-align:center;color:var(--t4);font-size:12px" onclick="document.getElementById('sobre-img-input').click()">
+              Clic para subir imagen de cabecera
+            </div>
+            <div id="sobre-img-prev" style="display:none;position:relative">
+              <img id="sobre-img-el" src="" style="width:100%;max-height:220px;object-fit:cover;border-radius:8px;border:1px solid var(--bd)">
+              <button type="button" class="ab ab-sm" onclick="quitarImgSobre()" style="position:absolute;top:8px;right:8px">✕ Quitar</button>
+            </div>
+            <input type="file" id="sobre-img-input" accept="image/*" style="display:none" onchange="cargarImgSobre(this)">
+          </div>
+          <div class="fg">
+            <label class="fl" for="sobre-tagline">Tagline (subtítulo del hero)</label>
+            <input class="fi" type="text" id="sobre-tagline" placeholder="Revista cultural del Caribe colombiano">
+          </div>
+          <div class="fg">
             <label class="fl" for="sobre-cuerpo">Texto de presentación</label>
             <textarea class="fta" id="sobre-cuerpo" style="min-height:180px;font-family:var(--serif);font-size:15px;line-height:1.8"
               placeholder="La Enbajada es una revista cultural del Caribe colombiano…"></textarea>
+          </div>
+          <div class="fg">
+            <label class="fl" for="sobre-cita">Cita destacada (opcional)</label>
+            <textarea class="fta" id="sobre-cita" style="min-height:72px;font-family:var(--serif);font-style:italic;font-size:15px" placeholder="«Una frase que defina la revista.»"></textarea>
+          </div>
+          <div class="fg">
+            <label class="fl" for="sobre-texto2">Texto de cierre (opcional)</label>
+            <textarea class="fta" id="sobre-texto2" style="min-height:100px;font-family:var(--serif);line-height:1.8" placeholder="Un párrafo final sobre la revista..."></textarea>
           </div>
         </div>
       </div>
@@ -4490,26 +4513,21 @@ async function _cargarFooter() {
 async function _cargarSobre() {
   const cfg = await DB.getConfig();
   const s   = cfg.sobre || {};
-  if (g('sobre-titulo')) g('sobre-titulo').value = s.titulo  || '';
-  if (g('sobre-cuerpo')) g('sobre-cuerpo').value = s.texto1  || s.cuerpo || '';
-  if (g('sobre-equipo') && Array.isArray(s.equipo)) g('sobre-equipo').value = s.equipo.join('\n');
-  /* Director editorial */
-  if (g('sobre-editor'))  g('sobre-editor').value  = s.editor  || '';
-  if (g('sobre-cargo'))   g('sobre-cargo').value   = s.cargo   || 'Director Editorial';
-  if (g('sobre-bio'))     g('sobre-bio').value     = s.bio     || '';
+  /* Cabecera */
+  if (g('sobre-titulo'))     g('sobre-titulo').value     = s.titulo   || '';
+  if (g('sobre-tagline'))    g('sobre-tagline').value    = s.tagline  || '';
+  if (g('sobre-cuerpo'))     g('sobre-cuerpo').value     = s.texto1   || s.cuerpo || '';
+  if (g('sobre-cita'))       g('sobre-cita').value       = s.cita     || '';
+  if (g('sobre-texto2'))     g('sobre-texto2').value     = s.texto2   || '';
   /* Manifiesto */
   if (g('sobre-man-titulo')) g('sobre-man-titulo').value = s.manTitulo || '';
   if (g('sobre-man-texto1')) g('sobre-man-texto1').value = s.manTexto1 || '';
   if (g('sobre-man-cita'))   g('sobre-man-cita').value   = s.manCita   || '';
   if (g('sobre-man-texto2')) g('sobre-man-texto2').value = s.manTexto2 || '';
-  /* Imágenes */
+  /* Imagen de cabecera */
   if (s.imagenUrl) {
     prevImgSobre(s.imagenUrl);
     if (g('sobre-img-url')) g('sobre-img-url').value = s.imagenUrl.startsWith('data:') ? '' : s.imagenUrl;
-  }
-  if (s.fotoEditor) {
-    prevImgEditor(s.fotoEditor);
-    if (g('sobre-editor-img-url')) g('sobre-editor-img-url').value = s.fotoEditor.startsWith('data:') ? '' : s.fotoEditor;
   }
 }
 
@@ -4669,31 +4687,30 @@ function quitarImgEditor() {
 async function guardarSobre() {
   const overlay = g('loading-overlay'); if (overlay) overlay.classList.add('show');
   try {
-    const equipo = (g('sobre-equipo')?.value||'').split('\n').map(l=>l.trim()).filter(Boolean);
-    const imgData    = g('sobre-img-data')?.value;
-    const imgUrl     = g('sobre-img-url')?.value?.trim();
-    const edImgData  = g('sobre-editor-img-data')?.value;
-    const edImgUrl   = g('sobre-editor-img-url')?.value?.trim();
+    const imgData = g('sobre-img-data')?.value;
+    const imgUrl  = g('sobre-img-url')?.value?.trim();
+    const cfgActual   = await DB.getConfig();
+    const sobreActual = cfgActual.sobre || {};
     await DB.setConfig({
       sobre: {
-        titulo:     g('sobre-titulo')?.value?.trim() || '',
-        texto1:     g('sobre-cuerpo')?.value?.trim() || '',
-        imagenUrl:  imgData || imgUrl || '',
-        editor:     g('sobre-editor')?.value?.trim() || '',
-        cargo:      g('sobre-cargo')?.value?.trim()  || 'Director Editorial',
-        bio:        g('sobre-bio')?.value?.trim()    || '',
-        fotoEditor: edImgData || edImgUrl || '',
-        manTitulo:  g('sobre-man-titulo')?.value?.trim()  || '',
-        manTexto1:  g('sobre-man-texto1')?.value?.trim()  || '',
-        manCita:    g('sobre-man-cita')?.value?.trim()    || '',
-        manTexto2:  g('sobre-man-texto2')?.value?.trim()  || '',
-        equipo,
+        ...sobreActual,
+        titulo:    g('sobre-titulo')?.value?.trim()    || '',
+        tagline:   g('sobre-tagline')?.value?.trim()   || '',
+        texto1:    g('sobre-cuerpo')?.value?.trim()    || '',
+        cita:      g('sobre-cita')?.value?.trim()      || '',
+        texto2:    g('sobre-texto2')?.value?.trim()    || '',
+        imagenUrl: imgData || imgUrl || sobreActual.imagenUrl || '',
+        manTitulo: g('sobre-man-titulo')?.value?.trim() || '',
+        manTexto1: g('sobre-man-texto1')?.value?.trim() || '',
+        manCita:   g('sobre-man-cita')?.value?.trim()   || '',
+        manTexto2: g('sobre-man-texto2')?.value?.trim() || '',
       }
     });
     notif('Página Nosotros guardada ✓', 'ok');
   } catch(e) { notif('Error: ' + e.message, 'err'); }
   finally { if (overlay) overlay.classList.remove('show'); }
 }
+
 
 async function guardarFrase() {
   const overlay = g('loading-overlay'); if (overlay) overlay.classList.add('show');
@@ -4887,7 +4904,6 @@ async function cargarMetricas() {
   if (listPages) listPages.innerHTML = '<div class="empty"><div class="empty-ic">⌛</div><h3>Cargando…</h3></div>';
 
   try {
-    /* Leer visitas desde Supabase — tabla `visitas` */
     const rango = g('met-filtro-rango')?.value || 'todo';
     let filtro = 'order=created_at.desc';
     if (rango === 'hoy') {
@@ -4901,11 +4917,13 @@ async function cargarMetricas() {
       filtro += `&created_at=gte.${d30.toISOString()}`;
     }
 
-    const visitas = await SB.select('visitas', filtro + '&limit=2000').catch(() => null);
+    const [visitas, arts] = await Promise.all([
+      SB.select('visitas', filtro + '&limit=5000').catch(() => null),
+      SB.select('articulos', 'select=id,titulo,slug,seccion_tag').catch(() => []),
+    ]);
 
     if (!visitas) {
-      /* Tabla no existe aún */
-      const msg = '<div style="padding:24px;text-align:center;color:var(--t3);font-size:13px">La tabla <code style="font-family:var(--mono);background:var(--bg2);padding:1px 5px">visitas</code> no existe aún. Descarga el SQL de métricas y ejecútalo en Supabase.</div>';
+      const msg = '<div style="padding:24px;text-align:center;color:var(--t3);font-size:13px">La tabla <code style="font-family:var(--mono)">visitas</code> no existe aún.</div>';
       if (listArts)  listArts.innerHTML  = msg;
       if (listPages) listPages.innerHTML = msg;
       return;
@@ -4914,24 +4932,23 @@ async function cargarMetricas() {
     /* Totales */
     const hoy = new Date(); hoy.setHours(0,0,0,0);
     const d7  = new Date(); d7.setDate(d7.getDate()-7);
-    const total      = visitas.length;
-    const hoyCount   = visitas.filter(v => new Date(v.created_at) >= hoy).length;
-    const semCount   = visitas.filter(v => new Date(v.created_at) >= d7).length;
-    const uniqArts   = new Set(visitas.filter(v => v.tipo==='articulo').map(v=>v.referencia_id)).size;
+    const total    = visitas.length;
+    const hoyCount = visitas.filter(v => new Date(v.created_at) >= hoy).length;
+    const semCount = visitas.filter(v => new Date(v.created_at) >= d7).length;
+    const uniqArts = new Set(visitas.filter(v=>v.tipo==='articulo').map(v=>v.referencia_id)).size;
+    const uniqSes  = new Set(visitas.map(v=>v.sesion_id).filter(Boolean)).size;
 
-    if (g('met-total'))      g('met-total').textContent      = total.toLocaleString('es-CO');
-    if (g('met-hoy'))        g('met-hoy').textContent        = hoyCount;
-    if (g('met-semana'))     g('met-semana').textContent     = semCount.toLocaleString('es-CO');
+    if (g('met-total'))       g('met-total').textContent       = total.toLocaleString('es-CO');
+    if (g('met-hoy'))         g('met-hoy').textContent         = hoyCount;
+    if (g('met-semana'))      g('met-semana').textContent      = semCount.toLocaleString('es-CO');
     if (g('met-arts-vistos')) g('met-arts-vistos').textContent = uniqArts;
-    /* Sesiones únicas */
-    const uniqSes = new Set(visitas.map(v => v.sesion_id).filter(Boolean)).size;
-    if (g('met-sesiones'))   g('met-sesiones').textContent   = uniqSes.toLocaleString('es-CO');
-    /* Gráfico de tendencia */
+    if (g('met-sesiones'))    g('met-sesiones').textContent    = uniqSes.toLocaleString('es-CO');
+
     _renderMetChart(visitas);
 
     /* Artículos más leídos */
     const conteoArts = {};
-    visitas.filter(v => v.tipo === 'articulo' && v.referencia_id).forEach(v => {
+    visitas.filter(v=>v.tipo==='articulo'&&v.referencia_id).forEach(v=>{
       conteoArts[v.referencia_id] = (conteoArts[v.referencia_id]||0) + 1;
     });
     const artsSorted = Object.entries(conteoArts).sort((a,b)=>b[1]-a[1]).slice(0,20);
@@ -4940,31 +4957,28 @@ async function cargarMetricas() {
       if (!artsSorted.length) {
         listArts.innerHTML = '<div class="empty"><div class="empty-ic">📰</div><h3>Sin vistas de artículos aún</h3></div>';
       } else {
-        const arts = await DB.getArticulos().catch(()=>[]);
-        const maxVistas = artsSorted[0]?.[1] || 1;
+        const maxV = artsSorted[0]?.[1] || 1;
         listArts.innerHTML = artsSorted.map(([artId, cnt], i) => {
-          const art = arts.find(a => a.id === artId);
-          const eliminado = !art;
-          const titulo = eliminado
-            ? `<span style="opacity:.45;font-style:normal;font-size:12px">Artículo eliminado</span> <span style="font-family:var(--mono);font-size:10px;color:var(--t4)">${artId.slice(0,8)}…</span>`
-            : `<a href="articulo.html?id=${artId}" target="_blank" style="color:inherit;text-decoration:none;font-style:italic">${art.titulo}</a>`;
+          const art = (arts||[]).find(a => a.id === artId);
+          const artUrl = art?.slug && art?.seccion_tag
+            ? `/secciones/${art.seccion_tag}/${art.slug}`
+            : art?.slug ? `/historias/${art.slug}` : null;
+          const titulo = !art
+            ? `<span style="opacity:.45;font-size:12px">Artículo eliminado</span>`
+            : artUrl
+              ? `<a href="${artUrl}" target="_blank" style="color:inherit;text-decoration:none;font-style:italic">${art.titulo}</a>`
+              : `<span style="font-style:italic">${art.titulo}</span>`;
           const secBadge = art?.seccion_tag
-            ? `<span style="font-size:9px;font-family:var(--sans);color:var(--azul);background:rgba(0,74,173,.07);padding:1px 7px;border-radius:2px;font-weight:600">${art.seccion_tag}</span>` : '';
-          const estadoBadge = art?.estado === 'borrador'
-            ? `<span style="font-size:9px;font-family:var(--sans);color:var(--t3);background:var(--paper2);padding:1px 7px;border-radius:2px">borrador</span>` : '';
-          const pct = Math.round(cnt / maxVistas * 100);
-          return `<div class="met-art-row" data-titulo="${eliminado?'eliminado '+(artId.slice(0,8)):art.titulo}" style="display:grid;grid-template-columns:22px 1fr 60px;gap:10px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--bd);${eliminado?'opacity:.55;background:repeating-linear-gradient(45deg,transparent,transparent 4px,rgba(0,0,0,.02) 4px,rgba(0,0,0,.02) 8px)':''}">
+            ? `<span style="font-size:9px;font-family:var(--ui);color:var(--azul);background:rgba(0,74,173,.07);padding:1px 7px;border-radius:2px;font-weight:600">${art.seccion_tag}</span>` : '';
+          const pct = Math.round(cnt/maxV*100);
+          return `<div style="display:grid;grid-template-columns:22px 1fr 60px;gap:10px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--bd)">
             <div style="font-family:var(--mono);font-size:11px;color:var(--t4);text-align:right">${i+1}</div>
             <div>
-              <div style="font-family:var(--serif);font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                ${eliminado ? '🗑 ' : ''}${titulo} ${secBadge} ${estadoBadge}
-              </div>
-              <div style="height:3px;background:var(--bd);border-radius:2px">
-                <div style="height:3px;background:${eliminado?'var(--t4)':'var(--azul)'};border-radius:2px;width:${pct}%;transition:width .6s"></div>
-              </div>
+              <div style="font-family:var(--serif);font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">${titulo} ${secBadge}</div>
+              <div style="height:3px;background:var(--bd);border-radius:2px"><div style="height:3px;background:var(--azul);border-radius:2px;width:${pct}%"></div></div>
             </div>
             <div style="text-align:right">
-              <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:${eliminado?'var(--t3)':'var(--azul)'}">${cnt}</div>
+              <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--azul)">${cnt}</div>
               <div style="font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4)">vistas</div>
             </div>
           </div>`;
@@ -4972,10 +4986,10 @@ async function cargarMetricas() {
       }
     }
 
-    /* Páginas del sitio */
+    /* Páginas */
     const conteoPages = {};
-    visitas.filter(v => v.tipo !== 'articulo').forEach(v => {
-      const p = v.pagina || 'desconocida';
+    visitas.filter(v=>v.tipo!=='articulo').forEach(v=>{
+      const p = v.pagina||'desconocida';
       conteoPages[p] = (conteoPages[p]||0) + 1;
     });
     const pagesSorted = Object.entries(conteoPages).sort((a,b)=>b[1]-a[1]);
@@ -4984,16 +4998,15 @@ async function cargarMetricas() {
       if (!pagesSorted.length) {
         listPages.innerHTML = '<div class="empty"><div class="empty-ic">◈</div><h3>Sin visitas de páginas aún</h3></div>';
       } else {
-        const maxP = pagesSorted[0]?.[1] || 1;
-        const icons = { index:'🏠', secciones:'◈', edicion:'📰', archivo:'◫', sobre:'◑', editor:'◉' };
-        listPages.innerHTML = pagesSorted.map(([pag, cnt]) => {
+        const maxP = pagesSorted[0]?.[1]||1;
+        const icons = {index:'🏠',secciones:'◈',edicion:'📰',archivo:'◫',sobre:'◑',editor:'◉',articulo:'📄'};
+        listPages.innerHTML = pagesSorted.map(([pag,cnt])=>{
           const pct = Math.round(cnt/maxP*100);
-          const ic  = icons[pag] || '◎';
           return `<div style="display:grid;grid-template-columns:28px 1fr 60px;gap:10px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--bd)">
-            <div style="text-align:center;font-size:14px">${ic}</div>
+            <div style="text-align:center;font-size:14px">${icons[pag]||'◎'}</div>
             <div>
-              <div style="font-family:var(--ui);font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--t1);margin-bottom:4px">${pag}.html</div>
-              <div style="height:3px;background:var(--bg2);border-radius:2px"><div style="height:3px;background:var(--oro2,#a07840);border-radius:2px;width:${pct}%;transition:width .6s var(--ease)"></div></div>
+              <div style="font-family:var(--ui);font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--t1);margin-bottom:4px">${pag}</div>
+              <div style="height:3px;background:var(--bd);border-radius:2px"><div style="height:3px;background:var(--azul);border-radius:2px;width:${pct}%"></div></div>
             </div>
             <div style="text-align:right">
               <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--t2)">${cnt}</div>
@@ -5003,9 +5016,8 @@ async function cargarMetricas() {
         }).join('');
       }
     }
-
   } catch(e) {
-    const msg = `<div style="padding:20px;color:#c0392b;font-size:13px">Error: ${e.message}</div>`;
+    const msg = `<div style="padding:20px;color:#c0392b;font-size:13px">Error cargando métricas: ${e.message}</div>`;
     if (listArts)  listArts.innerHTML  = msg;
     if (listPages) listPages.innerHTML = msg;
   }
@@ -6984,15 +6996,19 @@ async function cargarEditores() {
       wrap.innerHTML = '<div class="empty"><div class="empty-ic">◉</div><h3>Sin autores aún</h3><p>Añade los autores y colaboradores de la revista. Luego podrás vincularlos al crear un artículo.</p></div>';
       return;
     }
-    wrap.innerHTML = _editoresData.map(ed => {
-      const total = (arts||[]).filter(a => a.editor_id === ed.id).length;
-      const pubs  = (arts||[]).filter(a => a.editor_id === ed.id && a.estado === 'publicado').length;
-      const init  = (ed.nombre||'?').split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
-      const edJson = JSON.stringify(ed).replace(/"/g, '&quot;');
+    wrap.innerHTML = _editoresData.map((ed, i) => {
+      const total   = (arts||[]).filter(a => a.editor_id === ed.id).length;
+      const pubs    = (arts||[]).filter(a => a.editor_id === ed.id && a.estado === 'publicado').length;
+      const init    = (ed.nombre||'?').split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
+      const isFirst = i === 0;
+      const isLast  = i === _editoresData.length - 1;
       return `<div style="display:flex;gap:16px;align-items:flex-start;padding:16px 20px;border-bottom:1px solid var(--bd)">
-        ${ed.foto_url
-          ? `<img src="${ed.foto_url}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;flex-shrink:0">`
-          : `<div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--negro),var(--azul));display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:16px;font-weight:900;color:rgba(255,255,255,.82);flex-shrink:0">${init}</div>`}
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;min-width:28px;padding-top:4px">
+          <button ${isFirst?'disabled':''} onclick="moverEditor('${ed.id}',-1)" style="background:none;border:1px solid var(--bd);border-radius:4px;width:24px;height:22px;cursor:pointer;font-size:10px;color:var(--t3)" title="Subir">▲</button>
+          <span style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--t4)">${ed.orden||i+1}</span>
+          <button ${isLast?'disabled':''} onclick="moverEditor('${ed.id}',1)" style="background:none;border:1px solid var(--bd);border-radius:4px;width:24px;height:22px;cursor:pointer;font-size:10px;color:var(--t3)" title="Bajar">▼</button>
+        </div>
+        ${ed.foto_url?`<img src="${ed.foto_url}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;flex-shrink:0">`:`<div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--negro),var(--azul));display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:16px;font-weight:900;color:rgba(255,255,255,.82);flex-shrink:0">${init}</div>`}
         <div style="flex:1;min-width:0">
           <div style="font-family:var(--serif);font-size:15px;font-weight:700;font-style:italic">${ed.nombre}</div>
           ${ed.cargo?`<div style="font-size:11px;color:var(--t4);text-transform:uppercase;letter-spacing:.08em;margin-top:1px">${ed.cargo}</div>`:''}
@@ -7004,12 +7020,75 @@ async function cargarEditores() {
           </div>
         </div>
         <div style="display:flex;gap:6px;flex-shrink:0">
-          <button class="ab ab-s ab-sm" onclick="abrirFormEditor('${edJson}')">Editar</button>
+          <button class="ab ab-s ab-sm" onclick="abrirFormEditorById('${ed.id}')">Editar</button>
           <button class="ab ab-d ab-sm" onclick="eliminarEditor('${ed.id}','${(ed.nombre||'').replace(/'/g,"\\'")}')">✕ Eliminar</button>
         </div>
       </div>`;
     }).join('');
   } catch(e) { wrap.innerHTML = `<div class="empty"><div class="empty-ic">⚠</div><h3>${e.message}</h3></div>`; }
+}
+
+/* Abre el form de editor por ID — evita problemas con JSON inline */
+function abrirFormEditorById(id) {
+  const ed = _editoresData.find(e => e.id === id) || null;
+  abrirFormEditor(ed);
+}
+
+/* Mueve un editor hacia arriba (-1) o abajo (+1) */
+async function moverEditor(edId, dir) {
+  const idx  = _editoresData.findIndex(e => e.id === edId);
+  const swap = idx + dir;
+  if (swap < 0 || swap >= _editoresData.length) return;
+
+  const edA = _editoresData[idx];
+  const edB = _editoresData[swap];
+
+  /* Normalizar órdenes secuenciales antes de intercambiar — evita duplicados */
+  _editoresData.forEach((e, i) => { e.orden = i + 1; });
+  const ordenA = edA.orden; /* = idx + 1 */
+  const ordenB = edB.orden; /* = swap + 1 */
+
+  try {
+    await Promise.all([
+      SB.update('editores', `id=eq.${edA.id}`, { orden: ordenB }),
+      SB.update('editores', `id=eq.${edB.id}`, { orden: ordenA }),
+    ]);
+    edA.orden = ordenB;
+    edB.orden = ordenA;
+    _editoresData.sort((a, b) => (a.orden||0) - (b.orden||0));
+    /* Re-renderizar en memoria sin nuevo fetch */
+    const wrap = g('editores-list');
+    if (wrap) {
+      const arts = await SB.select('articulos','select=id,editor_id,estado').catch(()=>[]);
+      wrap.innerHTML = _editoresData.map((ed, i) => {
+        const total = (arts||[]).filter(a => a.editor_id === ed.id).length;
+        const pubs  = (arts||[]).filter(a => a.editor_id === ed.id && a.estado === 'publicado').length;
+        const init  = (ed.nombre||'?').split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
+        const isFirst = i === 0;
+        const isLast  = i === _editoresData.length - 1;
+        return `<div style="display:flex;gap:16px;align-items:flex-start;padding:16px 20px;border-bottom:1px solid var(--bd)">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;min-width:28px;padding-top:4px">
+            <button ${isFirst?'disabled':''} onclick="moverEditor('${ed.id}',-1)" style="background:none;border:1px solid var(--bd);border-radius:4px;width:24px;height:22px;cursor:pointer;font-size:10px;color:var(--t3)">▲</button>
+            <span style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--t4)">${ed.orden||i+1}</span>
+            <button ${isLast?'disabled':''} onclick="moverEditor('${ed.id}',1)" style="background:none;border:1px solid var(--bd);border-radius:4px;width:24px;height:22px;cursor:pointer;font-size:10px;color:var(--t3)">▼</button>
+          </div>
+          ${ed.foto_url?`<img src="${ed.foto_url}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;flex-shrink:0">`:`<div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--negro),var(--azul));display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:16px;font-weight:900;color:rgba(255,255,255,.82);flex-shrink:0">${init}</div>`}
+          <div style="flex:1;min-width:0">
+            <div style="font-family:var(--serif);font-size:15px;font-weight:700;font-style:italic">${ed.nombre}</div>
+            ${ed.cargo?`<div style="font-size:11px;color:var(--t4);text-transform:uppercase;letter-spacing:.08em;margin-top:1px">${ed.cargo}</div>`:''}
+            ${ed.bio?`<div style="font-size:12px;color:var(--t2);margin-top:6px;line-height:1.6;max-width:480px">${ed.bio}</div>`:''}
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0">
+            <button class="ab ab-s ab-sm" onclick="abrirFormEditorById('${ed.id}')">Editar</button>
+            <button class="ab ab-d ab-sm" onclick="eliminarEditor('${ed.id}','${(ed.nombre||'').replace(/'/g,"\\'")}')">✕ Eliminar</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    notif('Orden actualizado ✓', 'ok');
+  } catch(e) {
+    notif('Error al reordenar: ' + e.message, 'err');
+  }
 }
 
 function abrirFormEditor(rawOrNull) {
@@ -7021,7 +7100,7 @@ function abrirFormEditor(rawOrNull) {
   if (g('ed-id'))       g('ed-id').value       = ed?.id       || '';
   if (g('ed-nombre'))   g('ed-nombre').value   = ed?.nombre   || '';
   if (g('ed-cargo'))    g('ed-cargo').value     = ed?.cargo    || '';
-  if (g('ed-orden'))    g('ed-orden').value     = ed?.orden    || 1;
+  if (g('ed-orden'))    g('ed-orden').value     = ed?.orden    || (_editoresData.length + 1);
   if (g('ed-slug'))     g('ed-slug').value      = ed?.slug     || '';
   if (g('ed-email'))    g('ed-email').value     = ed?.email    || '';
   if (g('ed-bio'))      g('ed-bio').value       = ed?.bio      || '';
@@ -7065,7 +7144,7 @@ async function guardarEditor() {
       nombre, foto_url: foto, activo: true,
       slug:  _slugify(g('ed-slug')?.value || nombre),
       cargo: (g('ed-cargo')?.value||'').trim() || null,
-      orden: parseInt(g('ed-orden')?.value) || 1,
+      orden: parseInt(g('ed-orden')?.value) || (_editoresData.length + 1),
       email: (g('ed-email')?.value||'').trim() || null,
       bio:   (g('ed-bio')?.value||'').trim()   || null,
     };
@@ -7075,11 +7154,33 @@ async function guardarEditor() {
     } else {
       await SB.insert('editores', payload);
     }
+
+    /* Reasignar órdenes secuenciales para evitar duplicados y huecos */
+    try {
+      const todosEds = await SB.select('editores', 'activo=eq.true&order=orden.asc,created_at.asc');
+      /* Si el editor guardado tiene un orden distinto, insertarlo en esa posición */
+      const nuevoOrden = payload.orden;
+      const edId = id || null;
+      /* Ordenar: el editado va a su posición, los demás se desplazan */
+      const reordenados = (todosEds || [])
+        .map(e => ({ ...e, orden: e.id === edId ? nuevoOrden : e.orden }))
+        .sort((a, b) => (a.orden||99) - (b.orden||99) || a.nombre.localeCompare(b.nombre));
+
+      /* Asignar 1,2,3... secuenciales y actualizar solo los que cambiaron */
+      const updates = [];
+      reordenados.forEach((e, i) => {
+        const ordenNuevo = i + 1;
+        if (e.orden !== ordenNuevo) {
+          updates.push(SB.update('editores', `id=eq.${e.id}`, { orden: ordenNuevo }));
+        }
+      });
+      if (updates.length) await Promise.all(updates);
+    } catch(_) {}
+
     notif('Autor guardado ✓','ok');
     cerrarFormEditor();
-    cargarEditores();
-    /* Actualizar selector en el form de artículo */
-    cargarEditoresEnSelector();
+    await cargarEditores();     /* recarga fresco para reflejar nuevos órdenes */
+    cargarEditoresEnSelector(); /* actualizar selector artículos */
   } catch(e) { notif('Error: '+e.message,'err'); }
   finally { if (overlay) overlay.classList.remove('show'); }
 }
@@ -7096,20 +7197,29 @@ async function eliminarEditor(id, nombre) {
 }
 
 /* Carga editores en el <select> del wizard */
+/* _editoresSelector es independiente de _editoresData para no pisarla */
+let _editoresSelector = [];
+
 async function cargarEditoresEnSelector() {
   const sel = g('f-editor-id'); if (!sel) return;
   try {
-    const eds = await SB.select('editores', 'activo=eq.true&order=orden.asc,nombre.asc');
-    _editoresData = eds || [];
+    const eds = await SB.select('editores', 'activo=eq.true&order=orden.asc,created_at.asc');
+    _editoresSelector = eds || [];
     const cur = sel.value;
     sel.innerHTML = '<option value="">— Sin editor vinculado —</option>'
-      + _editoresData.map(e => `<option value="${e.id}" ${e.id===cur?'selected':''}>${e.nombre}${e.cargo?' · '+e.cargo:''}</option>`).join('');
+      + _editoresSelector.map(e => `<option value="${e.id}" ${e.id===cur?'selected':''}>${e.nombre}${e.cargo?' · '+e.cargo:''}</option>`).join('');
   } catch(e) {}
 }
 
 function onEditorSelect(edId) {
-  const ed = _editoresData.find(e => e.id === edId);
-  if (ed && g('f-autor')) g('f-autor').value = ed.nombre;
+  const ed = _editoresSelector.find(e => e.id === edId);
+  if (!ed) return;
+  const autorInput = g('f-autor');
+  if (!autorInput) return;
+  const valActual = autorInput.value.trim();
+  if (!valActual || valActual === 'Redacción La Enbajada') {
+    autorInput.value = ed.nombre;
+  }
 }
 
 /* ── Portada (una sola imagen de portada) ── */

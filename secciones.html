@@ -203,7 +203,7 @@ html.dark .search-modal { background:var(--bg); }
 </style>
   <link rel="preconnect" href="https://pkilwzcypcyhxjuknkho.supabase.co" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-  <link rel="canonical" href="https://laenbajada.com/secciones.html">
+  <link rel="canonical" href="https://laenbajada.com/secciones.html" id="canonical">
 </head>
 <body>
 <noscript>
@@ -617,6 +617,17 @@ async function init() {
   _secActual = secMatch
     ? normTag(secMatch.tag)
     : (primeraSec ? normTag(primeraSec.tag) : '');
+
+  /* Canonical dinámico: si hay una sección real detectada, apuntar a su
+     URL limpia (/secciones/:tag) — evita que todas las secciones se
+     canonicalicen entre sí como si fueran la misma página. Sin sección
+     real (o sin match), cae al genérico /secciones.html. */
+  const canonicalEl = document.getElementById('canonical');
+  if (canonicalEl) {
+    canonicalEl.href = secMatch
+      ? `https://laenbajada.com/secciones/${_secActual}`
+      : 'https://laenbajada.com/secciones.html';
+  }
 
   /* Llenar nav con secciones reales — DESPUÉS de definir _secActual
      para que el tab activo quede marcado correctamente */

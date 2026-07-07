@@ -1083,6 +1083,8 @@ async function init() {
   const canonical = document.getElementById('canonical');
   const canonicalHref = cleanTag ? `https://laenbajada.com/secciones/${cleanTag}/${encodeURIComponent(cleanSlug)}` : `https://laenbajada.com/historias/${encodeURIComponent(cleanSlug)}`;
   if (canonical) canonical.href = canonicalHref;
+  const ogUrlEl = document.getElementById('og-url');
+  if (ogUrlEl) ogUrlEl.setAttribute('content', canonicalHref);
 
   /* HERO */
   if (a.imagen_url) {

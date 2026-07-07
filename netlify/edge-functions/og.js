@@ -1,33 +1,121 @@
 /* ══════════════════════════════════════════════════════════════════════
    La Enbajada — netlify/edge-functions/og.js
-   Intercepta bots de redes sociales en /articulo.html y sirve
-   un HTML mínimo con OG tags rellenos desde Supabase.
+   Intercepta bots de redes sociales en artículos, ediciones y perfiles
+   de editor, y sirve un HTML mínimo con OG tags rellenos desde Supabase.
    ══════════════════════════════════════════════════════════════════════ */
 
 const SUPA_URL = 'https://pkilwzcypcyhxjuknkho.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraWx3emN5cGN5aHhqdWtua2hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNDE1NTksImV4cCI6MjA5MDgxNzU1OX0.fAhepDbj2p1JEbHzZvD1ZqwAK95OskE-CRxF4gqgIrg';
 
-const BOT_UA = /facebookexternalhit|Facebot|Twitterbot|WhatsApp|TelegramBot|LinkedInBot|Slackbot|Discordbot|Pinterest|Googlebot|bingbot|Applebot|vkShare|redditbot|W3C_Validator/i;
+/* Imagen de respaldo cuando no hay foto/portada específica — debe existir
+   subida en assets/og-image.jpg (logo o imagen genérica de La Enbajada). */
+const DEFAULT_IMAGE = 'https://laenbajada.com/assets/og-image.jpg';
+
+/* Solo bots de redes sociales — NO buscadores. Googlebot/bingbot/Applebot
+   deben recibir la página real renderizada por app.js (contenido completo
+   + schema.org), no este stub mínimo pensado solo para previews sociales. */
+const BOT_UA = /facebookexternalhit|Facebot|Twitterbot|WhatsApp|TelegramBot|LinkedInBot|Slackbot|Discordbot|Pinterest|vkShare|redditbot|W3C_Validator/i;
 
 function esc(str) {
   return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-export default async (request, context) => {
-  const ua = request.headers.get('user-agent') || '';
+async function supaSelect(tabla, query) {
+  const res = await fetch(`${SUPA_URL}/rest/v1/${tabla}?${query}`, {
+    headers: { apikey: SUPA_KEY, Authorization: `Bearer ${SUPA_KEY}` },
+  });
+  if (!res.ok) return null;
+  const rows = await res.json();
+  return rows?.[0] || null;
+}
 
-  // Usuarios normales → archivo estático sin cambios
-  if (!BOT_UA.test(ua)) return context.next();
+function buildHtml({ type = 'website', title, desc, url, image, linkText }) {
+  const imgTags = image ? `
+<meta property="og:image"            content="${esc(image)}">
+<meta property="og:image:secure_url" content="${esc(image)}">
+<meta property="og:image:width"      content="1200">
+<meta property="og:image:height"     content="630">
+<meta name="twitter:image"           content="${esc(image)}">` : '';
 
+  return `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>${esc(title)}</title>
+<meta name="description"             content="${esc(desc)}">
+<meta property="og:type"             content="${esc(type)}">
+<meta property="og:site_name"        content="La Enbajada">
+<meta property="og:title"            content="${esc(title)}">
+<meta property="og:description"      content="${esc(desc)}">
+<meta property="og:url"              content="${esc(url)}">
+${imgTags}
+<meta name="twitter:card"            content="summary_large_image">
+<meta name="twitter:title"           content="${esc(title)}">
+<meta name="twitter:description"     content="${esc(desc)}">
+<link rel="canonical"                href="${esc(url)}">
+</head>
+<body><p><a href="${esc(url)}">${esc(linkText)}</a></p></body>
+</html>`;
+}
+
+function respond(html) {
+  return new Response(html, {
+    status: 200,
+    headers: {
+      'content-type':  'text/html; charset=UTF-8',
+      'cache-control': 'public, max-age=3600',
+      'x-robots-tag':  'index, follow',
+    },
+  });
+}
+
+/* /sobre/equipo/:slug → perfil de editor */
+async function renderEditor(slug, context) {
+  try {
+    const ed = await supaSelect('editores',
+      `slug=eq.${encodeURIComponent(slug)}&activo=eq.true&select=nombre,cargo,bio,foto_url,slug&limit=1`);
+    if (!ed) return context.next();
+
+    const url   = `https://laenbajada.com/sobre/equipo/${encodeURIComponent(ed.slug || slug)}`;
+    const title = `${ed.nombre || 'Editor'} — La Enbajada`;
+    const desc  = ed.cargo
+      ? `${ed.cargo} en La Enbajada, revista cultural del Caribe colombiano.`
+      : (ed.bio || 'Editor de La Enbajada, revista cultural del Caribe colombiano.');
+    const image = ed.foto_url || DEFAULT_IMAGE;
+
+    return respond(buildHtml({ type: 'profile', title, desc, url, image, linkText: ed.nombre || 'Ver perfil' }));
+  } catch (_) {
+    return context.next();
+  }
+}
+
+/* /ediciones/:num → edición */
+async function renderEdicion(num, context) {
+  try {
+    const ed = await supaSelect('numeros',
+      `id=eq.${encodeURIComponent(num)}&select=id,titulo,subtitulo,imagen_url&limit=1`);
+    if (!ed) return context.next();
+
+    const url   = `https://laenbajada.com/ediciones/${encodeURIComponent(ed.id)}`;
+    const title = `${ed.titulo || 'Edición'} — La Enbajada`;
+    const desc  = ed.subtitulo || 'Edición de La Enbajada, revista cultural del Caribe colombiano.';
+    const image = ed.imagen_url || DEFAULT_IMAGE;
+
+    return respond(buildHtml({ type: 'website', title, desc, url, image, linkText: ed.titulo || 'Ver edición' }));
+  } catch (_) {
+    return context.next();
+  }
+}
+
+/* /articulo.html, /secciones/:tag/:slug, /historias/:slug → artículo */
+async function renderArticulo(request, context) {
   const url      = new URL(request.url);
-  const pathname = url.pathname; // ej: /secciones/historias/mi-articulo
+  const pathname = url.pathname;
 
-  /* Leer slug desde query string (?slug=) o desde pathname (/secciones/:tag/:slug) */
   let slug = url.searchParams.get('slug') || url.searchParams.get('s') || '';
   const id = url.searchParams.get('id') || '';
 
   if (!slug && !id) {
-    /* Intentar extraer slug del pathname /secciones/:tag/:slug */
     const parts = pathname.split('/').filter(Boolean);
     if (parts[0] === 'secciones' && parts.length >= 3) {
       slug = parts[2];
@@ -41,20 +129,9 @@ export default async (request, context) => {
     : `id=eq.${encodeURIComponent(id)}`;
 
   try {
-    const res = await fetch(
-      `${SUPA_URL}/rest/v1/articulos?${filter}&select=titulo,extracto,subtitulo,imagen_url,autor,slug,id,seccion_tag&limit=1`,
-      {
-        headers: {
-          apikey:        SUPA_KEY,
-          Authorization: `Bearer ${SUPA_KEY}`,
-        },
-      }
-    );
-
-    if (!res.ok) return context.next();
-
-    const [art] = await res.json();
-    if (!art)   return context.next();
+    const art = await supaSelect('articulos',
+      `${filter}&select=titulo,extracto,subtitulo,imagen_url,autor,slug,id,seccion_tag&limit=1`);
+    if (!art) return context.next();
 
     const artSlug = art.slug || art.id;
     const artTag  = (art.seccion_tag||'').replace(/#/g,'').trim();
@@ -63,49 +140,40 @@ export default async (request, context) => {
       : `https://laenbajada.com/historias/${encodeURIComponent(artSlug)}`;
     const title   = `${art.titulo || 'Artículo'} — La Enbajada`;
     const desc    = art.subtitulo || art.extracto || 'Revista cultural del Caribe colombiano.';
-    const image   = art.imagen_url || '';
+    const image   = art.imagen_url || DEFAULT_IMAGE;
 
-    const imgTags = image ? `
-<meta property="og:image"            content="${esc(image)}">
-<meta property="og:image:secure_url" content="${esc(image)}">
-<meta property="og:image:width"      content="1200">
-<meta property="og:image:height"     content="630">
-<meta name="twitter:image"           content="${esc(image)}">` : '';
-
-    const html = `<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>${esc(title)}</title>
-<meta name="description"             content="${esc(desc)}">
-<meta property="og:type"             content="article">
-<meta property="og:site_name"        content="La Enbajada">
-<meta property="og:title"            content="${esc(title)}">
-<meta property="og:description"      content="${esc(desc)}">
-<meta property="og:url"              content="${esc(artUrl)}">
-${imgTags}
-<meta name="twitter:card"            content="summary_large_image">
-<meta name="twitter:title"           content="${esc(title)}">
-<meta name="twitter:description"     content="${esc(desc)}">
-<link rel="canonical"                href="${esc(artUrl)}">
-</head>
-<body><p><a href="${esc(artUrl)}">${esc(art.titulo || 'Ver artículo')}</a></p></body>
-</html>`;
-
-    return new Response(html, {
-      status: 200,
-      headers: {
-        'content-type':  'text/html; charset=UTF-8',
-        'cache-control': 'public, max-age=3600',
-        'x-robots-tag':  'index, follow',
-      },
-    });
-
+    return respond(buildHtml({ type: 'article', title, desc, url: artUrl, image, linkText: art.titulo || 'Ver artículo' }));
   } catch (_) {
     return context.next();
   }
+}
+
+export default async (request, context) => {
+  const ua = request.headers.get('user-agent') || '';
+
+  // Usuarios normales y buscadores → archivo estático/renderizado, sin cambios
+  if (!BOT_UA.test(ua)) return context.next();
+
+  const pathname = new URL(request.url).pathname;
+  const parts    = pathname.split('/').filter(Boolean);
+
+  if (parts[0] === 'sobre' && parts[1] === 'equipo' && parts[2]) {
+    return renderEditor(parts[2], context);
+  }
+
+  if (parts[0] === 'ediciones' && parts[1]) {
+    return renderEdicion(parts[1], context);
+  }
+
+  return renderArticulo(request, context);
 };
 
 export const config = {
-  path: ['/articulo.html', '/secciones/:tag/:slug', '/historias/:slug'],
+  path: [
+    '/articulo.html',
+    '/secciones/:tag/:slug',
+    '/historias/:slug',
+    '/sobre/equipo/:slug',
+    '/ediciones/:num',
+  ],
 };

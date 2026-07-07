@@ -361,7 +361,7 @@ async function init(){
   await initSite();
   const _secsNav = await DB.getSecciones().catch(() => []);
   _renderNavSecs(_secsNav);
-  aplicarSEO({titulo:'Archivo — La Enbajada',desc:'Todos los números de La Enbajada.'});
+  aplicarSEO({titulo:'Archivo',desc:'Todos los números de La Enbajada.'});
   const nums = await DB.getNumeros();
 
   /* Números */

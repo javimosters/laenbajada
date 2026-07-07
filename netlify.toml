@@ -24,9 +24,12 @@
   path = "/historias/:slug"
   function = "og"
 
-# ── OG también para URLs limpias de artículos ──
 [[edge_functions]]
-  path = "/secciones/:tag/:slug"
+  path = "/sobre/equipo/:slug"
+  function = "og"
+
+[[edge_functions]]
+  path = "/ediciones/:num"
   function = "og"
 
 # ── Edge Function: Sitemap dinámico ──

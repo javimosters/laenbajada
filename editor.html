@@ -8,6 +8,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Editor — La Enbajada</title>
   <meta name="robots" content="index, follow">
+  <meta name="description" content="Conoce al equipo editorial de La Enbajada, revista cultural del Caribe colombiano.">
+  <meta property="og:type" content="profile">
+  <meta property="og:site_name" content="La Enbajada">
+  <meta property="og:title" content="Editor — La Enbajada">
+  <meta property="og:description" content="Conoce al equipo editorial de La Enbajada, revista cultural del Caribe colombiano.">
+  <meta property="og:url" content="https://laenbajada.com/sobre.html" id="og-url">
+  <meta property="og:image" content="https://laenbajada.com/assets/og-image.jpg" id="og-image">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Editor — La Enbajada">
+  <meta name="twitter:description" content="Conoce al equipo editorial de La Enbajada, revista cultural del Caribe colombiano.">
+  <meta name="twitter:image" content="https://laenbajada.com/assets/og-image.jpg">
+  <link rel="canonical" href="https://laenbajada.com/sobre.html" id="canonical">
 <link rel="stylesheet" href="/assets/styles.css">
 <style>
 
@@ -424,7 +436,18 @@ async function init(){
     }
   }
 
-  aplicarSEO({titulo:`${ed.nombre} — La Enbajada`,desc:ed.bio||`Artículos de ${ed.nombre} en La Enbajada.`});
+  /* aplicarSEO ya agrega " — La Enbajada" solo, así que titulo va sin el
+     sufijo (antes quedaba duplicado: "Nombre — La Enbajada — La Enbajada").
+     Antes tampoco se pasaba `imagen`, por eso el link preview nunca
+     mostraba la foto del editor. */
+  aplicarSEO({ titulo: ed.nombre, desc: ed.bio || `Artículos de ${ed.nombre} en La Enbajada.`, imagen: ed.foto_url || '', type: 'profile' });
+
+  const edUrl = `https://laenbajada.com/sobre/equipo/${encodeURIComponent(ed.slug || slug)}`;
+  const canonicalEl = document.getElementById('canonical');
+  if (canonicalEl) canonicalEl.href = edUrl;
+  const ogUrlEl = document.getElementById('og-url');
+  if (ogUrlEl) ogUrlEl.setAttribute('content', edUrl);
+
   observeReveal();
 }
 init();
