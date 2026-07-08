@@ -22,24 +22,60 @@
 
   /* Detectar qué página es */
   function detectarPagina() {
-    const path = location.pathname;
+    const path   = location.pathname;
     const params = new URLSearchParams(location.search);
+    const parts  = path.split('/').filter(Boolean);
 
+    /* ── URLs limpias (rewrite de Netlify, la barra de direcciones NO
+       contiene articulo.html/editor.html/etc — hay que leer el path) ── */
+
+    /* /secciones/:tag/:slug → artículo dentro de una sección */
+    if (parts[0] === 'secciones' && parts.length >= 3) {
+      return {
+        pagina: 'articulo',
+        tipo: 'articulo',
+        referencia_id: params.get('id') || parts[2] || null,
+        slug: parts[2] || params.get('slug') || null,
+      };
+    }
+    /* /secciones/:tag → listado de sección */
+    if (parts[0] === 'secciones' && parts.length === 2) {
+      return { pagina: 'secciones', tipo: 'pagina', referencia_id: parts[1] || params.get('sec') || null };
+    }
+    /* /historias/:slug → artículo legacy sin sección */
+    if (parts[0] === 'historias' && parts[1]) {
+      return {
+        pagina: 'articulo',
+        tipo: 'articulo',
+        referencia_id: params.get('id') || parts[1] || null,
+        slug: parts[1],
+      };
+    }
+    /* /ediciones/:num → edición */
+    if (parts[0] === 'ediciones' && parts[1]) {
+      return { pagina: 'edicion', tipo: 'pagina', referencia_id: parts[1] || params.get('num') || null };
+    }
+    /* /sobre/equipo/:slug → perfil de editor (revisar ANTES que /sobre genérico) */
+    if (parts[0] === 'sobre' && parts[1] === 'equipo') {
+      return { pagina: 'editor', tipo: 'pagina', referencia_id: parts[2] || params.get('slug') || null };
+    }
+
+    /* ── Fallback: acceso directo a los .html con query string ── */
     if (path.includes('articulo')) {
       const slug  = params.get('slug') || params.get('s') || params.get('') || '';
       const artId = params.get('id') || '';
       return {
         pagina: 'articulo',
         tipo: 'articulo',
-        referencia_id: artId || null,
+        referencia_id: artId || slug || null,
         slug: slug || null,
       };
     }
     if (path.includes('edicion') || path.includes('numero'))  return { pagina: 'edicion',    tipo: 'pagina', referencia_id: params.get('num') || null };
     if (path.includes('secciones'))                           return { pagina: 'secciones',  tipo: 'pagina', referencia_id: params.get('sec') || null };
     if (path.includes('archivo'))                             return { pagina: 'archivo',    tipo: 'pagina' };
-    if (path.includes('sobre'))                               return { pagina: 'sobre',      tipo: 'pagina' };
     if (path.includes('editor'))                              return { pagina: 'editor',     tipo: 'pagina', referencia_id: params.get('slug') || null };
+    if (path.includes('sobre'))                               return { pagina: 'sobre',      tipo: 'pagina' };
     if (path.includes('404'))                                 return { pagina: '404',        tipo: 'pagina' };
     /* index o raíz */
     return { pagina: 'index', tipo: 'pagina' };

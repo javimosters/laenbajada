@@ -4960,7 +4960,9 @@ async function cargarMetricas() {
         const arts = await DB.getArticulos().catch(()=>[]);
         const maxVistas = artsSorted[0]?.[1] || 1;
         listArts.innerHTML = artsSorted.map(([artId, cnt], i) => {
-          const art = arts.find(a => a.id === artId);
+          /* referencia_id puede ser el id (tracking antiguo/legacy con ?id=)
+             o el slug (URLs limpias /secciones/:tag/:slug, que no llevan id) */
+          const art = arts.find(a => a.id === artId || a.slug === artId);
           const eliminado = !art;
           const titulo = eliminado
             ? `<span style="opacity:.45;font-style:normal;font-size:12px">Artículo eliminado</span> <span style="font-family:var(--mono);font-size:10px;color:var(--t4)">${artId.slice(0,8)}…</span>`
@@ -6356,7 +6358,7 @@ async function guardarIndexCfg() {
 async function cargarEquipoEnSobre() {
   const wrap = g('sobre-equipo-preview'); if (!wrap) return;
   try {
-    const eds = await SB.select('editores', 'activo=eq.true&order=nombre.asc').catch(() => []);
+    const eds = await SB.select('editores', 'activo=eq.true&order=orden.asc,nombre.asc').catch(() => []);
     if (!eds?.length) {
       wrap.innerHTML = `<div class="empty" style="padding:24px"><div class="empty-ic">◉</div><h3>Sin autores registrados</h3><p>Ve a <strong>Autores / Editores</strong> para crear los perfiles del equipo.</p></div>`;
       return;
@@ -6993,7 +6995,7 @@ async function cargarEditores() {
   wrap.innerHTML = '<div class="empty"><div class="empty-ic">⌛</div><h3>Cargando…</h3></div>';
   try {
     const [eds, arts] = await Promise.all([
-      SB.select('editores', 'activo=eq.true&order=nombre.asc'),
+      SB.select('editores', 'activo=eq.true&order=orden.asc,nombre.asc'),
       SB.select('articulos', 'select=id,editor_id,estado,titulo').catch(()=>[]),
     ]);
     _editoresData = eds || [];
