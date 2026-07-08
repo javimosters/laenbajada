@@ -148,14 +148,37 @@ async function renderArticulo(request, context) {
   }
 }
 
+/* /historias/:slug con seccion_tag real → 301 a /secciones/:tag/:slug.
+   Esto corre para TODOS (bots y navegadores reales), antes que el resto de
+   la función — así se evita el "flash" donde la barra de direcciones
+   muestra primero /historias/... y el JS recién la corrige después de
+   cargar los datos. Si el artículo de verdad no tiene sección, no hay
+   redirect y /historias/:slug sigue siendo su URL canónica normal. */
+async function redirectHistoriasSiAplica(slug, origin) {
+  try {
+    const art = await supaSelect('articulos', `slug=eq.${encodeURIComponent(slug)}&select=seccion_tag&limit=1`);
+    const tag = (art?.seccion_tag || '').replace(/#/g,'').trim();
+    if (tag) {
+      return Response.redirect(new URL(`/secciones/${tag}/${encodeURIComponent(slug)}`, origin), 301);
+    }
+  } catch (_) {}
+  return null;
+}
+
 export default async (request, context) => {
+  const url      = new URL(request.url);
+  const pathname = url.pathname;
+  const parts    = pathname.split('/').filter(Boolean);
+
+  if (parts[0] === 'historias' && parts[1]) {
+    const redirected = await redirectHistoriasSiAplica(parts[1], url.origin);
+    if (redirected) return redirected;
+  }
+
   const ua = request.headers.get('user-agent') || '';
 
   // Usuarios normales y buscadores → archivo estático/renderizado, sin cambios
   if (!BOT_UA.test(ua)) return context.next();
-
-  const pathname = new URL(request.url).pathname;
-  const parts    = pathname.split('/').filter(Boolean);
 
   if (parts[0] === 'sobre' && parts[1] === 'equipo' && parts[2]) {
     return renderEditor(parts[2], context);

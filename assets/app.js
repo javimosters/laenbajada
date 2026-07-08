@@ -410,11 +410,14 @@ const DB = {
   },
   async getPublicados(numero_id) {
     const key = 'pub_' + (numero_id || 'all');
-    /* Limpiar caches viejos con prefijos anteriores */
+    /* FIX: esto borraba TODAS las claves '_lae2_' (el prefijo que se usa
+       AHORA para cachear) en cada llamada, justo antes de intentar leer
+       esa misma caché dos líneas más abajo — se autodestruía siempre, así
+       que nunca cacheaba nada de verdad (pedía todo fresco a Supabase en
+       cada navegación). Solo debe limpiar el prefijo viejo y obsoleto
+       ('_lae_'), no el que está en uso. */
     try {
-      ['_lae_','_lae2_'].forEach(old => {
-        Object.keys(sessionStorage).filter(k=>k.startsWith(old)).forEach(k=>sessionStorage.removeItem(k));
-      });
+      Object.keys(sessionStorage).filter(k=>k.startsWith('_lae_')).forEach(k=>sessionStorage.removeItem(k));
     } catch(e) {}
     /* Caché en sessionStorage — persiste entre páginas en la misma sesión */
     try {

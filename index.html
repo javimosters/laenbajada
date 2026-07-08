@@ -234,6 +234,7 @@ input, textarea, select, button { max-width: 100% }
 .idx-num-badge.activo{background:rgba(200,169,110,.16);color:var(--oro)}
 .idx-num-badge.archivado{background:rgba(0,74,173,.18);color:#6B9FE4}
 .idx-num-badge.proximo{background:rgba(242,237,228,.05);color:rgba(242,237,228,.28)}
+.idx-num-badge.publicado{background:rgba(242,237,228,.08);color:rgba(242,237,228,.55)}
 .idx-num-body{padding:14px 16px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
 .idx-num-id{font-family:var(--ui);font-size:7px;font-weight:700;letter-spacing:.20em;text-transform:uppercase;color:rgba(242,237,228,.20)}
 .idx-num-card-titulo{font-family:var(--serif);font-style:italic;font-weight:700;font-size:clamp(14px,1.8vw,18px);line-height:1.12;color:rgba(242,237,228,.86)}
@@ -755,7 +756,10 @@ function _renderGrid(arts,excluirIds,secciones,maxArts,cols){
       '<div class="idx-art-body">'+
       '<div class="idx-art-num">'+_esc(sn)+'</div>'+
       '<h3 class="idx-art-titulo">'+_esc(a.titulo)+'</h3>'+
-      (a.subtitulo?'<p class="idx-art-sub">'+_esc(a.subtitulo)+'</p>':'')+
+      /* FIX: antes solo miraba a.subtitulo — si ese campo estaba vacío
+         (aunque el artículo sí tuviera extracto) no mostraba nada. Ahora
+         cae a extracto igual que ya hace el hero de portada. */
+      ((a.subtitulo||a.extracto)?'<p class="idx-art-sub">'+_esc(a.subtitulo||a.extracto)+'</p>':'')+
       '<div class="idx-art-meta">'+_esc(a.autor||'')+(a.numero_id?' <span>·</span> N.º '+(a.numero_id||''):'')+(fmtFecha(a)?' <span>·</span> '+fmtFecha(a):'')+'</div>'+
       '</div></a>';
   }).join('');
@@ -781,21 +785,24 @@ function _renderNumeros(nums,idxCfg){
   if(!grid) return;
   if(titulo){var t=idxCfg.tituloArchivo||'Números de La Enbajada';titulo.innerHTML=t.replace('La Enbajada','<em>La Enbajada</em>')}
   if(!nums||!nums.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:rgba(242,237,228,.22);font-family:var(--ui);font-size:10px;letter-spacing:.18em;text-transform:uppercase;grid-column:1/-1">Sin ediciones publicadas aún</div>';return}
-  var activo=nums.find(function(n){return n.estado==='edicion-actual'})||nums.find(function(n){return n.estado==='activo'})||nums[0];
+  /* isActivo = literalmente estado 'edicion-actual' (la BD ya garantiza
+     que solo una edición puede tener ese estado, vía trigger). Cada
+     tarjeta muestra la etiqueta de SU PROPIO estado, uno a uno — nada de
+     adivinar cuál es "la elegida" ni de descartes por defecto. */
   grid.innerHTML=nums.slice(0,6).map(function(n){
-    var isActivo=n.id===activo?.id;
+    var isActivo=n.estado==='edicion-actual';
     var esNav=n.estado!=='proximo';
     var href=esNav?'/ediciones/'+n.id:'#';
     var np=String(n.id).padStart(2,'0');
     var imgOk=n.imagen_url&&(n.imagen_url.startsWith('http')||n.imagen_url.startsWith('data:'));
-    var eLabel=isActivo?'Edición actual':n.estado==='proximo'?'Próximamente':'Archivada';
-    var eClass=isActivo?'activo':n.estado==='proximo'?'proximo':'archivado';
+    var eLabel=n.estado==='edicion-actual'?'Edición actual':n.estado==='activo'?'Activo':n.estado==='proximo'?'Próximo':n.estado==='archivado'?'Archivado':'';
+    var eClass=n.estado==='edicion-actual'?'activo':n.estado==='activo'?'publicado':n.estado==='proximo'?'proximo':n.estado==='archivado'?'archivado':'';
     return '<a class="idx-num-card'+(isActivo?' activo':'')+(n.estado==='proximo'?' proximo':'')+'" href="'+href+'">'+
       '<div class="idx-num-img">'+
       (imgOk?'<img src="'+_esc(n.imagen_url)+'" alt="'+_esc(n.titulo)+'" loading="lazy">':'<div style="width:100%;height:100%;background:linear-gradient(160deg,#060e1f,#004AAD)"></div>')+
       '<div class="idx-num-img-ov"></div>'+
       '<div class="idx-num-ghost" aria-hidden="true">'+np+'</div>'+
-      '<div class="idx-num-badge '+eClass+'">'+eLabel+'</div></div>'+
+      (eLabel?'<div class="idx-num-badge '+eClass+'">'+eLabel+'</div>':'')+'</div>'+
       '<div class="idx-num-body">'+
       '<div class="idx-num-id">Edición N.º '+np+'</div>'+
       '<div class="idx-num-card-titulo">'+_esc(n.titulo||'')+'</div>'+
