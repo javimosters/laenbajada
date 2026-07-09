@@ -754,6 +754,13 @@ async function init() {
     return;
   }
 
+  /* Exponer el id ya resuelto para tracking.js — cuando se entra por el
+     alias genérico /edicion.html sin ?num=, la URL no trae el id, así
+     que tracking.js no tiene forma de saber cuál edición es. Este JS
+     ya lo resolvió arriba (edición actual o la del query param), así
+     que lo dejamos disponible globalmente antes de que corra el tracking. */
+  window._lae_num_id = num.id;
+
   /* Canonical dinámico: apuntar a la URL limpia de esta edición real
      (/ediciones/:num) en vez de siempre al genérico /edicion.html —
      evita que todas las ediciones se canonicalicen entre sí. */

@@ -2660,6 +2660,17 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
         </div>
       </div>
 
+      <!-- Vistas por edición / número -->
+      <div class="sc" style="margin-bottom:16px">
+        <div class="sc-head"><div class="sc-head-left"><div class="sc-head-dot"></div><div>
+          <div class="sc-title">Vistas por edición</div>
+          <div class="sc-desc">Números de la revista, ordenados por vistas</div>
+        </div></div></div>
+        <div id="met-eds-list">
+          <div class="empty"><div class="empty-ic">⌛</div><h3>Cargando…</h3></div>
+        </div>
+      </div>
+
       <!-- Gráfico de tendencia (últimos 7 días) -->
       <div class="sc" style="margin-bottom:16px">
         <div class="sc-head"><div class="sc-head-left"><div class="sc-head-dot"></div><div>
@@ -4900,8 +4911,10 @@ function filtrarMetArts(q) {
 async function cargarMetricas() {
   const listArts  = g('met-arts-list');
   const listPages = g('met-pages-list');
+  const listEds   = g('met-eds-list');
   if (listArts)  listArts.innerHTML  = '<div class="empty"><div class="empty-ic">⌛</div><h3>Cargando…</h3></div>';
   if (listPages) listPages.innerHTML = '<div class="empty"><div class="empty-ic">⌛</div><h3>Cargando…</h3></div>';
+  if (listEds)   listEds.innerHTML   = '<div class="empty"><div class="empty-ic">⌛</div><h3>Cargando…</h3></div>';
 
   try {
     /* Leer visitas desde Supabase — tabla `visitas` */
@@ -4925,8 +4938,17 @@ async function cargarMetricas() {
       const msg = '<div style="padding:24px;text-align:center;color:var(--t3);font-size:13px">La tabla <code style="font-family:var(--mono);background:var(--bg2);padding:1px 5px">visitas</code> no existe aún. Descarga el SQL de métricas y ejecútalo en Supabase.</div>';
       if (listArts)  listArts.innerHTML  = msg;
       if (listPages) listPages.innerHTML = msg;
+      if (listEds)   listEds.innerHTML   = msg;
       return;
     }
+
+    /* Traer artículos y números ANTES de contar, para poder resolver
+       referencia_id (a veces id, a veces slug) a una sola identidad
+       canónica y no contar el mismo artículo/edición dos veces. */
+    const [arts, numeros] = await Promise.all([
+      DB.getArticulos().catch(()=>[]),
+      DB.getNumeros().catch(()=>[]),
+    ]);
 
     /* Totales */
     const hoy = new Date(); hoy.setHours(0,0,0,0);
@@ -4934,39 +4956,44 @@ async function cargarMetricas() {
     const total      = visitas.length;
     const hoyCount   = visitas.filter(v => new Date(v.created_at) >= hoy).length;
     const semCount   = visitas.filter(v => new Date(v.created_at) >= d7).length;
-    const uniqArts   = new Set(visitas.filter(v => v.tipo==='articulo').map(v=>v.referencia_id)).size;
 
     if (g('met-total'))      g('met-total').textContent      = total.toLocaleString('es-CO');
     if (g('met-hoy'))        g('met-hoy').textContent        = hoyCount;
     if (g('met-semana'))     g('met-semana').textContent     = semCount.toLocaleString('es-CO');
-    if (g('met-arts-vistos')) g('met-arts-vistos').textContent = uniqArts;
     /* Sesiones únicas */
     const uniqSes = new Set(visitas.map(v => v.sesion_id).filter(Boolean)).size;
     if (g('met-sesiones'))   g('met-sesiones').textContent   = uniqSes.toLocaleString('es-CO');
     /* Gráfico de tendencia */
     _renderMetChart(visitas);
 
-    /* Artículos más leídos */
+    /* ═══ 1. Artículos más leídos ═══
+       referencia_id puede venir como el id (tracking antiguo con ?id=)
+       o como el slug (URLs limpias /secciones/:tag/:slug, sin id).
+       Se resuelve a arts[].id ANTES de contar para que un mismo
+       artículo no aparezca duplicado en la lista. */
     const conteoArts = {};
     visitas.filter(v => v.tipo === 'articulo' && v.referencia_id).forEach(v => {
-      conteoArts[v.referencia_id] = (conteoArts[v.referencia_id]||0) + 1;
+      const art = arts.find(a => a.id === v.referencia_id || a.slug === v.referencia_id);
+      const key = art ? art.id : v.referencia_id; /* si no existe (eliminado), se cuenta por su valor crudo */
+      conteoArts[key] = (conteoArts[key]||0) + 1;
     });
     const artsSorted = Object.entries(conteoArts).sort((a,b)=>b[1]-a[1]).slice(0,20);
+    if (g('met-arts-vistos')) g('met-arts-vistos').textContent = Object.keys(conteoArts).length;
 
     if (listArts) {
       if (!artsSorted.length) {
         listArts.innerHTML = '<div class="empty"><div class="empty-ic">📰</div><h3>Sin vistas de artículos aún</h3></div>';
       } else {
-        const arts = await DB.getArticulos().catch(()=>[]);
         const maxVistas = artsSorted[0]?.[1] || 1;
         listArts.innerHTML = artsSorted.map(([artId, cnt], i) => {
-          /* referencia_id puede ser el id (tracking antiguo/legacy con ?id=)
-             o el slug (URLs limpias /secciones/:tag/:slug, que no llevan id) */
-          const art = arts.find(a => a.id === artId || a.slug === artId);
+          const art = arts.find(a => a.id === artId);
           const eliminado = !art;
+          const artUrl = art
+            ? (art.seccion_tag ? `secciones/${art.seccion_tag}/${art.slug||art.id}` : `historias/${art.slug||art.id}`)
+            : null;
           const titulo = eliminado
             ? `<span style="opacity:.45;font-style:normal;font-size:12px">Artículo eliminado</span> <span style="font-family:var(--mono);font-size:10px;color:var(--t4)">${artId.slice(0,8)}…</span>`
-            : `<a href="articulo.html?id=${artId}" target="_blank" style="color:inherit;text-decoration:none;font-style:italic">${art.titulo}</a>`;
+            : `<a href="${artUrl}" target="_blank" style="color:inherit;text-decoration:none;font-style:italic">${art.titulo}</a>`;
           const secBadge = art?.seccion_tag
             ? `<span style="font-size:9px;font-family:var(--sans);color:var(--azul);background:rgba(0,74,173,.07);padding:1px 7px;border-radius:2px;font-weight:600">${art.seccion_tag}</span>` : '';
           const estadoBadge = art?.estado === 'borrador'
@@ -4991,9 +5018,10 @@ async function cargarMetricas() {
       }
     }
 
-    /* Páginas del sitio */
+    /* ═══ 2. Páginas generales del sitio (todo lo que NO sea artículo
+       ni edición: index, secciones, sobre, archivo, editor, 404) ═══ */
     const conteoPages = {};
-    visitas.filter(v => v.tipo !== 'articulo').forEach(v => {
+    visitas.filter(v => v.tipo !== 'articulo' && v.pagina !== 'edicion').forEach(v => {
       const p = v.pagina || 'desconocida';
       conteoPages[p] = (conteoPages[p]||0) + 1;
     });
@@ -5004,7 +5032,7 @@ async function cargarMetricas() {
         listPages.innerHTML = '<div class="empty"><div class="empty-ic">◈</div><h3>Sin visitas de páginas aún</h3></div>';
       } else {
         const maxP = pagesSorted[0]?.[1] || 1;
-        const icons = { index:'🏠', secciones:'◈', edicion:'📰', archivo:'◫', sobre:'◑', editor:'◉' };
+        const icons = { index:'🏠', secciones:'◈', archivo:'◫', sobre:'◑', editor:'◉', '404':'⊘' };
         listPages.innerHTML = pagesSorted.map(([pag, cnt]) => {
           const pct = Math.round(cnt/maxP*100);
           const ic  = icons[pag] || '◎';
@@ -5023,10 +5051,48 @@ async function cargarMetricas() {
       }
     }
 
+    /* ═══ 3. Vistas por edición / número ═══
+       tracking.js registra pagina:'edicion' con referencia_id = numeros.id.
+       Se resuelve contra DB.getNumeros() para mostrar el título real. */
+    const conteoEds = {};
+    visitas.filter(v => v.pagina === 'edicion').forEach(v => {
+      const ref = v.referencia_id || 'sin-numero';
+      conteoEds[ref] = (conteoEds[ref]||0) + 1;
+    });
+    const edsSorted = Object.entries(conteoEds).sort((a,b)=>b[1]-a[1]);
+
+    if (listEds) {
+      if (!edsSorted.length) {
+        listEds.innerHTML = '<div class="empty"><div class="empty-ic">📖</div><h3>Sin vistas de ediciones aún</h3></div>';
+      } else {
+        const maxE = edsSorted[0]?.[1] || 1;
+        listEds.innerHTML = edsSorted.map(([numId, cnt]) => {
+          const num = numeros.find(n => n.id === numId);
+          const pct = Math.round(cnt/maxE*100);
+          const titulo = num ? num.titulo : `Edición eliminada`;
+          return `<div style="display:grid;grid-template-columns:28px 1fr 60px;gap:10px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--bd)">
+            <div style="text-align:center;font-size:14px">📖</div>
+            <div>
+              <div style="font-family:var(--serif);font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                <a href="ediciones/${numId}" target="_blank" style="color:inherit;text-decoration:none;font-style:italic">${titulo}</a>
+                <span style="font-size:9px;font-family:var(--mono);color:var(--t4);background:var(--paper2);padding:1px 7px;border-radius:2px">#${numId}</span>
+              </div>
+              <div style="height:3px;background:var(--bg2);border-radius:2px"><div style="height:3px;background:var(--azul);border-radius:2px;width:${pct}%;transition:width .6s var(--ease)"></div></div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--azul)">${cnt}</div>
+              <div style="font-family:var(--ui);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4)">vistas</div>
+            </div>
+          </div>`;
+        }).join('');
+      }
+    }
+
   } catch(e) {
     const msg = `<div style="padding:20px;color:#c0392b;font-size:13px">Error: ${e.message}</div>`;
     if (listArts)  listArts.innerHTML  = msg;
     if (listPages) listPages.innerHTML = msg;
+    if (listEds)   listEds.innerHTML   = msg;
   }
 }
 

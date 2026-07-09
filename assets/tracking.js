@@ -71,7 +71,14 @@
         slug: slug || null,
       };
     }
-    if (path.includes('edicion') || path.includes('numero'))  return { pagina: 'edicion',    tipo: 'pagina', referencia_id: params.get('num') || null };
+    if (path.includes('edicion') || path.includes('numero'))
+      return {
+        pagina: 'edicion',
+        tipo: 'pagina',
+        /* Sin ?num= (alias genérico "Edición actual") — edicion.html
+           ya resolvió cuál es y la dejó en window._lae_num_id */
+        referencia_id: params.get('num') || window._lae_num_id || null
+      };
     if (path.includes('secciones'))                           return { pagina: 'secciones',  tipo: 'pagina', referencia_id: params.get('sec') || null };
     if (path.includes('archivo'))                             return { pagina: 'archivo',    tipo: 'pagina' };
     if (path.includes('editor'))                              return { pagina: 'editor',     tipo: 'pagina', referencia_id: params.get('slug') || null };
