@@ -89,19 +89,19 @@ async function renderEditor(slug, context) {
   }
 }
 
-/* /ediciones/:num → edición */
-async function renderEdicion(num, context) {
+/* /contenido/:slug → contenido */
+async function renderContenido(slug, context) {
   try {
-    const ed = await supaSelect('numeros',
-      `id=eq.${encodeURIComponent(num)}&select=id,titulo,subtitulo,imagen_url&limit=1`);
-    if (!ed) return context.next();
+    const cont = await supaSelect('contenidos',
+      `slug=eq.${encodeURIComponent(slug)}&select=id,slug,titulo,subtitulo,imagen_url&limit=1`);
+    if (!cont) return context.next();
 
-    const url   = `https://laenbajada.com/ediciones/${encodeURIComponent(ed.id)}`;
-    const title = `${ed.titulo || 'Edición'} — La Enbajada`;
-    const desc  = ed.subtitulo || 'Edición de La Enbajada, revista cultural del Caribe colombiano.';
-    const image = ed.imagen_url || DEFAULT_IMAGE;
+    const url   = `https://laenbajada.com/contenido/${encodeURIComponent(cont.slug)}`;
+    const title = `${cont.titulo || 'Contenido'} — La Enbajada`;
+    const desc  = cont.subtitulo || 'Contenido de La Enbajada, revista cultural del Caribe colombiano.';
+    const image = cont.imagen_url || DEFAULT_IMAGE;
 
-    return respond(buildHtml({ type: 'website', title, desc, url, image, linkText: ed.titulo || 'Ver edición' }));
+    return respond(buildHtml({ type: 'website', title, desc, url, image, linkText: cont.titulo || 'Ver contenido' }));
   } catch (_) {
     return context.next();
   }
@@ -184,8 +184,8 @@ export default async (request, context) => {
     return renderEditor(parts[2], context);
   }
 
-  if (parts[0] === 'ediciones' && parts[1]) {
-    return renderEdicion(parts[1], context);
+  if (parts[0] === 'contenido' && parts[1]) {
+    return renderContenido(parts[1], context);
   }
 
   return renderArticulo(request, context);
@@ -197,6 +197,6 @@ export const config = {
     '/secciones/:tag/:slug',
     '/historias/:slug',
     '/sobre/equipo/:slug',
-    '/ediciones/:num',
+    '/contenido/:slug',
   ],
 };

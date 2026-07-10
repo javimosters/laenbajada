@@ -29,7 +29,7 @@
   function = "og"
 
 [[edge_functions]]
-  path = "/ediciones/:num"
+  path = "/contenido/:slug"
   function = "og"
 
 # ── Edge Function: Sitemap dinámico ──

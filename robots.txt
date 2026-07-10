@@ -5,17 +5,14 @@
 
 User-agent: *
 Allow: /
-Allow: /
 Allow: /secciones/
 Allow: /historias/
 Allow: /sobre/equipo/
-Allow: /ediciones/
-Allow: /archivo
+Allow: /contenido/
 Allow: /sobre
 Allow: /articulo.html
-Allow: /edicion.html
+Allow: /contenido.html
 Allow: /secciones.html
-Allow: /archivo.html
 Allow: /sobre.html
 
 # Bloquear panel admin y rutas sensibles

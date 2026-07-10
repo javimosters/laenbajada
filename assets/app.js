@@ -143,8 +143,8 @@ function _validarArticulo(data) {
     errs.push('Título requerido (mínimo 2 caracteres)');
   if (data.titulo && data.titulo.length > 500)
     errs.push('Título demasiado largo (máx 500 caracteres)');
-  if (!data.numero_id)
-    errs.push('Edición requerida');
+  if (!data.contenido_id)
+    errs.push('Contenido requerido');
   const estadosValidos = ['borrador','publicado','archivado'];
   if (data.estado && !estadosValidos.includes(data.estado))
     errs.push('Estado inválido');
@@ -350,55 +350,61 @@ const DB = {
     return SB.delete('secciones', `id=eq.${id}`);
   },
 
-  /* ── Números ────────────────────────────────────────────────── */
-  async getNumeros() {
-    if (_cache.numeros) return _cache.numeros;
-    const rows = await SB.select('numeros', 'order=id.asc');
-    _cache.numeros = rows || [];
-    return _cache.numeros;
+  /* ── Contenido ──────────────────────────────────────────────── */
+  async getContenidos() {
+    if (_cache.contenidos) return _cache.contenidos;
+    const rows = await SB.select('contenidos', 'order=orden.asc');
+    _cache.contenidos = rows || [];
+    return _cache.contenidos;
   },
-  async getNumeroActivo() {
-    const nums = await this.getNumeros();
-    return nums.find(n => n.estado === 'edicion-actual') || nums.find(n => n.estado === 'activo') || nums[0] || null;
+  /* El destacado: el primer 'activo' según orden. Ya no existe el
+     estado especial 'edicion-actual' — el orden decide cuál se ve primero. */
+  async getContenidoDestacado() {
+    const cs = await this.getContenidos();
+    return cs.find(c => c.estado === 'activo') || cs[0] || null;
   },
-  async getNumero(id) {
-    const nums = await this.getNumeros();
-    return nums.find(n => n.id === id) || null;
+  async getContenido(id) {
+    const cs = await this.getContenidos();
+    return cs.find(c => c.id === id) || null;
   },
-  async setNumero(id, data) {
-    _cache.numeros = null;
+  async getContenidoBySlug(slug) {
+    const cs = await this.getContenidos();
+    return cs.find(c => c.slug === slug) || null;
+  },
+  async setContenido(id, data) {
+    _cache.contenidos = null;
     const clean = Object.fromEntries(
       Object.entries(data).filter(([, v]) => v !== undefined)
     );
-    /* Usar PATCH si el número ya existe para nunca hacer INSERT accidental */
+    /* Usar PATCH si el contenido ya existe para nunca hacer INSERT accidental */
     try {
-      const existe = await SB.select('numeros', `id=eq.${id}&select=id`);
+      const existe = await SB.select('contenidos', `id=eq.${id}&select=id`);
       if (existe && existe.length > 0) {
-        return SB.update('numeros', `id=eq.${id}`, { ...clean, updated_at: new Date().toISOString() });
+        return SB.update('contenidos', `id=eq.${id}`, { ...clean, updated_at: new Date().toISOString() });
       }
     } catch(_) {}
-    return SB.upsert('numeros', { id, ...clean, updated_at: new Date().toISOString() }, 'id');
+    return SB.upsert('contenidos', { id, ...clean, updated_at: new Date().toISOString() }, 'id');
   },
-  async crearNumero(data) {
-    _cache.numeros = null;
-    return SB.insert('numeros', data);
+  async crearContenido(data) {
+    _cache.contenidos = null;
+    return SB.insert('contenidos', data);
   },
-  async deleteNumero(id) {
-    _cache.numeros = null;
-    return SB.delete('numeros', `id=eq.${id}`);
+  async deleteContenido(id) {
+    _cache.contenidos = null;
+    return SB.delete('contenidos', `id=eq.${id}`);
   },
 
   /* ── Artículos ──────────────────────────────────────────────── */
-  async getArticulos(numero_id) {
-    const key = numero_id || 'all';
+  async getArticulos(contenido_id) {
+    const key = contenido_id || 'all';
     if (_cache.articulos[key]) return _cache.articulos[key];
-    return this._fetchArticulos(numero_id, key);
+    return this._fetchArticulos(contenido_id, key);
   },
-  async _fetchArticulos(numero_id, key) {
-    if (!key) key = numero_id || 'all';
-    const COLS = 'select=id,titulo,subtitulo,extracto,imagen_url,slug,estado,tipo,seccion_tag,numero_id,orden,autor,editor_id,fecha_publicacion,created_at';
-    const filter = numero_id
-      ? `${COLS}&numero_id=eq.${numero_id}&order=orden.asc,created_at.desc`
+  async _fetchArticulos(contenido_id, key) {
+    if (!key) key = contenido_id || 'all';
+    const COLS = 'select=id,titulo,subtitulo,extracto,imagen_url,slug,estado,tipo,seccion_tag,contenido_id,orden,autor,editor_id,fecha_publicacion,created_at';
+    const filter = contenido_id
+      ? `${COLS}&contenido_id=eq.${contenido_id}&order=orden.asc,created_at.desc`
       : `${COLS}&order=orden.asc,created_at.desc`;
     const rows = await SB.select('articulos', filter);
     const normalized = (rows || []).map(a => ({
@@ -408,8 +414,8 @@ const DB = {
     _cache.articulos[key] = normalized;
     return _cache.articulos[key];
   },
-  async getPublicados(numero_id) {
-    const key = 'pub_' + (numero_id || 'all');
+  async getPublicados(contenido_id) {
+    const key = 'pub_' + (contenido_id || 'all');
     /* FIX: esto borraba TODAS las claves '_lae2_' (el prefijo que se usa
        AHORA para cachear) en cada llamada, justo antes de intentar leer
        esa misma caché dos líneas más abajo — se autodestruía siempre, así
@@ -428,10 +434,10 @@ const DB = {
       }
     } catch(e) {}
     /* Filtrar publicados directo en Supabase — no bajar borradores al navegador */
-    const COLS = 'select=id,titulo,subtitulo,extracto,imagen_url,slug,estado,tipo,seccion_tag,numero_id,orden,autor,editor_id,fecha_publicacion,created_at';
+    const COLS = 'select=id,titulo,subtitulo,extracto,imagen_url,slug,estado,tipo,seccion_tag,contenido_id,orden,autor,editor_id,fecha_publicacion,created_at';
     const ahora = new Date().toISOString();
-    const base = numero_id
-      ? `${COLS}&numero_id=eq.${numero_id}&estado=eq.publicado&order=orden.asc,created_at.desc`
+    const base = contenido_id
+      ? `${COLS}&contenido_id=eq.${contenido_id}&estado=eq.publicado&order=orden.asc,created_at.desc`
       : `${COLS}&estado=eq.publicado&order=orden.asc,created_at.desc`;
     const rows = await SB.select('articulos', base);
     const arts = (rows || [])
@@ -602,7 +608,7 @@ const DB = {
       .filter(a => a.id !== art.id)
       .map(a => {
         let score = 0;
-        if (a.numero_id   === art.numero_id)   score += 5;
+        if (a.contenido_id === art.contenido_id) score += 5;
         if (a.tipo        === art.tipo)         score += 3;
         if (a.seccion_tag === art.seccion_tag)  score += 3;
         return { ...a, _score: score };
@@ -631,7 +637,7 @@ const DB = {
   invalidarCache() {
     _cache.config      = null;
     _cache.secciones   = null;
-    _cache.numeros     = null;
+    _cache.contenidos  = null;
     _cache.articulos   = {};
     _cache.bloques     = {};
     _cache.curatiaitems = {};

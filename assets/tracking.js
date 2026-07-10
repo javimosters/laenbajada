@@ -51,9 +51,9 @@
         slug: parts[1],
       };
     }
-    /* /ediciones/:num → edición */
-    if (parts[0] === 'ediciones' && parts[1]) {
-      return { pagina: 'edicion', tipo: 'pagina', referencia_id: parts[1] || params.get('num') || null };
+    /* /contenido/:slug → contenido individual */
+    if (parts[0] === 'contenido' && parts[1]) {
+      return { pagina: 'contenido', tipo: 'contenido', referencia_id: parts[1] || params.get('slug') || null, slug: parts[1] };
     }
     /* /sobre/equipo/:slug → perfil de editor (revisar ANTES que /sobre genérico) */
     if (parts[0] === 'sobre' && parts[1] === 'equipo') {
@@ -71,16 +71,16 @@
         slug: slug || null,
       };
     }
-    if (path.includes('edicion') || path.includes('numero'))
+    if (path.includes('contenido'))
       return {
-        pagina: 'edicion',
-        tipo: 'pagina',
-        /* Sin ?num= (alias genérico "Edición actual") — edicion.html
-           ya resolvió cuál es y la dejó en window._lae_num_id */
-        referencia_id: params.get('num') || window._lae_num_id || null
+        pagina: 'contenido',
+        /* Sin slug en la URL (alias genérico /contenido.html) — contenido.html
+           ya resolvió cuál es (el 'activo' según orden) y lo dejó en
+           window._lae_contenido_slug, así que sí se puede identificar. */
+        tipo: window._lae_contenido_slug ? 'contenido' : 'pagina',
+        referencia_id: params.get('slug') || window._lae_contenido_slug || null
       };
     if (path.includes('secciones'))                           return { pagina: 'secciones',  tipo: 'pagina', referencia_id: params.get('sec') || null };
-    if (path.includes('archivo'))                             return { pagina: 'archivo',    tipo: 'pagina' };
     if (path.includes('editor'))                              return { pagina: 'editor',     tipo: 'pagina', referencia_id: params.get('slug') || null };
     if (path.includes('sobre'))                               return { pagina: 'sobre',      tipo: 'pagina' };
     if (path.includes('404'))                                 return { pagina: '404',        tipo: 'pagina' };

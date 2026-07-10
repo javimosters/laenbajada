@@ -205,9 +205,8 @@ html.dark .search-modal { background:var(--bg); }
     <a href="/" class="logo-wrap"><img loading="lazy" src="/assets/logo.png" alt="" class="logo-img" onerror="this.style.display='none'"><div class="logo-text-group"><span class="logo-name js-logo-name">La Enbajada</span><span class="logo-tag js-logo-tag">Aterrizamos la Cultura</span></div></a>
     <nav class="nav-left" id="nav-secciones" aria-label="Navegación principal">
       <a href="/">Inicio</a>
-      <a href="/edicion.html">Edición actual</a>
+    <a href="/contenido.html">Contenido</a>
       <span id="nav-secs-dyn"></span>
-      <a href="/archivo.html">Archivo</a>
       <a href="/sobre.html" class="nav-activo">Nosotros</a>
     </nav>
     <div class="header-spacer"></div>
@@ -220,11 +219,10 @@ html.dark .search-modal { background:var(--bg); }
   </div>
   <nav class="mobile-menu" id="mobile-menu">
     <a href="/">Inicio</a>
-    <a href="/edicion.html">Edición actual</a>
+    <a href="/contenido.html">Contenido</a>
     <div class="mm-sep"></div>
     <div id="mm-secs-dyn"></div>
     <div class="mm-sep"></div>
-    <a href="/archivo.html">Archivo</a>
     <a href="/sobre.html" class="nav-activo">Nosotros</a>
     <div class="mm-sep"></div>
     <a href="/#sec-boletin" class="mm-cta">Suscribirse →</a>
@@ -304,8 +302,7 @@ html.dark .search-modal { background:var(--bg); }
     </div>
     <div class="footer-cols">
       <div class="footer-col"><h5>La Revista</h5><ul>
-        <li><a href="/edicion.html">Edición actual</a></li>
-        <li><a href="/archivo.html">Archivo</a></li>
+        <li><a href="/contenido.html">Contenido</a></li>
         <li><a href="/sobre.html">Nosotros</a></li>
       </ul></div>
       <div class="footer-col"><h5>Secciones</h5><ul><li id="footer-secs-dyn"></li></ul></div>
@@ -371,7 +368,7 @@ function openSearch(){const modal=document.getElementById('search-modal');const 
 function closeSearch(){const modal=document.getElementById('search-modal');const input=document.getElementById('search-modal-input');const hint=document.getElementById('search-modal-hint');const res=document.getElementById('search-modal-results');modal.classList.remove('open');document.body.style.overflow='';document.getElementById('search-icon-btn').setAttribute('aria-expanded','false');if(input)input.value='';if(hint)hint.textContent='Escribe para buscar';if(res)res.innerHTML='';}
 function _searchModalKey(e){if(e.key==='Escape')closeSearch();}
 let _smTimer=null;function _searchModal(q){clearTimeout(_smTimer);_smTimer=setTimeout(()=>_doSearchModal(q),240);}
-async function _doSearchModal(q){const hint=document.getElementById('search-modal-hint');const res=document.getElementById('search-modal-results');if(!res)return;const v=(q||'').trim();if(v.length<2){if(hint)hint.textContent='Escribe para buscar';res.innerHTML='';return;}if(hint)hint.textContent='Buscando…';const arts=await DB.buscar(v).catch(()=>[]);if(!arts.length){if(hint)hint.textContent=`Sin resultados para "${v}"`;res.innerHTML=`<div class="search-modal-empty">No encontramos nada para <em>"${v}"</em></div>`;return;}if(hint)hint.textContent=`${arts.length} resultado${arts.length!==1?'s':''} encontrado${arts.length!==1?'s':''}`;res.innerHTML=`<div class="search-results-grid">${arts.map(a=>`<a class="search-result-card" href="${articuloUrl(a)}" onclick="closeSearch()"><div class="search-result-img">${a.imagen_url?`<img src="${a.imagen_url}" alt="${a.titulo}" loading="lazy">`:''}<div class="search-result-img-ov"><div class="search-result-cat">${a.seccion_tag||'La Enbajada'}</div></div></div><div class="search-result-titulo">${a.titulo}</div><div class="search-result-meta">${a.autor||''} · N.º ${a.numero_id||''}</div></a>`).join('')}</div>`;}
+async function _doSearchModal(q){const hint=document.getElementById('search-modal-hint');const res=document.getElementById('search-modal-results');if(!res)return;const v=(q||'').trim();if(v.length<2){if(hint)hint.textContent='Escribe para buscar';res.innerHTML='';return;}if(hint)hint.textContent='Buscando…';const arts=await DB.buscar(v).catch(()=>[]);if(!arts.length){if(hint)hint.textContent=`Sin resultados para "${v}"`;res.innerHTML=`<div class="search-modal-empty">No encontramos nada para <em>"${v}"</em></div>`;return;}if(hint)hint.textContent=`${arts.length} resultado${arts.length!==1?'s':''} encontrado${arts.length!==1?'s':''}`;res.innerHTML=`<div class="search-results-grid">${arts.map(a=>`<a class="search-result-card" href="${articuloUrl(a)}" onclick="closeSearch()"><div class="search-result-img">${a.imagen_url?`<img src="${a.imagen_url}" alt="${a.titulo}" loading="lazy">`:''}<div class="search-result-img-ov"><div class="search-result-cat">${a.seccion_tag||'La Enbajada'}</div></div></div><div class="search-result-titulo">${a.titulo}</div><div class="search-result-meta">${a.autor||''}</div></a>`).join('')}</div>`;}
 document.getElementById('search-modal')?.addEventListener('click',function(e){if(e.target===this)closeSearch();});
 
 function toggleMenu(){const h=document.getElementById('site-header'),m=document.getElementById('mobile-menu'),b=document.getElementById('hamburger-btn'),o=m.classList.toggle('open');h.classList.toggle('menu-open',o);b.setAttribute('aria-expanded',o);document.body.style.overflow=o?'hidden':'';}

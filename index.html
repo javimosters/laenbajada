@@ -373,9 +373,8 @@ input, textarea, select, button { max-width: 100% }
     </a>
     <nav class="nav-left" id="nav-secciones" aria-label="Navegación principal">
       <a href="/" class="nav-activo">Inicio</a>
-      <a href="/edicion.html">Edición actual</a>
+    <a href="/contenido.html">Contenido</a>
       <span id="nav-secs-dyn"></span>
-      <a href="/archivo.html">Archivo</a>
       <a href="/sobre.html">Nosotros</a>
     </nav>
     <div class="header-spacer"></div>
@@ -397,11 +396,10 @@ input, textarea, select, button { max-width: 100% }
   </div>
   <nav class="mobile-menu" id="mobile-menu" aria-label="Menú móvil">
     <a href="/" class="nav-activo">Inicio</a>
-    <a href="/edicion.html" id="mm-edicion">Edición actual</a>
+    <a href="/contenido.html">Contenido</a>
     <div class="mm-sep"></div>
     <div id="mm-secs-dyn"></div>
     <div class="mm-sep"></div>
-    <a href="/archivo.html">Archivo</a>
     <a href="/sobre.html">Nosotros</a>
     <div class="mm-sep"></div>
     <a href="#sec-boletin" class="mm-cta" onclick="closeMobileMenu()">Suscribirse →</a>
@@ -460,7 +458,7 @@ input, textarea, select, button { max-width: 100% }
   <section class="idx-numeros" id="sec-numeros" aria-label="Ediciones">
     <div class="idx-num-hdr">
       <h2 class="idx-num-titulo" id="idx-num-titulo"></h2>
-      <a href="/archivo.html" class="idx-num-ver">Ver archivo</a>
+      <a href="/contenido.html" class="idx-num-ver">Ver contenido</a>
     </div>
     <div class="idx-num-grid reveal" id="idx-num-grid"></div>
   </section>
@@ -499,8 +497,7 @@ input, textarea, select, button { max-width: 100% }
       <div class="footer-col">
         <h5>La Revista</h5>
         <ul>
-          <li><a href="/edicion.html">Edición actual</a></li>
-          <li><a href="/archivo.html">Archivo</a></li>
+          <li><a href="/contenido.html">Contenido</a></li>
           <li><a href="/sobre.html">Nosotros</a></li>
         </ul>
       </div>
@@ -611,7 +608,7 @@ async function _doSearch(q){
   var arts=await DB.buscar(v).catch(function(){return[]});
   if(!arts.length){if(hint)hint.textContent='Sin resultados para "'+_esc(v)+'"';res.innerHTML='<div class="search-modal-empty">No encontramos nada para <em>"'+_esc(v)+'"</em></div>';return}
   if(hint)hint.textContent=arts.length+' resultado'+(arts.length!==1?'s':'');
-  res.innerHTML='<div class="search-results-grid">'+arts.map(function(a){return'<a class="search-result-card" href="'+articuloUrl(a)+'" onclick="closeSearch()"><div class="search-result-img">'+(a.imagen_url?'<img src="'+_esc(a.imagen_url)+'" alt="'+_esc(a.titulo)+'" loading="lazy">':'')+'<div class="search-result-img-ov"><div class="search-result-cat">'+_esc(a.seccion_tag||'')+'</div></div></div><div class="search-result-titulo">'+_esc(a.titulo)+'</div><div class="search-result-meta">'+_esc(a.autor||'')+' · N.º '+(a.numero_id||'')+(fmtFecha(a)?' · '+fmtFecha(a):'')+' </div></a>'}).join('')+'</div>';
+  res.innerHTML='<div class="search-results-grid">'+arts.map(function(a){return'<a class="search-result-card" href="'+articuloUrl(a)+'" onclick="closeSearch()"><div class="search-result-img">'+(a.imagen_url?'<img src="'+_esc(a.imagen_url)+'" alt="'+_esc(a.titulo)+'" loading="lazy">':'')+'<div class="search-result-img-ov"><div class="search-result-cat">'+_esc(a.seccion_tag||'')+'</div></div></div><div class="search-result-titulo">'+_esc(a.titulo)+'</div><div class="search-result-meta">'+_esc(a.autor||'')+(fmtFecha(a)?' · '+fmtFecha(a):'')+' </div></a>'}).join('')+'</div>';
 }
 
 /* ════════════════════════════════════════
@@ -636,7 +633,7 @@ function _renderTicker(arts,idxCfg){
    Sin botones. La imagen es el protagonista.
    Texto estructurado abajo-izquierda.
    ════════════════════════════════════════ */
-async function _renderHero(cfg,numActivo,secciones,pubs){
+async function _renderHero(cfg,contenidoDestacado,secciones,pubs){
   var ft=cfg.footer||{};
   var portadaId=ft.portada_id||(ft.carrusel||[])[0];
   var portada=null;
@@ -647,13 +644,12 @@ async function _renderHero(cfg,numActivo,secciones,pubs){
   }
   if(!portada){portada=pubs.find(function(a){return a.es_portada})||pubs[0]||null}
 
-  if(numActivo){
-    var np=String(numActivo.id).padStart(2,'0');
+  if(contenidoDestacado){
+    var np=String(contenidoDestacado.orden||'').padStart(2,'0');
     var ghost=document.getElementById('idx-hero-numghost');
     if(ghost) ghost.textContent=np;
     var edbarL=document.getElementById('idx-hero-edbar-left');
-    if(edbarL) edbarL.textContent='Edición N.º '+numActivo.id+(numActivo.titulo?' · '+numActivo.titulo:'');
-    ['mm-edicion','nav-edicion'].forEach(function(id){var el=document.getElementById(id);if(el) el.href='/ediciones/'+numActivo.id});
+    if(edbarL) edbarL.textContent=contenidoDestacado.titulo||'';
   }
 
   if(!portada) return null;
@@ -678,8 +674,7 @@ async function _renderHero(cfg,numActivo,secciones,pubs){
   var tagEl=document.getElementById('idx-hero-tag');
   if(tagEl){
     var secUrl='/secciones/'+normTag(portada.seccion_tag||'');
-    var numPart=portada.numero_id?'<span class="idx-hero-tag-sep">·</span><span class="idx-hero-tag-num">N.º '+_esc(String(portada.numero_id))+'</span>':'';
-    tagEl.innerHTML='<a class="idx-hero-tag-pill" href="'+secUrl+'" onclick="event.stopPropagation()">'+_esc(secNombre)+'</a>'+numPart;
+    tagEl.innerHTML='<a class="idx-hero-tag-pill" href="'+secUrl+'" onclick="event.stopPropagation()">'+_esc(secNombre)+'</a>';
   }
 
   /* Título — un solo bloque */
@@ -695,7 +690,6 @@ async function _renderHero(cfg,numActivo,secciones,pubs){
   var autEl=document.getElementById('idx-hero-autor');
   if(autEl){
     var _nombre=portada.autor||'';
-    var _num=portada.numero_id;
     var _renderChip=function(foto,slug,cargo){
       var _init=(_nombre||'?').split(' ').map(function(p){return p[0]||''}).join('').slice(0,2).toUpperCase();
       var _fotoEl=foto
@@ -760,7 +754,7 @@ function _renderGrid(arts,excluirIds,secciones,maxArts,cols){
          (aunque el artículo sí tuviera extracto) no mostraba nada. Ahora
          cae a extracto igual que ya hace el hero de portada. */
       ((a.subtitulo||a.extracto)?'<p class="idx-art-sub">'+_esc(a.subtitulo||a.extracto)+'</p>':'')+
-      '<div class="idx-art-meta">'+_esc(a.autor||'')+(a.numero_id?' <span>·</span> N.º '+(a.numero_id||''):'')+(fmtFecha(a)?' <span>·</span> '+fmtFecha(a):'')+'</div>'+
+      '<div class="idx-art-meta">'+_esc(a.autor||'')+(fmtFecha(a)?' <span>·</span> '+fmtFecha(a):'')+'</div>'+
       '</div></a>';
   }).join('');
 }
@@ -783,20 +777,19 @@ function _renderNumeros(nums,idxCfg){
   var grid=document.getElementById('idx-num-grid');
   var titulo=document.getElementById('idx-num-titulo');
   if(!grid) return;
-  if(titulo){var t=idxCfg.tituloArchivo||'Números de La Enbajada';titulo.innerHTML=t.replace('La Enbajada','<em>La Enbajada</em>')}
-  if(!nums||!nums.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:rgba(242,237,228,.22);font-family:var(--ui);font-size:10px;letter-spacing:.18em;text-transform:uppercase;grid-column:1/-1">Sin ediciones publicadas aún</div>';return}
-  /* isActivo = literalmente estado 'edicion-actual' (la BD ya garantiza
-     que solo una edición puede tener ese estado, vía trigger). Cada
-     tarjeta muestra la etiqueta de SU PROPIO estado, uno a uno — nada de
-     adivinar cuál es "la elegida" ni de descartes por defecto. */
+  if(titulo){var t=idxCfg.tituloArchivo||'Contenido de La Enbajada';titulo.innerHTML=t.replace('La Enbajada','<em>La Enbajada</em>')}
+  if(!nums||!nums.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:rgba(242,237,228,.22);font-family:var(--ui);font-size:10px;letter-spacing:.18em;text-transform:uppercase;grid-column:1/-1">Sin contenido publicado aún</div>';return}
+  /* Cada tarjeta muestra la etiqueta de su propio estado (activo/proximo/
+     archivado). El orden ya viene de Supabase (columna 'orden'), así que
+     el primero de la lista es naturalmente el destacado. */
   grid.innerHTML=nums.slice(0,6).map(function(n){
-    var isActivo=n.estado==='edicion-actual';
+    var isActivo=n.estado==='activo';
     var esNav=n.estado!=='proximo';
-    var href=esNav?'/ediciones/'+n.id:'#';
-    var np=String(n.id).padStart(2,'0');
+    var href=esNav?'/contenido/'+n.slug:'#';
+    var np=String(n.orden||'').padStart(2,'0');
     var imgOk=n.imagen_url&&(n.imagen_url.startsWith('http')||n.imagen_url.startsWith('data:'));
-    var eLabel=n.estado==='edicion-actual'?'Edición actual':n.estado==='activo'?'Activo':n.estado==='proximo'?'Próximo':n.estado==='archivado'?'Archivado':'';
-    var eClass=n.estado==='edicion-actual'?'activo':n.estado==='activo'?'publicado':n.estado==='proximo'?'proximo':n.estado==='archivado'?'archivado':'';
+    var eLabel=n.estado==='activo'?'Activo':n.estado==='proximo'?'Próximo':n.estado==='archivado'?'Archivado':'';
+    var eClass=n.estado==='activo'?'activo':n.estado==='proximo'?'proximo':n.estado==='archivado'?'archivado':'';
     return '<a class="idx-num-card'+(isActivo?' activo':'')+(n.estado==='proximo'?' proximo':'')+'" href="'+href+'">'+
       '<div class="idx-num-img">'+
       (imgOk?'<img src="'+_esc(n.imagen_url)+'" alt="'+_esc(n.titulo)+'" loading="lazy">':'<div style="width:100%;height:100%;background:linear-gradient(160deg,#060e1f,#004AAD)"></div>')+
@@ -804,10 +797,10 @@ function _renderNumeros(nums,idxCfg){
       '<div class="idx-num-ghost" aria-hidden="true">'+np+'</div>'+
       (eLabel?'<div class="idx-num-badge '+eClass+'">'+eLabel+'</div>':'')+'</div>'+
       '<div class="idx-num-body">'+
-      '<div class="idx-num-id">Edición N.º '+np+'</div>'+
+      '<div class="idx-num-id">N.º '+np+'</div>'+
       '<div class="idx-num-card-titulo">'+_esc(n.titulo||'')+'</div>'+
       (n.subtitulo?'<div class="idx-num-card-sub">'+_esc(n.subtitulo)+'</div>':'')+
-      (esNav?'<div class="idx-num-cta">Leer edición →</div>':'')+
+      (esNav?'<div class="idx-num-cta">Leer →</div>':'')+
       '</div></a>';
   }).join('');
 }
@@ -828,15 +821,15 @@ async function init(){
   try{
     var tituloDefecto=document.title;
     /* Arrancar todas las queries en paralelo ANTES de que initSite bloquee */
-    var resultsPromise=Promise.all([DB.getConfig(),DB.getArticulos().then(function(a){return a.filter(function(x){return x.estado==='publicado'})}),DB.getNumeros(),DB.getSecciones(),DB.getIndexCfg()]);
+    var resultsPromise=Promise.all([DB.getConfig(),DB.getArticulos().then(function(a){return a.filter(function(x){return x.estado==='publicado'})}),DB.getContenidos(),DB.getSecciones(),DB.getIndexCfg()]);
     await initSite();
     var results=await resultsPromise;
     var cfg=results[0],arts=results[1],nums=results[2],secciones=results[3],idxCfg=results[4];
-    var numActivo=nums.find(function(n){return n.estado==='edicion-actual'})||nums.find(function(n){return n.estado==='activo'})||nums[0]||null;
+    var contenidoDestacado=nums.find(function(n){return n.estado==='activo'})||nums[0]||null;
 
     _renderNavSecs(secciones);
     _renderTicker(arts,idxCfg);
-    var portadaId=await _renderHero(cfg,numActivo,secciones,arts);
+    var portadaId=await _renderHero(cfg,contenidoDestacado,secciones,arts);
     _renderGrid(arts,[portadaId],secciones,idxCfg.maxArtsGrid,idxCfg.colsGrid);
     _renderRuptura();
     /* Ediciones — condicional según admin */

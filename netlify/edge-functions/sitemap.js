@@ -8,9 +8,9 @@ const SUPA_URL = 'https://pkilwzcypcyhxjuknkho.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraWx3emN5cGN5aHhqdWtua2hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNDE1NTksImV4cCI6MjA5MDgxNzU1OX0.fAhepDbj2p1JEbHzZvD1ZqwAK95OskE-CRxF4gqgIrg';
 
 const PAGINAS_FIJAS = [
-  { loc: 'https://laenbajada.com/',        priority: '1.0', changefreq: 'daily'   },
-  { loc: 'https://laenbajada.com/archivo', priority: '0.7', changefreq: 'monthly' },
-  { loc: 'https://laenbajada.com/sobre',   priority: '0.5', changefreq: 'monthly' },
+  { loc: 'https://laenbajada.com/',          priority: '1.0', changefreq: 'daily'   },
+  { loc: 'https://laenbajada.com/contenido', priority: '0.7', changefreq: 'monthly' },
+  { loc: 'https://laenbajada.com/sobre',     priority: '0.5', changefreq: 'monthly' },
 ];
 
 function url(loc, priority, changefreq, lastmod) {
@@ -32,7 +32,7 @@ export default async (request) => {
       fetch(`${SUPA_URL}/rest/v1/secciones?activa=eq.true&select=tag`, {
         headers: { apikey: SUPA_KEY, Authorization: `Bearer ${SUPA_KEY}` },
       }),
-      fetch(`${SUPA_URL}/rest/v1/numeros?estado=neq.proximo&select=id`, {
+      fetch(`${SUPA_URL}/rest/v1/contenidos?estado=neq.proximo&select=slug`, {
         headers: { apikey: SUPA_KEY, Authorization: `Bearer ${SUPA_KEY}` },
       }),
     ]);
@@ -45,8 +45,8 @@ export default async (request) => {
       // Páginas fijas
       ...PAGINAS_FIJAS.map(p => url(p.loc, p.priority, p.changefreq)),
 
-      // Ediciones activas desde Supabase
-      ...numeros.map(n => url(`https://laenbajada.com/ediciones/${n.id}`, '0.9', 'weekly')),
+      // Contenido activo/archivado desde Supabase
+      ...numeros.filter(n => n.slug).map(n => url(`https://laenbajada.com/contenido/${n.slug}`, '0.9', 'weekly')),
 
       // Secciones desde Supabase — dinámico, sin hardcodear
       ...secciones.map(s => url(`https://laenbajada.com/secciones/${s.tag}`, '0.8', 'weekly')),

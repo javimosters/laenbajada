@@ -1202,7 +1202,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
         <span class="ic">★</span> Portada
       </button>
       <button class="a-lnk" onclick="irTab('numeros',this)">
-        <span class="ic">◫</span> Números / Ediciones
+        <span class="ic">◫</span> Contenido
       </button>
       <button class="a-lnk" onclick="irTab('secciones',this)">
         <span class="ic">◈</span> Secciones
@@ -1427,7 +1427,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
                 <th>Título</th>
                 <th>Tipo</th>
                 <th>Estado</th>
-                <th>Edición</th>
+                <th>Contenido</th>
                 <th>Fecha</th>
                 <th>Acciones</th>
               </tr>
@@ -1490,7 +1490,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
           <div class="sc-body">
             <div class="fr fr-2">
               <div class="fg">
-                <label class="fl" for="f-numero">Número / Edición</label>
+                <label class="fl" for="f-numero">Contenido</label>
                 <select class="fs" id="f-numero"></select>
                 <div class="fh">¿A qué edición pertenece este artículo?</div>
               </div>
@@ -1787,16 +1787,16 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
     <div class="tab" id="tab-numeros">
       <div class="page-hdr">
         <div class="page-hdr-row">
-          <h1 class="page-title">Números / <em>Ediciones</em></h1>
+          <h1 class="page-title"><em>Contenido</em></h1>
         </div>
-        <p class="page-desc">Solo <strong>una</strong> edición puede ser la <em>Edición actual</em> — aparece como principal en el sitio. Las demás pueden estar activas, próximas o archivadas.</p>
+        <p class="page-desc">El primer <strong>activo</strong> según su <em>orden</em> es el que se destaca en el sitio. Los demás pueden estar activos, próximos o archivados.</p>
       </div>
 
       <!-- Buscador -->
       <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
         <div style="position:relative;flex:1;min-width:220px">
           <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--t4);pointer-events:none">⌕</span>
-          <input class="fi" type="search" id="num-search" placeholder="Buscar por título, subtítulo o N.º…"
+          <input class="fi" type="search" id="num-search" placeholder="Buscar por título o subtítulo…"
             style="padding-left:34px" oninput="cargarNumerosAdmin(this.value)">
         </div>
         <button class="ab ab-s ab-sm" onclick="cargarNumerosAdmin('')">↺ Actualizar</button>
@@ -1804,38 +1804,50 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
 
       <div id="numeros-list"></div>
 
-      <!-- Crear nueva edición -->
+      <!-- Crear nuevo contenido -->
       <div class="sc" style="margin-top:16px">
         <div class="sc-head"><div class="sc-head-left"><div class="sc-head-dot"></div><div>
-          <div class="sc-title">Agregar nueva edición</div>
-          <div class="sc-desc">Crea un nuevo número de la revista</div>
+          <div class="sc-title">Agregar nuevo contenido</div>
+          <div class="sc-desc">Crea una nueva pieza de contenido</div>
         </div></div></div>
         <div class="sc-body">
           <div class="fr fr-3">
-            <div class="fg">
-              <label class="fl" for="new-num-id">ID del número (ej: 04)</label>
-              <input class="fi" type="text" id="new-num-id" placeholder="04" style="font-family:var(--mono);max-width:100px">
+            <div class="fg" style="max-width:120px">
+              <label class="fl" for="new-num-orden">Orden</label>
+              <input class="fi" type="number" id="new-num-orden" min="1" placeholder="1" style="font-family:var(--mono);text-align:center;font-weight:700">
+              <div class="fh">Posición en que aparece (1 = primero)</div>
             </div>
             <div class="fg">
-              <label class="fl" for="new-num-titulo">Título de la edición *</label>
-              <input class="fi" type="text" id="new-num-titulo" placeholder="El título de este número" style="font-family:var(--serif);font-weight:700">
+              <label class="fl" for="new-num-titulo">Título *</label>
+              <input class="fi" type="text" id="new-num-titulo" placeholder="El título de este contenido" style="font-family:var(--serif);font-weight:700" oninput="_autoSlugNum(this)">
             </div>
             <div class="fg">
               <label class="fl" for="new-num-sub">Subtítulo</label>
-              <input class="fi" type="text" id="new-num-sub" placeholder="La bajada de esta edición" style="font-family:var(--serif);font-style:italic">
+              <input class="fi" type="text" id="new-num-sub" placeholder="La bajada de este contenido" style="font-family:var(--serif);font-style:italic">
             </div>
           </div>
-          <div class="fg">
-            <label class="fl" for="new-num-estado">Estado inicial</label>
-            <select class="fs" id="new-num-estado" style="max-width:300px">
-              <option value="activo">◎ Activo</option>
-              <option value="edicion-actual">● Edición actual (será la principal)</option>
-              <option value="proximo">○ Próximo</option>
-              <option value="archivado">◫ Archivado</option>
-            </select>
+          <div class="fr fr-3" style="margin-top:12px">
+            <div class="fg">
+              <label class="fl" for="new-num-slug">Slug (URL pública)</label>
+              <input class="fi" type="text" id="new-num-slug" placeholder="titulo-del-contenido" style="font-family:var(--mono)">
+              <div class="fh">Se usará en /contenido/slug — se genera automáticamente desde el título.</div>
+            </div>
+            <div class="fg">
+              <label class="fl" for="new-num-tipo">Tipo de contenido</label>
+              <input class="fi" type="text" id="new-num-tipo" placeholder="Ej: Dossier, Especial, Entrevista…">
+              <div class="fh">Libre — alimenta el filtro "Tipo de contenido" del sitio.</div>
+            </div>
+            <div class="fg">
+              <label class="fl" for="new-num-estado">Estado inicial</label>
+              <select class="fs" id="new-num-estado">
+                <option value="activo">◎ Activo</option>
+                <option value="proximo">○ Próximo</option>
+                <option value="archivado">◫ Archivado</option>
+              </select>
+            </div>
           </div>
           <div class="btn-row">
-            <button class="ab ab-or" onclick="crearNumero()">+ Crear edición</button>
+            <button class="ab ab-or" onclick="crearNumero()">+ Crear contenido</button>
           </div>
         </div>
       </div>
@@ -2459,7 +2471,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
             <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--t4);margin-bottom:14px">① Elige la edición a anunciar</div>
             <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
               <div class="fg" style="flex:1;min-width:200px;margin:0">
-                <label class="fl">Número / Edición</label>
+                <label class="fl">Contenido</label>
                 <select class="fs" id="bol-num-sel" onchange="_onBoletinNumChange(this.value)" style="font-size:13px">
                   <option value="">— Selecciona una edición —</option>
                 </select>
@@ -2660,11 +2672,11 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
         </div>
       </div>
 
-      <!-- Vistas por edición / número -->
+      <!-- Vistas por contenido -->
       <div class="sc" style="margin-bottom:16px">
         <div class="sc-head"><div class="sc-head-left"><div class="sc-head-dot"></div><div>
-          <div class="sc-title">Vistas por edición</div>
-          <div class="sc-desc">Números de la revista, ordenados por vistas</div>
+          <div class="sc-title">Vistas por contenido</div>
+          <div class="sc-desc">Piezas de contenido, ordenadas por vistas</div>
         </div></div></div>
         <div id="met-eds-list">
           <div class="empty"><div class="empty-ic">⌛</div><h3>Cargando…</h3></div>
@@ -3206,7 +3218,7 @@ async function updateStats() {
   try {
     const [arts, nums] = await Promise.all([
       DB.getArticulos().catch(()=>[]),
-      DB.getNumeros().catch(()=>[]),
+      DB.getContenidos().catch(()=>[]),
     ]);
     const subs = await SB.select('suscriptores', 'activo=eq.true&select=id').catch(() => []);
 
@@ -3219,32 +3231,29 @@ async function updateStats() {
     if (g('subs-total'))   g('subs-total').textContent   = subs?.length ?? '—';
     if (g('subs-activos')) g('subs-activos').textContent = subs?.length ?? '—';
 
-    /* Edición activa — buscar 'edicion-actual' primero, luego 'activo' */
-    const activa = (nums||[]).find(n => n.estado === 'edicion-actual') ||
-                   (nums||[]).find(n => n.estado === 'activo') ||
-                   (nums||[])[0];
+    /* Contenido destacado — el primer 'activo' según orden */
+    const activa = (nums||[]).find(n => n.estado === 'activo') || (nums||[])[0];
     if (activa) {
-      const esActual = activa.estado === 'edicion-actual';
-      if (g('da-label')) g('da-label').textContent = esActual ? '★ Edición actual' : 'Edición activa';
-      if (g('da-num'))    g('da-num').textContent    = 'N.º ' + String(activa.id).padStart(2,'0');
+      if (g('da-label')) g('da-label').textContent = 'Contenido destacado';
+      if (g('da-num'))    g('da-num').textContent    = 'N.º ' + String(activa.orden||'').padStart(2,'0');
       if (g('da-titulo')) g('da-titulo').textContent = activa.titulo || '—';
       if (g('da-sub'))    g('da-sub').textContent    = activa.subtitulo || '';
-      const artsActiva = (arts||[]).filter(a => a.numero_id === activa.id);
+      const artsActiva = (arts||[]).filter(a => a.contenido_id === activa.id);
       const pubActiva  = artsActiva.filter(a => a.estado === 'publicado').length;
       if (g('da-arts')) g('da-arts').textContent = artsActiva.length;
       if (g('da-pubs')) g('da-pubs').textContent = pubActiva;
 
-      /* Mostrar otras ediciones en el panel */
+      /* Mostrar otras piezas de contenido en el panel */
       const otras = (nums||[]).filter(n => n.id !== activa.id).slice(0,4);
       const listaEl = g('da-otras-lista');
       const otrasWrap = g('da-otras-eds');
       if (listaEl && otras.length) {
-        const estadoIcon = { 'edicion-actual':'★', activo:'◎', proximo:'○', archivado:'◫' };
+        const estadoIcon = { activo:'◎', proximo:'○', archivado:'◫' };
         listaEl.innerHTML = otras.map(n =>
           `<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;opacity:.8;cursor:pointer;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.08)"
             onclick="irTab('numeros',null)">
             <span style="font-family:var(--sans,sans-serif)">
-              ${estadoIcon[n.estado]||'○'} N.º ${String(n.id).padStart(2,'0')} — ${(n.titulo||'').slice(0,22)}${(n.titulo||'').length>22?'…':''}
+              ${estadoIcon[n.estado]||'○'} N.º ${String(n.orden||'').padStart(2,'0')} — ${(n.titulo||'').slice(0,22)}${(n.titulo||'').length>22?'…':''}
             </span>
             <span style="font-size:9px;opacity:.6;text-transform:uppercase;letter-spacing:.08em">${n.estado}</span>
           </div>`
@@ -3252,8 +3261,8 @@ async function updateStats() {
         if (otrasWrap) otrasWrap.style.display = '';
       }
     } else {
-      if (g('da-label')) g('da-label').textContent = 'Sin edición activa';
-      if (g('da-titulo')) g('da-titulo').textContent = 'Ve a Números y crea una';
+      if (g('da-label')) g('da-label').textContent = 'Sin contenido activo';
+      if (g('da-titulo')) g('da-titulo').textContent = 'Ve a Contenido y crea uno';
     }
 
     /* Quick-access dinámico desde Supabase */
@@ -3293,7 +3302,6 @@ async function updateStats() {
               <div class="dash-art-meta">
                 <span class="badge badge-${a.estado==='publicado'?'pub':'bor'}">${a.estado}</span>
                 <span>${a.seccion_tag || a.tipo || '—'}</span>
-                <span>Ed. ${a.numero_id}</span>
               </div>
             </div>
             <button class="dash-art-edit" onclick="event.preventDefault();irTab('nuevo',null);cargarArtForm('${a.id}')">Editar</button>
@@ -3353,7 +3361,7 @@ async function cargarArticulos() {
     const filtroSec    = g('filtro-sec')?.value      || '';
     const filtroSearch = (g('arts-search')?.value   || '').trim().toLowerCase();
 
-    if (filtroNum) arts = arts.filter(a => a.numero_id === filtroNum);
+    if (filtroNum) arts = arts.filter(a => a.contenido_id === filtroNum);
     if (filtroEst) arts = arts.filter(a => a.estado === filtroEst);
     if (filtroSec) arts = arts.filter(a => normTag(a.seccion_tag) === normTag(filtroSec));
     if (filtroSearch) arts = arts.filter(a =>
@@ -3412,6 +3420,13 @@ async function cargarArticulos() {
     secLabels['conversacion'] = secLabels['la-conversacion'];
     secLabels['curatia']      = secLabels['la-curaturia'];
 
+    /* Lookup de contenidos — para mostrar "N.º X" en vez del uuid crudo */
+    let contLabels = {};
+    try {
+      const contsData = await DB.getContenidos();
+      contsData.forEach(c => { contLabels[c.id] = 'N.º ' + String(c.orden||'').padStart(2,'0'); });
+    } catch(_) {}
+
     tbody.innerHTML = arts.map(a => {
       const secTag   = (a.seccion_tag || a.tipo || '').replace(/#/g,'').toLowerCase();
       const secLabel = secLabels[secTag] || secTag || '—';
@@ -3427,7 +3442,7 @@ async function cargarArticulos() {
           <span class="badge badge-tipo" title="Sección: ${secLabel}">${secLabel}</span>
         </td>
         <td><span class="badge badge-${isPub?'pub':'bor'}">${isPub?'Publicado':'Borrador'}</span></td>
-        <td style="font-family:var(--mono);font-size:11px;color:var(--t3)">Ed.&nbsp;${a.numero_id}</td>
+        <td style="font-family:var(--mono);font-size:11px;color:var(--t3)">${contLabels[a.contenido_id] || '—'}</td>
         <td style="font-size:11px;color:var(--t4)">${_fmtFecha(a.updated_at)}</td>
         <td>
           <div class="t-actions">
@@ -3443,18 +3458,18 @@ async function cargarArticulos() {
   } catch(e) { notif('Error cargando artículos: ' + e.message, 'err'); }
 }
 
-/* ── Rellenar selects de número ── */
+/* ── Rellenar selects de contenido ── */
 async function rellenarNumerosSelect(targetId = 'f-numero') {
   try {
-    const nums = await DB.getNumeros();
+    const nums = await DB.getContenidos();
     const targets = targetId ? [g(targetId)] : [g('f-numero'), g('filtro-num')];
     targets.forEach(sel => {
       if (!sel) return;
       const cur = sel.value;
-      const prefix = sel.id === 'filtro-num' ? '<option value="">Todas las ediciones</option>' : '';
+      const prefix = sel.id === 'filtro-num' ? '<option value="">Todo el contenido</option>' : '';
       sel.innerHTML = prefix + nums.map(n => {
-        const lbl = n.estado === 'edicion-actual' ? ' ★' : (n.estado === 'activo' ? ' ◎' : '');
-        return `<option value="${n.id}" ${n.id===cur?'selected':''}>${n.id} — ${n.titulo}${lbl}</option>`;
+        const lbl = n.estado === 'activo' ? ' ◎' : '';
+        return `<option value="${n.id}" ${n.id===cur?'selected':''}>N.º ${String(n.orden||'').padStart(2,'0')} — ${n.titulo}${lbl}</option>`;
       }).join('');
     });
   } catch(e) {}
@@ -3556,7 +3571,7 @@ async function guardarArt(estadoOverride) {
       : _slugFromTitulo(titulo);
 
     const artData = {
-      numero_id: numId,
+      contenido_id: numId,
       tipo: _tipoActual,
       titulo,
       slug: _slugFinal,
@@ -3753,7 +3768,7 @@ async function cargarArtForm(id) {
 
     /* Números y editor vinculado */
     await rellenarNumerosSelect('f-numero');
-    if (a.numero_id && g('f-numero')) g('f-numero').value = a.numero_id;
+    if (a.contenido_id && g('f-numero')) g('f-numero').value = a.contenido_id;
     await cargarEditoresEnSelector();
     if (a.editor_id && g('f-editor-id')) g('f-editor-id').value = a.editor_id;
 
@@ -4265,9 +4280,8 @@ async function _regenerarSitemap() {
   const urls = [
     /* Páginas estáticas del sitio */
     { loc: `${_SITEMAP_CFG.BASE_URL}/`,               priority: '1.0', freq: 'daily'   },
-    { loc: `${_SITEMAP_CFG.BASE_URL}/edicion.html`,   priority: '0.9', freq: 'weekly'  },
+    { loc: `${_SITEMAP_CFG.BASE_URL}/contenido.html`, priority: '0.9', freq: 'weekly'  },
     { loc: `${_SITEMAP_CFG.BASE_URL}/secciones.html`, priority: '0.8', freq: 'weekly'  },
-    { loc: `${_SITEMAP_CFG.BASE_URL}/archivo.html`,   priority: '0.7', freq: 'monthly' },
     { loc: `${_SITEMAP_CFG.BASE_URL}/sobre.html`,     priority: '0.5', freq: 'monthly' },
     /* Un URL por cada artículo publicado */
     ...arts.map(a => ({
@@ -4332,9 +4346,8 @@ async function _generarSitemapDescarga() {
 
     const estaticas = [
       { loc: `${_SITEMAP_BASE}/`,               priority: '1.0', freq: 'daily',   lastmod: hoy },
-      { loc: `${_SITEMAP_BASE}/edicion.html`,   priority: '0.9', freq: 'weekly',  lastmod: hoy },
+      { loc: `${_SITEMAP_BASE}/contenido.html`, priority: '0.9', freq: 'weekly',  lastmod: hoy },
       { loc: `${_SITEMAP_BASE}/secciones.html`, priority: '0.8', freq: 'weekly',  lastmod: hoy },
-      { loc: `${_SITEMAP_BASE}/archivo.html`,   priority: '0.7', freq: 'monthly', lastmod: hoy },
       { loc: `${_SITEMAP_BASE}/sobre.html`,     priority: '0.5', freq: 'monthly', lastmod: hoy },
     ];
 
@@ -4947,7 +4960,7 @@ async function cargarMetricas() {
        canónica y no contar el mismo artículo/edición dos veces. */
     const [arts, numeros] = await Promise.all([
       DB.getArticulos().catch(()=>[]),
-      DB.getNumeros().catch(()=>[]),
+      DB.getContenidos().catch(()=>[]),
     ]);
 
     /* Totales */
@@ -5021,7 +5034,7 @@ async function cargarMetricas() {
     /* ═══ 2. Páginas generales del sitio (todo lo que NO sea artículo
        ni edición: index, secciones, sobre, archivo, editor, 404) ═══ */
     const conteoPages = {};
-    visitas.filter(v => v.tipo !== 'articulo' && v.pagina !== 'edicion').forEach(v => {
+    visitas.filter(v => v.tipo !== 'articulo' && v.pagina !== 'contenido').forEach(v => {
       const p = v.pagina || 'desconocida';
       conteoPages[p] = (conteoPages[p]||0) + 1;
     });
@@ -5032,7 +5045,7 @@ async function cargarMetricas() {
         listPages.innerHTML = '<div class="empty"><div class="empty-ic">◈</div><h3>Sin visitas de páginas aún</h3></div>';
       } else {
         const maxP = pagesSorted[0]?.[1] || 1;
-        const icons = { index:'🏠', secciones:'◈', archivo:'◫', sobre:'◑', editor:'◉', '404':'⊘' };
+        const icons = { index:'🏠', secciones:'◈', contenido:'◫', sobre:'◑', editor:'◉', '404':'⊘' };
         listPages.innerHTML = pagesSorted.map(([pag, cnt]) => {
           const pct = Math.round(cnt/maxP*100);
           const ic  = icons[pag] || '◎';
@@ -5051,31 +5064,32 @@ async function cargarMetricas() {
       }
     }
 
-    /* ═══ 3. Vistas por edición / número ═══
-       tracking.js registra pagina:'edicion' con referencia_id = numeros.id.
-       Se resuelve contra DB.getNumeros() para mostrar el título real. */
+    /* ═══ 3. Vistas por contenido ═══
+       tracking.js registra pagina:'contenido' con referencia_id = contenidos.slug.
+       Se resuelve contra DB.getContenidos() para mostrar el título real. */
     const conteoEds = {};
-    visitas.filter(v => v.pagina === 'edicion').forEach(v => {
-      const ref = v.referencia_id || 'sin-numero';
+    visitas.filter(v => v.pagina === 'contenido').forEach(v => {
+      const ref = v.referencia_id || 'sin-slug';
       conteoEds[ref] = (conteoEds[ref]||0) + 1;
     });
     const edsSorted = Object.entries(conteoEds).sort((a,b)=>b[1]-a[1]);
 
     if (listEds) {
       if (!edsSorted.length) {
-        listEds.innerHTML = '<div class="empty"><div class="empty-ic">📖</div><h3>Sin vistas de ediciones aún</h3></div>';
+        listEds.innerHTML = '<div class="empty"><div class="empty-ic">📖</div><h3>Sin vistas de contenido aún</h3></div>';
       } else {
         const maxE = edsSorted[0]?.[1] || 1;
-        listEds.innerHTML = edsSorted.map(([numId, cnt]) => {
-          const num = numeros.find(n => n.id === numId);
+        listEds.innerHTML = edsSorted.map(([slugRef, cnt]) => {
+          const num = numeros.find(n => n.slug === slugRef || n.id === slugRef);
           const pct = Math.round(cnt/maxE*100);
-          const titulo = num ? num.titulo : `Edición eliminada`;
+          const titulo = num ? num.titulo : `Contenido eliminado`;
+          const numLabel = num ? `N.º ${String(num.orden||'').padStart(2,'0')}` : slugRef;
           return `<div style="display:grid;grid-template-columns:28px 1fr 60px;gap:10px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--bd)">
             <div style="text-align:center;font-size:14px">📖</div>
             <div>
               <div style="font-family:var(--serif);font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                <a href="ediciones/${numId}" target="_blank" style="color:inherit;text-decoration:none;font-style:italic">${titulo}</a>
-                <span style="font-size:9px;font-family:var(--mono);color:var(--t4);background:var(--paper2);padding:1px 7px;border-radius:2px">#${numId}</span>
+                <a href="contenido/${slugRef}" target="_blank" style="color:inherit;text-decoration:none;font-style:italic">${titulo}</a>
+                <span style="font-size:9px;font-family:var(--mono);color:var(--t4);background:var(--paper2);padding:1px 7px;border-radius:2px">${numLabel}</span>
               </div>
               <div style="height:3px;background:var(--bg2);border-radius:2px"><div style="height:3px;background:var(--azul);border-radius:2px;width:${pct}%;transition:width .6s var(--ease)"></div></div>
             </div>
@@ -5145,51 +5159,21 @@ create or replace view vw_paginas as
   notif('SQL descargado ✓', 'ok');
 }
 
-/* ── Números admin — FIX: incluye botón eliminar ── */
+/* ── Contenido admin — FIX: incluye botón eliminar ── */
 
-/* ── Render de tarjeta de número — función separada para claridad ── */
+/* ── Render de tarjeta de contenido — función separada para claridad ── */
 function _renderNumCard(n) {
   const estadoBadge = {
-    'edicion-actual': { lbl: '● Edición actual', cls: 'badge-pub', dot: '#1a7a4a' },
-    'activo':         { lbl: '◎ Activo',         cls: 'badge-pub', dot: 'var(--azul)' },
-    'proximo':        { lbl: '○ Próximo',         cls: 'badge-bor', dot: 'var(--t4)' },
-    'archivado':      { lbl: '◫ Archivado',       cls: 'badge-bor', dot: 'var(--t4)' },
+    'activo':         { lbl: '◎ Activo',     cls: 'badge-pub', dot: 'var(--azul)' },
+    'proximo':        { lbl: '○ Próximo',    cls: 'badge-bor', dot: 'var(--t4)' },
+    'archivado':      { lbl: '◫ Archivado',  cls: 'badge-bor', dot: 'var(--t4)' },
   };
   const eb = estadoBadge[n.estado] || estadoBadge['activo'];
-  const esActual = n.estado === 'edicion-actual';
   const hasImg = n.imagen_url && n.imagen_url.length > 4 && !n.imagen_url.startsWith('data:');
   const imgData = n.imagen_url && n.imagen_url.startsWith('data:') ? n.imagen_url : '';
   const imgUrl  = hasImg ? n.imagen_url : '';
 
-  const bannerActual = esActual
-    ? `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#edfaf3;border:1.5px solid #1a7a4a;border-radius:5px;margin-bottom:16px">
-        <span style="font-size:18px">★</span>
-        <div>
-          <div style="font-family:var(--sans);font-size:12px;font-weight:700;color:#1a7a4a">EDICIÓN ACTUAL — PORTADA DEL SITIO</div>
-          <div style="font-family:var(--sans);font-size:11px;color:#2d8c5a;margin-top:1px">Esta es la edición que aparece como principal en el sitio público</div>
-        </div>
-      </div>` : '';
-
-  const hintActual = esActual
-    ? `<div class="fh" id="num-estado-hint-${n.id}" style="color:#1a7a4a;font-weight:600">★ Al cambiar el estado, esta edición dejará de ser la portada</div>`
-    : `<div class="fh" id="num-estado-hint-${n.id}" style="display:none">★ Al guardar, las otras ediciones actuales pasarán a Activo.</div>`;
-
-  const btnMarcar = esActual ? '' :
-    `<button class="ab ab-or ab-sm" onclick="marcarEdicionActual('${n.id}')">★ Marcar como Edición actual</button>`;
-
-  const headerStyle = esActual
-    ? 'background:#f0faf5;border-bottom:1px solid #c3e9d4;'
-    : '';
-
-  const cardStyle = esActual
-    ? `border-top:3px solid #1a7a4a;box-shadow:0 0 0 2px #1a7a4a,0 4px 24px rgba(26,122,74,.12);`
-    : `border-top:3px solid ${eb.dot};`;
-
-  const badgeActual = esActual
-    ? `<span style="font-size:10px;background:#1a7a4a;color:#fff;padding:2px 10px;border-radius:20px;font-family:var(--sans);font-weight:700;letter-spacing:.05em">★ PORTADA</span>`
-    : '';
-
-  const selectStyle = esActual ? 'border-color:#1a7a4a;font-weight:700;color:#1a7a4a;' : '';
+  const cardStyle = `border-top:3px solid ${eb.dot};`;
 
   const imgPreview = imgData
     ? `<div class="up-prev" id="num-up-prev-${n.id}" style="display:flex;position:relative;flex-shrink:0">
@@ -5209,40 +5193,48 @@ function _renderNumCard(n) {
 
   return `
   <div class="sc" style="margin-bottom:14px;${cardStyle}">
-    <div class="sc-head" style="${headerStyle}">
+    <div class="sc-head">
       <div class="sc-head-left">
         <div style="width:10px;height:10px;border-radius:50%;background:${eb.dot};flex-shrink:0"></div>
         <div>
           <div class="sc-title" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-            N.º ${String(n.id).padStart(2,'0')} — ${n.titulo || 'Sin título'}
+            N.º ${String(n.orden||'').padStart(2,'0')} — ${n.titulo || 'Sin título'}
             <span class="badge ${eb.cls}" style="font-size:9px">${eb.lbl}</span>
-            ${badgeActual}
           </div>
         </div>
       </div>
       <button class="ab ab-d ab-sm" onclick="eliminarNumero('${n.id}')">✕ Eliminar</button>
     </div>
     <div class="sc-body">
-      ${bannerActual}
-      <div class="fr fr-2">
+      <div class="fr fr-3">
+        <div class="fg" style="max-width:100px"><label class="fl">Orden</label>
+          <input class="fi" type="number" min="1" id="num-orden-${n.id}" value="${n.orden||''}" style="font-family:var(--mono);text-align:center;font-weight:700">
+        </div>
         <div class="fg"><label class="fl">Título</label>
           <input class="fi" type="text" id="num-titulo-${n.id}" value="${(n.titulo||'').replace(/"/g,'&quot;')}" style="font-family:var(--serif);font-weight:700">
         </div>
-        <div class="fg"><label class="fl">Estado de la edición</label>
-          <select class="fs" id="num-estado-${n.id}" onchange="_onNumEstadoChange('${n.id}',this.value)" style="${selectStyle}">
-            <option value="edicion-actual" ${esActual?'selected':''}>★ Edición actual (portada del sitio)</option>
-            <option value="activo"         ${n.estado==='activo'?'selected':''}>◎ Activo</option>
-            <option value="proximo"        ${n.estado==='proximo'?'selected':''}>○ Próximo</option>
-            <option value="archivado"      ${n.estado==='archivado'?'selected':''}>◫ Archivado</option>
+        <div class="fg"><label class="fl">Estado</label>
+          <select class="fs" id="num-estado-${n.id}">
+            <option value="activo"    ${n.estado==='activo'?'selected':''}>◎ Activo</option>
+            <option value="proximo"   ${n.estado==='proximo'?'selected':''}>○ Próximo</option>
+            <option value="archivado" ${n.estado==='archivado'?'selected':''}>◫ Archivado</option>
           </select>
-          ${hintActual}
         </div>
       </div>
-      <div class="fg"><label class="fl">Subtítulo</label>
-        <input class="fi" type="text" id="num-sub-${n.id}" value="${(n.subtitulo||'').replace(/"/g,'&quot;')}" style="font-family:var(--serif);font-style:italic">
+      <div class="fr fr-3" style="margin-top:12px">
+        <div class="fg"><label class="fl">Subtítulo</label>
+          <input class="fi" type="text" id="num-sub-${n.id}" value="${(n.subtitulo||'').replace(/"/g,'&quot;')}" style="font-family:var(--serif);font-style:italic">
+        </div>
+        <div class="fg"><label class="fl">Slug (URL)</label>
+          <input class="fi" type="text" id="num-slug-${n.id}" value="${(n.slug||'').replace(/"/g,'&quot;')}" style="font-family:var(--mono)">
+          <div class="fh">/contenido/${n.slug||'…'}</div>
+        </div>
+        <div class="fg"><label class="fl">Tipo de contenido</label>
+          <input class="fi" type="text" id="num-tipo-${n.id}" value="${(n.tipo||'').replace(/"/g,'&quot;')}" placeholder="Ej: Dossier, Especial…">
+        </div>
       </div>
-      <div class="fg">
-        <label class="fl">Imagen de portada del número</label>
+      <div class="fg" style="margin-top:12px">
+        <label class="fl">Imagen de portada</label>
         <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap">
           ${imgPreview}
           <div style="flex:2;min-width:200px">
@@ -5257,47 +5249,38 @@ function _renderNumCard(n) {
         <input type="hidden" id="num-img-data-${n.id}" value="${imgData ? 'loaded' : ''}">
       </div>
       <div class="btn-row">
-        <button class="ab ab-p ab-sm" onclick="guardarNumero('${n.id}')">💾 Guardar edición</button>
-        ${btnMarcar}
+        <button class="ab ab-p ab-sm" onclick="guardarNumero('${n.id}')">💾 Guardar contenido</button>
       </div>
     </div>
   </div>`;
+}
+
+function _autoSlugNum(input) {
+  const s = g('new-num-slug'); if (s && !s.value) s.value = _slugify(input.value);
 }
 
 async function cargarNumerosAdmin(filtro) {
   const list = g('numeros-list'); if (!list) return;
   list.innerHTML = '<div class="empty"><div class="empty-ic">⌛</div><h3>Cargando…</h3></div>';
   try {
-    let nums = await DB.getNumeros();
-    if (!nums.length) { list.innerHTML = '<div class="empty"><p>No hay ediciones creadas</p></div>'; return; }
+    let nums = await DB.getContenidos();
+    if (!nums.length) { list.innerHTML = '<div class="empty"><p>No hay contenido creado</p></div>'; return; }
 
     /* Buscador */
     const q = (filtro || g('num-search')?.value || '').toLowerCase().trim();
     if (q) nums = nums.filter(n =>
       (n.titulo||'').toLowerCase().includes(q) ||
       (n.subtitulo||'').toLowerCase().includes(q) ||
-      String(n.id).includes(q)
+      (n.slug||'').toLowerCase().includes(q)
     );
 
-    /* Edición actual siempre arriba, luego activas, luego el resto */
-    const _ordenEst = { 'edicion-actual':0, 'activo':1, 'proximo':2, 'archivado':3 };
-    nums.sort((a,b) => {
-      const d = (_ordenEst[a.estado]??2) - (_ordenEst[b.estado]??2);
-      return d !== 0 ? d : String(a.id).localeCompare(String(b.id));
-    });
+    /* Orden: por la columna 'orden' — el primer 'activo' es el destacado */
+    nums.sort((a,b) => (a.orden||0) - (b.orden||0));
 
     if (!nums.length) {
       list.innerHTML = `<div class="empty"><div class="empty-ic">🔍</div><h3>Sin resultados para "${q}"</h3></div>`;
       return;
     }
-
-    /* Badges de estado */
-    const estadoBadge = {
-      'edicion-actual': { lbl: '● Edición actual', cls: 'badge-pub', dot: '#1a7a4a' },
-      'activo':         { lbl: '◎ Activo',         cls: 'badge-pub', dot: 'var(--azul)' },
-      'proximo':        { lbl: '○ Próximo',         cls: 'badge-bor', dot: 'var(--t4)' },
-      'archivado':      { lbl: '◫ Archivado',       cls: 'badge-bor', dot: 'var(--t4)' },
-    };
 
     /* Renderizar cada tarjeta con función separada para evitar template-literal anidado */
     list.innerHTML = nums.map(n => _renderNumCard(n)).join('');
@@ -5308,42 +5291,7 @@ async function cargarNumerosAdmin(filtro) {
       }
     });
 
-  } catch(e) { notif('Error cargando ediciones: ' + e.message, 'err'); }
-}
-
-/* Feedback inmediato al cambiar estado en el select */
-function _onNumEstadoChange(id, val) {
-  const hint = g(`num-estado-hint-${id}`);
-  const sel  = g(`num-estado-${id}`);
-  if (val === 'edicion-actual') {
-    if (hint) { hint.style.display=''; hint.textContent='★ Al guardar, las otras ediciones actuales pasarán a Activo.'; }
-    if (sel)  { sel.style.borderColor='#1a7a4a'; sel.style.fontWeight='700'; sel.style.color='#1a7a4a'; }
-  } else {
-    if (hint) hint.style.display = 'none';
-    if (sel)  { sel.style.borderColor=''; sel.style.fontWeight=''; sel.style.color=''; }
-  }
-}
-
-/* Atajo rápido: marcar como edición actual sin cambiar el select */
-async function marcarEdicionActual(id) {
-  if (!confirm(`¿Marcar N.º ${id} como la Edición actual?\n\nLas otras ediciones pasarán a "Activo".`)) return;
-  const overlay = g('loading-overlay'); if (overlay) overlay.classList.add('show');
-  try {
-    /* Quitar edicion-actual de todas las demás sin tocar titulo */
-    const todos = await DB.getNumeros();
-    for (const n of todos) {
-      if (n.id !== id && n.estado === 'edicion-actual') {
-        await DB.setNumero(n.id, { estado: 'activo' });
-      }
-    }
-    /* Marcar esta como edicion-actual — solo cambiar el estado, sin tocar título */
-    await DB.setNumero(id, { estado: 'edicion-actual' });
-    _invalidarCache();
-    notif('★ Edición actual actualizada ✓', 'ok');
-    await cargarNumerosAdmin();
-    updateStats();
-  } catch(e) { notif('Error: ' + e.message, 'err'); }
-  finally { if (overlay) overlay.classList.remove('show'); }
+  } catch(e) { notif('Error cargando contenido: ' + e.message, 'err'); }
 }
 
 async function guardarNumero(id) {
@@ -5382,37 +5330,31 @@ async function guardarNumero(id) {
       imagen_url = undefined; /* no cambiar — sin nuevas instrucciones */
     }
 
-    const nuevo_estado = g(`num-estado-${id}`)?.value;
-
-    /* Si el nuevo estado es 'edicion-actual', quitar ese estado de los demás */
-    if (nuevo_estado === 'edicion-actual') {
-      const todos = await DB.getNumeros();
-      for (const n of todos) {
-        if (n.id !== id && n.estado === 'edicion-actual') {
-          await DB.setNumero(n.id, { estado: 'activo' });
-        }
-      }
-    }
-
     const titVal = (g(`num-titulo-${id}`)?.value || '').trim();
     /* Si el input no existe en el DOM (edge case), leer de Supabase */
     let tituloFinal = titVal;
     if (!tituloFinal) {
-      const numActual = await DB.getNumero(id);
+      const numActual = await DB.getContenido(id);
       tituloFinal = numActual?.titulo || '';
     }
     if (!tituloFinal) { notif('El título no puede estar vacío', 'err'); return; }
+
+    const slugVal = (g(`num-slug-${id}`)?.value || '').trim() || _slugify(tituloFinal);
+
     const payload = {
       titulo:    tituloFinal,
       subtitulo: (g(`num-sub-${id}`)?.value || '').trim() || null,
-      estado:    nuevo_estado || 'activo',
+      slug:      slugVal,
+      tipo:      (g(`num-tipo-${id}`)?.value || '').trim() || null,
+      orden:     parseInt(g(`num-orden-${id}`)?.value, 10) || 0,
+      estado:    g(`num-estado-${id}`)?.value || 'activo',
     };
     if (imagen_url !== undefined) payload.imagen_url = imagen_url;
 
-    await DB.setNumero(id, payload);
+    await DB.setContenido(id, payload);
     delete _imgNumQuitada[id];
     _invalidarCache();
-    notif('Edición guardada ✓', 'ok');
+    notif('Contenido guardado ✓', 'ok');
     await cargarNumerosAdmin();
     updateStats(); /* refrescar panel del dashboard */
   } catch(e) { notif('Error: ' + e.message, 'err'); }
@@ -5420,12 +5362,12 @@ async function guardarNumero(id) {
 }
 
 async function eliminarNumero(id) {
-  if (!confirm(`¿Eliminar la edición N.º ${id}?\n\nSolo es posible si no tiene artículos asociados.`)) return;
+  if (!confirm(`¿Eliminar este contenido?\n\nSolo es posible si no tiene artículos asociados.`)) return;
   const overlay = g('loading-overlay'); if (overlay) overlay.classList.add('show');
   try {
-    await DB.deleteNumero(id);
+    await DB.deleteContenido(id);
     _invalidarCache();
-    notif('Edición eliminada ✓', 'ok');
+    notif('Contenido eliminado ✓', 'ok');
     cargarNumerosAdmin();
   } catch(e) {
     notif('No se pudo eliminar (¿tiene artículos?): ' + e.message, 'err');
@@ -5433,7 +5375,7 @@ async function eliminarNumero(id) {
   finally { if (overlay) overlay.classList.remove('show'); }
 }
 
-/* ── Imagen para números/ediciones ── */
+/* ── Imagen para contenido ── */
 async function cargarImgNum(id, input) {
   const file = input.files?.[0]; if (!file) return;
   const reader = new FileReader();
@@ -5468,8 +5410,8 @@ function prevNumImg(id, url) {
   if (data) data.value = '';
 }
 
-const _imgNumQuitada = {}; /* rastrea qué números tuvieron su imagen quitada */
-const _numImgDataStore = {}; /* data URLs de imágenes de números cargados */
+const _imgNumQuitada = {}; /* rastrea qué contenidos tuvieron su imagen quitada */
+const _numImgDataStore = {}; /* data URLs de imágenes de contenido cargadas */
 
 function quitarImgNum(id) {
   const img = g(`num-up-img-${id}`);
@@ -5487,55 +5429,55 @@ function quitarImgNum(id) {
 }
 
 async function guardarNumeros() {
-  /* Guarda todos los números visibles en pantalla */
+  /* Guarda todo el contenido visible en pantalla */
   const overlay = g('loading-overlay'); if (overlay) overlay.classList.add('show');
   try {
-    const nums = await DB.getNumeros();
+    const nums = await DB.getContenidos();
     for (const n of nums) {
       const titulo    = g(`num-titulo-${n.id}`)?.value?.trim();
       const subtitulo = g(`num-sub-${n.id}`)?.value?.trim() || null;
+      const slug      = g(`num-slug-${n.id}`)?.value?.trim() || n.slug;
+      const tipo      = g(`num-tipo-${n.id}`)?.value?.trim() || null;
+      const orden     = parseInt(g(`num-orden-${n.id}`)?.value, 10) || n.orden || 0;
       const estado    = g(`num-estado-${n.id}`)?.value;
       const imgData   = g(`num-img-data-${n.id}`)?.value;
       const imgUrl    = g(`num-img-url-${n.id}`)?.value?.trim();
       const imagen_url = imgData || imgUrl || n.imagen_url || null;
-      await DB.setNumero(n.id, { titulo: titulo || n.titulo, subtitulo, estado: estado || n.estado, imagen_url });
+      await DB.setContenido(n.id, { titulo: titulo || n.titulo, subtitulo, slug, tipo, orden, estado: estado || n.estado, imagen_url });
     }
     _invalidarCache();
-    notif('Todas las ediciones guardadas ✓', 'ok');
+    notif('Todo el contenido guardado ✓', 'ok');
     cargarNumerosAdmin();
   } catch(e) { notif('Error: ' + e.message, 'err'); }
   finally { if (overlay) overlay.classList.remove('show'); }
 }
 
 async function crearNumero() {
-  const id     = (g('new-num-id')?.value?.trim() || '').padStart(2,'0');
   const titulo = g('new-num-titulo')?.value?.trim();
   const sub    = g('new-num-sub')?.value?.trim() || null;
+  const slugIn = g('new-num-slug')?.value?.trim();
+  const tipo   = g('new-num-tipo')?.value?.trim() || null;
+  const ordenIn = parseInt(g('new-num-orden')?.value, 10);
   const estado = g('new-num-estado')?.value || 'activo';
-  if (!id || id === '00') { notif('El ID del número es obligatorio', 'warn'); return; }
   if (!titulo) { notif('El título es obligatorio', 'warn'); return; }
+  const slug = slugIn || _slugify(titulo);
   const overlay = g('loading-overlay'); if (overlay) overlay.classList.add('show');
   try {
-    /* Si el nuevo número es edicion-actual, quitar ese estado de los demás */
-    if (estado === 'edicion-actual') {
-      const todos = await DB.getNumeros();
-      for (const n of todos) {
-        if (n.estado === 'edicion-actual') {
-          await DB.setNumero(n.id, { estado: 'activo' });
-        }
-      }
-    }
-    await DB.crearNumero({ id, titulo, subtitulo: sub, estado });
+    const todos = await DB.getContenidos();
+    const orden = Number.isFinite(ordenIn) && ordenIn > 0 ? ordenIn : (todos.length + 1);
+    await DB.crearContenido({ titulo, subtitulo: sub, slug, tipo, orden, estado });
     _invalidarCache();
-    notif(`Edición N.º ${id} creada ✓`, 'ok');
-    if (g('new-num-id'))     g('new-num-id').value     = '';
+    notif(`Contenido "${titulo}" creado ✓`, 'ok');
+    if (g('new-num-orden'))  g('new-num-orden').value  = '';
     if (g('new-num-titulo')) g('new-num-titulo').value = '';
     if (g('new-num-sub'))    g('new-num-sub').value    = '';
+    if (g('new-num-slug'))   g('new-num-slug').value    = '';
+    if (g('new-num-tipo'))   g('new-num-tipo').value    = '';
     if (g('new-num-estado')) g('new-num-estado').value = 'activo';
     cargarNumerosAdmin();
-    /* Actualizar el select de número en el form de artículos */
+    /* Actualizar el select de contenido en el form de artículos */
     rellenarNumerosSelect('f-numero');
-  } catch(e) { notif('Error: ' + (e.message.includes('duplicate') ? `El N.º ${id} ya existe` : e.message), 'err'); }
+  } catch(e) { notif('Error: ' + (e.message.includes('duplicate') ? `Ese slug ya existe` : e.message), 'err'); }
   finally { if (overlay) overlay.classList.remove('show'); }
 }
 
@@ -5704,7 +5646,7 @@ async function cargarCarrusel() {
           ${a.imagen_url?`<img class="t-thumb" src="${a.imagen_url}" alt="">`:'<div class="t-thumb-ph"></div>'}
           <div class="t-titulo-c">
             <div class="t-titulo">${a.titulo}</div>
-            <div class="t-sub">${a.tipo} · Ed. ${a.numero_id}</div>
+            <div class="t-sub">${a.tipo}</div>
           </div>
           <button class="ab ab-sm ${enC?'ab-d':'ab-p'}" onclick="toggleCarrusel('${a.id}')">
             ${enC?'✕ Quitar':'+ Añadir'}
@@ -5784,11 +5726,11 @@ const _idxBloquesConfig = [
 /* ── IndexCfg — bloques modernos con toggles ── */
 const _idxBloques = [
   { id:'ticker',       label:'Ticker de titulares', desc:'Banda animada con los últimos artículos publicados', ic:'⟶' },
-  { id:'portada',      label:'Portada',          desc:'Imagen principal de la edición activa',    ic:'◧' },
+  { id:'portada',      label:'Portada',          desc:'Imagen principal del contenido activo',    ic:'◧' },
   { id:'cronistas',    label:'Últimas crónicas',  desc:'Las crónicas más recientes publicadas',    ic:'📜' },
-  { id:'conversacion', label:'La Conversación',   desc:'Entrevistas de la edición actual',         ic:'🎙' },
+  { id:'conversacion', label:'La Conversación',   desc:'Entrevistas publicadas',                   ic:'🎙' },
   { id:'curatia',      label:'La Curaturía',        desc:'Música, libros y cine recomendados',       ic:'♦' },
-  { id:'archivo',      label:'Archivo',           desc:'Ediciones anteriores de la revista',       ic:'◫' },
+  { id:'archivo',      label:'Contenido',         desc:'Todo el contenido publicado',              ic:'◫' },
   { id:'boletin',      label:'Boletín',           desc:'Formulario de suscripción al correo',      ic:'@' },
   { id:'nosotros',     label:'Sobre nosotros',    desc:'Sección de presentación en la portada',    ic:'◑' },
 ];
@@ -5978,7 +5920,7 @@ async function _enviarConResend() {
   if (!asunto) { notif('Escribe el asunto del correo', 'warn'); return; }
 
   /* Obtener título del número seleccionado */
-  const nums = await DB.getNumeros().catch(() => []);
+  const nums = await DB.getContenidos().catch(() => []);
   const num  = nums.find(n => n.id === numId);
   const titulo = num?.titulo || 'Nueva edición';
 
@@ -6050,10 +5992,10 @@ function _toggleBoletinEditor() {
 
 async function _cargarNumerosBoletinSel() {
   const sel = g('bol-num-sel'); if (!sel) return;
-  const nums = await DB.getNumeros().catch(() => []);
+  const nums = await DB.getContenidos().catch(() => []);
   const cur = sel.value;
-  sel.innerHTML = '<option value="">— Selecciona una edición —</option>' +
-    nums.map(n => `<option value="${n.id}" ${n.id===cur?'selected':''}>${n.id} — ${n.titulo} ${n.estado==='edicion-actual'?'★':''}</option>`).join('');
+  sel.innerHTML = '<option value="">— Selecciona un contenido —</option>' +
+    nums.map(n => `<option value="${n.id}" ${n.id===cur?'selected':''}>N.º ${String(n.orden||'').padStart(2,'0')} — ${n.titulo} ${n.estado==='activo'?'◎':''}</option>`).join('');
   /* Cargar suscriptores frescos para el contador */
   try {
     const todos = await SB.select('suscriptores', 'order=created_at.desc');
@@ -6068,16 +6010,16 @@ async function _cargarNumerosBoletinSel() {
 
 function _onBoletinNumChange(numId) {
   if (!numId) return;
-  DB.getNumeros().then(nums => {
+  DB.getContenidos().then(nums => {
     const n = nums.find(x => x.id === numId);
     if (!n) return;
     /* Autocompletar asunto */
     const asuEl = g('bol-asunto');
-    if (asuEl && !asuEl.value) asuEl.value = `La Enbajada N.º ${String(n.id).padStart(2,'0')} — ${n.titulo}`;
-    /* URL del artículo: usar el slug del artículo de portada si hay */
+    if (asuEl && !asuEl.value) asuEl.value = `La Enbajada N.º ${String(n.orden||'').padStart(2,'0')} — ${n.titulo}`;
+    /* URL del contenido: el slug ya es la ruta pública limpia */
     const urlEl = g('bol-url');
-    if (urlEl && !urlEl.value && n.estado === 'edicion-actual') {
-      urlEl.value = window.location.origin + '/articulo.html?num=' + n.id;
+    if (urlEl && !urlEl.value && n.slug) {
+      urlEl.value = window.location.origin + '/contenido/' + n.slug;
     }
     _actualizarBoletinPreview();
   });
@@ -6087,10 +6029,10 @@ function _actualizarBoletinPreview() {
   const numId = g('bol-num-sel')?.value || '';
   const msg   = g('bol-mensaje')?.value?.trim() || '';
   const url   = g('bol-url')?.value?.trim()     || '#';
-  DB.getNumeros().then(nums => {
+  DB.getContenidos().then(nums => {
     const n = nums.find(x => x.id === numId);
-    if (g('bol-prev-num-label')) g('bol-prev-num-label').textContent = n ? `Edición N.º ${String(n.id).padStart(2,'0')}` : 'Edición N.º —';
-    if (g('bol-prev-titulo'))   g('bol-prev-titulo').textContent   = n?.titulo || 'Título de la edición';
+    if (g('bol-prev-num-label')) g('bol-prev-num-label').textContent = n ? `N.º ${String(n.orden||'').padStart(2,'0')}` : 'N.º —';
+    if (g('bol-prev-titulo'))   g('bol-prev-titulo').textContent   = n?.titulo || 'Título del contenido';
     if (g('bol-prev-mensaje'))  g('bol-prev-mensaje').textContent  = msg || 'El mensaje introductorio aparecerá aquí…';
     const cta = g('bol-prev-cta'); if (cta) cta.href = url;
   }).catch(() => {});
@@ -6112,7 +6054,7 @@ async function _actualizarPaso4() {
   const url     = g('bol-url')?.value?.trim()      || '';
   const cuerpoLineas = [];
   if (mensaje) cuerpoLineas.push(mensaje);
-  if (url)     cuerpoLineas.push('', 'Leer edición completa: ' + url);
+  if (url)     cuerpoLineas.push('', 'Leer contenido completo: ' + url);
   cuerpoLineas.push('', '—', 'La Enbajada · laenbajada.com');
   if (g('bol-emails-preview'))  g('bol-emails-preview').textContent  = subsActivos.join(', ') || '—';
   if (g('bol-asunto-preview'))  g('bol-asunto-preview').textContent  = asunto || '—';
@@ -6163,12 +6105,12 @@ function _renderIdxSortable() {
   const wrap = g('indexcfg-sortable'); if (!wrap) return;
   /* Secciones fijas del sitio (siempre existen) */
   const FIJAS = [
-    { id:'portada',      label:'Portada principal',     desc:'Hero con la imagen y título de la edición activa',   ic:'⬛' },
+    { id:'portada',      label:'Portada principal',     desc:'Hero con la imagen y título del contenido activo',   ic:'⬛' },
     { id:'articulos',    label:'Grilla de artículos',   desc:'Los artículos más recientes en formato grilla',       ic:'⊞' },
-    { id:'conversacion', label:'La Conversación',       desc:'Entrevistas de la edición actual',                    ic:'🎙' },
+    { id:'conversacion', label:'La Conversación',       desc:'Entrevistas publicadas',                              ic:'🎙' },
     { id:'curatia',      label:'La Curaturía',           desc:'Música, libros y cine recomendados',                  ic:'♦' },
-    { id:'archivo',      label:'Archivo de ediciones',  desc:'Números anteriores de la revista',                    ic:'◫' },
-    { id:'boletin',      label:'Boletín de suscripción', desc:'Formulario para recibir cada edición por correo',    ic:'@' },
+    { id:'archivo',      label:'Contenido',             desc:'Todo el contenido publicado',                         ic:'◫' },
+    { id:'boletin',      label:'Boletín de suscripción', desc:'Formulario para recibir el boletín por correo',      ic:'@' },
     { id:'nosotros',     label:'Sobre nosotros',        desc:'Presentación del equipo en la portada',               ic:'◑' },
   ];
 
@@ -6925,7 +6867,7 @@ function wSetHTML(html) {
 async function exportarTodo() {
   try {
     const [config, arts, nums, secs, subs] = await Promise.all([
-      DB.getConfig(), DB.getArticulos(), DB.getNumeros(),
+      DB.getConfig(), DB.getArticulos(), DB.getContenidos(),
       DB.getSecciones(false),
       DB.getSuscriptores().catch(()=>[])
     ]);
@@ -7341,7 +7283,7 @@ async function cargarPortada() {
 
 function _mostrarPortadaActual(art) {
   if (g('portada-actual-titulo')) g('portada-actual-titulo').textContent = art.titulo || 'Sin título';
-  if (g('portada-actual-meta'))   g('portada-actual-meta').textContent   = (art.tipo||'—')+' · Ed. '+art.numero_id;
+  if (g('portada-actual-meta'))   g('portada-actual-meta').textContent   = (art.tipo||'—');
   if (art.imagen_url) {
     const img = g('portada-actual-img'); const ph = g('portada-actual-ph');
     if (img) { img.src = art.imagen_url; img.style.display = ''; }
@@ -7359,7 +7301,7 @@ function _renderPortadaOpts(arts, selId) {
       ${a.imagen_url?`<img src="${a.imagen_url}" style="width:52px;height:36px;object-fit:cover;border-radius:3px">`:'<div style="width:52px;height:36px;background:var(--paper3);border-radius:3px"></div>'}
       <div>
         <div style="font-family:var(--serif);font-weight:700;font-style:italic;font-size:13px">${a.titulo}</div>
-        <div style="font-size:10px;color:var(--t4);margin-top:2px">${a.tipo||'—'} · Ed. ${a.numero_id}</div>
+        <div style="font-size:10px;color:var(--t4);margin-top:2px">${a.tipo||'—'}</div>
       </div>
       <div id="port-dot-${a.id}" style="width:18px;height:18px;border-radius:50%;border:2px solid ${a.id===selId?'var(--azul)':'var(--bd)'};background:${a.id===selId?'var(--azul)':'transparent'};flex-shrink:0"></div>
     </div>`).join('');
