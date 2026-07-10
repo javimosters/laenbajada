@@ -1110,7 +1110,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
 </style>
 
 <!-- MOTOR PRINCIPAL -->
-<script src="assets/app.js"></script>
+<script src="/assets/app.js?v=v10"></script>
 
 <!-- ════════════════ NOTIF / LOADING / AUTOSAVE ════════════════ -->
 <div class="notif" id="notif" role="status" aria-live="polite">
@@ -1455,22 +1455,22 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
       <div class="sc">
         <div class="sc-body" style="padding:20px 22px 16px">
           <div class="wizard-bar" id="wizard-progress">
-            <div class="wz-step"><div class="wz-dot activo" id="wzs-0" onclick="wzIr(0)">1</div><div class="wz-label">Tipo</div></div>
-            <div class="wz-step"><div class="wz-dot" id="wzs-1" onclick="wzIr(1)">2</div><div class="wz-label">Edición</div></div>
+            <div class="wz-step"><div class="wz-dot activo" id="wzs-0" onclick="wzIr(0)">1</div><div class="wz-label">Sección</div></div>
+            <div class="wz-step"><div class="wz-dot" id="wzs-1" onclick="wzIr(1)">2</div><div class="wz-label">Contenido</div></div>
             <div class="wz-step"><div class="wz-dot" id="wzs-2" onclick="wzIr(2)">3</div><div class="wz-label">Título</div></div>
             <div class="wz-step"><div class="wz-dot" id="wzs-3" onclick="wzIr(3)">4</div><div class="wz-label">Autoría</div></div>
             <div class="wz-step"><div class="wz-dot" id="wzs-4" onclick="wzIr(4)">5</div><div class="wz-label">Imagen</div></div>
-            <div class="wz-step"><div class="wz-dot" id="wzs-5" onclick="wzIr(5)">6</div><div class="wz-label">Contenido</div></div>
-            <div class="wz-step"><div class="wz-dot" id="wzs-6" onclick="wzIr(6)">7</div><div class="wz-label">Revisar</div></div>
+            <div class="wz-step"><div class="wz-dot" id="wzs-5" onclick="wzIr(5)">6</div><div class="wz-label">Cuerpo</div></div>
+            <div class="wz-step"><div class="wz-dot" id="wzs-6" onclick="wzIr(6)">7</div><div class="wz-label">Revisión</div></div>
           </div>
-          <div id="wz-desc-global" style="font-size:12px;color:var(--t3);font-style:italic;margin-top:8px">① Elige el tipo de artículo</div>
+          <div id="wz-desc-global" style="font-size:12px;color:var(--t3);font-style:italic;margin-top:8px">① Elige la sección del artículo</div>
         </div>
       </div>
 
       <!-- Paso 0: Tipo -->
       <div class="wz-panel activo" id="wz-0">
         <div class="sc">
-          <div class="sc-head"><div class="sc-head-left"><div class="sc-head-dot"></div><div><div class="sc-title">¿Qué tipo de pieza es?</div></div></div></div>
+          <div class="sc-head"><div class="sc-head-left"><div class="sc-head-dot"></div><div><div class="sc-title">¿En qué sección va?</div></div></div></div>
           <div class="sc-body">
             <div class="tipo-cards" id="tipo-cards-container">
               <div style="color:var(--t4);font-size:13px;font-style:italic;padding:20px">Cargando secciones…</div>
@@ -1483,16 +1483,16 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
         </div>
       </div>
 
-      <!-- Paso 1: Edición -->
+      <!-- Paso 1: Contenido -->
       <div class="wz-panel" id="wz-1">
         <div class="sc">
-          <div class="sc-head"><div class="sc-head-left"><div class="sc-head-dot"></div><div><div class="sc-title">Edición y publicación</div></div></div></div>
+          <div class="sc-head"><div class="sc-head-left"><div class="sc-head-dot"></div><div><div class="sc-title">Contenido y publicación</div></div></div></div>
           <div class="sc-body">
             <div class="fr fr-2">
               <div class="fg">
                 <label class="fl" for="f-numero">Contenido</label>
                 <select class="fs" id="f-numero"></select>
-                <div class="fh">¿A qué edición pertenece este artículo?</div>
+                <div class="fh">¿A qué contenido pertenece este artículo?</div>
               </div>
               <div class="fg">
                 <label class="fl" for="f-estado">Estado inicial</label>
@@ -1621,14 +1621,14 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
         </div>
       </div>
 
-      <!-- Paso 5: Contenido -->
+      <!-- Paso 5: Cuerpo -->
       <div class="wz-panel" id="wz-5">
         <div class="sc" style="overflow:visible">
           <div class="sc-head" style="flex-wrap:wrap;gap:8px">
             <div class="sc-head-left">
               <div class="sc-head-dot"></div>
               <div>
-                <div class="sc-title">Contenido del artículo</div>
+                <div class="sc-title">Cuerpo del artículo</div>
                 <div class="sc-desc">Todo en un solo documento — escribe, formatea, inserta imágenes y más</div>
               </div>
             </div>
@@ -1819,23 +1819,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
             </div>
             <div class="fg">
               <label class="fl" for="new-num-titulo">Título *</label>
-              <input class="fi" type="text" id="new-num-titulo" placeholder="El título de este contenido" style="font-family:var(--serif);font-weight:700" oninput="_autoSlugNum(this)">
-            </div>
-            <div class="fg">
-              <label class="fl" for="new-num-sub">Subtítulo</label>
-              <input class="fi" type="text" id="new-num-sub" placeholder="La bajada de este contenido" style="font-family:var(--serif);font-style:italic">
-            </div>
-          </div>
-          <div class="fr fr-3" style="margin-top:12px">
-            <div class="fg">
-              <label class="fl" for="new-num-slug">Slug (URL pública)</label>
-              <input class="fi" type="text" id="new-num-slug" placeholder="titulo-del-contenido" style="font-family:var(--mono)">
-              <div class="fh">Se usará en /contenido/slug — se genera automáticamente desde el título.</div>
-            </div>
-            <div class="fg">
-              <label class="fl" for="new-num-tipo">Tipo de contenido</label>
-              <input class="fi" type="text" id="new-num-tipo" placeholder="Ej: Dossier, Especial, Entrevista…">
-              <div class="fh">Libre — alimenta el filtro "Tipo de contenido" del sitio.</div>
+              <input class="fi" type="text" id="new-num-titulo" placeholder="El título de este contenido" style="font-family:var(--serif);font-weight:700">
             </div>
             <div class="fg">
               <label class="fl" for="new-num-estado">Estado inicial</label>
@@ -1846,6 +1830,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
               </select>
             </div>
           </div>
+          <div class="fh" style="margin-top:8px">El slug (URL) se genera automáticamente del título. Subtítulo, tipo e imagen se agregan después de crear, en la tarjeta de abajo.</div>
           <div class="btn-row">
             <button class="ab ab-or" onclick="crearNumero()">+ Crear contenido</button>
           </div>
@@ -2468,7 +2453,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
         <div id="boletin-editor-wrap" style="display:none">
           <!-- Paso 1: Elegir edición -->
           <div style="padding:20px;border-top:1px solid var(--bd);background:var(--paper2)">
-            <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--t4);margin-bottom:14px">① Elige la edición a anunciar</div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--t4);margin-bottom:14px">② ¿A qué contenido pertenece?</div>
             <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
               <div class="fg" style="flex:1;min-width:200px;margin:0">
                 <label class="fl">Contenido</label>
@@ -2705,7 +2690,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
         <div class="sc-body" style="font-size:13px;color:var(--t2);line-height:1.7;display:flex;flex-direction:column;gap:10px">
           <p>Cada visita a una página del sitio se registra en la tabla <code style="font-family:var(--mono);font-size:12px;background:var(--paper2);padding:1px 6px;border-radius:2px">visitas</code> de Supabase con sesión anónima.</p>
           <div style="background:var(--paper2);padding:12px 16px;border-radius:3px;border-left:2px solid var(--azul);font-family:var(--mono);font-size:11px;color:var(--t2)">/* Agregar en cada .html antes de &lt;/body&gt; */
-&lt;script src="assets/tracking.js"&gt;&lt;/script&gt;</div>
+&lt;script src="/assets/tracking.js?v=v10"&gt;&lt;/script&gt;</div>
           <button class="ab ab-s ab-sm" onclick="generarSQLMetricas()" style="align-self:flex-start">↓ Descargar SQL de métricas</button>
         </div>
       </div>
@@ -4944,7 +4929,7 @@ async function cargarMetricas() {
       filtro += `&created_at=gte.${d30.toISOString()}`;
     }
 
-    const visitas = await SB.select('visitas', filtro + '&limit=2000').catch(() => null);
+    const visitas = await SB.selectAll('visitas', filtro).catch(() => null);
 
     if (!visitas) {
       /* Tabla no existe aún */
@@ -5255,10 +5240,6 @@ function _renderNumCard(n) {
   </div>`;
 }
 
-function _autoSlugNum(input) {
-  const s = g('new-num-slug'); if (s && !s.value) s.value = _slugify(input.value);
-}
-
 async function cargarNumerosAdmin(filtro) {
   const list = g('numeros-list'); if (!list) return;
   list.innerHTML = '<div class="empty"><div class="empty-ic">⌛</div><h3>Cargando…</h3></div>';
@@ -5454,25 +5435,19 @@ async function guardarNumeros() {
 
 async function crearNumero() {
   const titulo = g('new-num-titulo')?.value?.trim();
-  const sub    = g('new-num-sub')?.value?.trim() || null;
-  const slugIn = g('new-num-slug')?.value?.trim();
-  const tipo   = g('new-num-tipo')?.value?.trim() || null;
   const ordenIn = parseInt(g('new-num-orden')?.value, 10);
   const estado = g('new-num-estado')?.value || 'activo';
   if (!titulo) { notif('El título es obligatorio', 'warn'); return; }
-  const slug = slugIn || _slugify(titulo);
+  const slug = _slugify(titulo);
   const overlay = g('loading-overlay'); if (overlay) overlay.classList.add('show');
   try {
     const todos = await DB.getContenidos();
     const orden = Number.isFinite(ordenIn) && ordenIn > 0 ? ordenIn : (todos.length + 1);
-    await DB.crearContenido({ titulo, subtitulo: sub, slug, tipo, orden, estado });
+    await DB.crearContenido({ titulo, slug, orden, estado });
     _invalidarCache();
-    notif(`Contenido "${titulo}" creado ✓`, 'ok');
+    notif(`Contenido "${titulo}" creado ✓ — agrega subtítulo, tipo o imagen en la tarjeta de abajo`, 'ok');
     if (g('new-num-orden'))  g('new-num-orden').value  = '';
     if (g('new-num-titulo')) g('new-num-titulo').value = '';
-    if (g('new-num-sub'))    g('new-num-sub').value    = '';
-    if (g('new-num-slug'))   g('new-num-slug').value    = '';
-    if (g('new-num-tipo'))   g('new-num-tipo').value    = '';
     if (g('new-num-estado')) g('new-num-estado').value = 'activo';
     cargarNumerosAdmin();
     /* Actualizar el select de contenido en el form de artículos */
@@ -6910,12 +6885,12 @@ function quitarLogo() {
 /* ── WIZARD ── */
 let _wzStep = 0;
 const _wzDescripciones = [
-  '① Elige el tipo de artículo',
-  '② ¿Dónde va y cuándo se publica?',
+  '① Elige la sección del artículo',
+  '② ¿A qué contenido pertenece y cuándo se publica?',
   '③ Escribe el título y el encabezado',
   '④ Autor',
   '⑤ Imagen de portada',
-  '⑥ Contenido del artículo',
+  '⑥ Escribe el cuerpo del artículo',
   '⑦ Revisar y publicar',
 ];
 

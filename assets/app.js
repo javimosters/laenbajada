@@ -47,6 +47,50 @@ const SB = {
   async select(table, params = '') {
     return this._req(`/${table}?${params}`);
   },
+  /* Supabase/PostgREST corta las respuestas en 1000 filas por defecto,
+     sin importar el &limit= que mandes en la query. Para tablas que
+     pueden crecer más allá de eso (ej. `visitas`), hay que paginar con
+     el header Range hasta agotar los resultados. */
+  async selectAll(table, params = '', maxRows = 20000) {
+    let all = [];
+    let offset = 0;
+    const chunk = 1000;
+    while (offset < maxRows) {
+      const res = await fetch(`${SUPA_URL}/rest/v1/${table}?${params}`, {
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': `Bearer ${SUPA_KEY}`,
+          'Range-Unit': 'items',
+          'Range': `${offset}-${offset + chunk - 1}`,
+          'Prefer': 'count=exact',
+        },
+      });
+      if (!res.ok) break;
+      const rows = await res.json().catch(() => []);
+      all = all.concat(rows);
+      if (rows.length < chunk) break; /* última página alcanzada */
+      offset += chunk;
+    }
+    return all;
+  },
+  /* Conteo exacto vía HEAD + Prefer: count=exact — no trae filas,
+     solo el total real (evita el límite de 1000 filas al mostrar stats). */
+  async count(table, params = '') {
+    try {
+      const res = await fetch(`${SUPA_URL}/rest/v1/${table}?${params}`, {
+        method: 'HEAD',
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': `Bearer ${SUPA_KEY}`,
+          'Prefer': 'count=exact',
+        },
+      });
+      const range = res.headers.get('content-range'); // "0-24/1234"
+      if (!range) return null;
+      const total = range.split('/')[1];
+      return total === '*' ? null : parseInt(total, 10);
+    } catch(e) { return null; }
+  },
   async insert(table, data) {
     return this._req(`/${table}`, {
       method:  'POST',

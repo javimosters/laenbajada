@@ -19,7 +19,7 @@
   <meta name="twitter:description" content="" id="tw-desc">
   <meta name="twitter:image" content="" id="tw-image">
   <link rel="canonical" href="" id="canonical">
-<link rel="stylesheet" href="/assets/styles.css">
+<link rel="stylesheet" href="/assets/styles.css?v=v10">
 <style>
 
 /* ── RESPONSIVE BASE — Fixes globales ── */
@@ -728,7 +728,7 @@ html.dark .search-modal { background:var(--bg); }
   <div class="search-modal-results" id="search-modal-results"></div>
 </div>
 
-<script src="/assets/app.js?v=86c552e1"></script>
+<script src="/assets/app.js?v=v10"></script>
 <script>
   /* OG image dinámica */
   function _setOGImage(url) {
@@ -1011,7 +1011,7 @@ function normTag(v) {
   return aliases[s] || s;
 }
 async function init() {
-  await initSite();
+  const _sitePromise = initSite();
 
   const params = new URLSearchParams(location.search);
 
@@ -1056,6 +1056,7 @@ async function init() {
     DB.getPublicados(),
     DB.getBloques(artId).catch(() => []),
     DB.getSecciones().catch(() => []),
+    _sitePromise,
   ]);
   if (!a) { window.location.href = '/404.html'; return; }
   _renderNavSecs(_secsNav);
@@ -1189,6 +1190,6 @@ function _getSesionId() {
 
 init();
 </script>
-<script src="/assets/tracking.js"></script>
+<script src="/assets/tracking.js?v=v10"></script>
 </body>
 </html>

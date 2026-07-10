@@ -18,7 +18,7 @@
   <meta name="twitter:description" content="Conoce al equipo detrás de La Enbajada, la revista cultural que aterriza la cultura del Caribe colombiano.">
 <title>Nosotros — La Enbajada</title>
   <meta name="robots" content="index, follow">
-<link rel="stylesheet" href="/assets/styles.css">
+<link rel="stylesheet" href="/assets/styles.css?v=v10">
 <style>
 
 /* ── RESPONSIVE BASE — Fixes globales ── */
@@ -338,7 +338,7 @@ html.dark .search-modal { background:var(--bg); }
   <div class="search-modal-results" id="search-modal-results"></div>
 </div>
 
-<script src="/assets/app.js?v=a50d39e7"></script>
+<script src="/assets/app.js?v=v10"></script>
 <script>
 
 /* ── Sanitize XSS — escapar datos de BD antes de innerHTML ── */
@@ -408,8 +408,10 @@ function normTag(v) {
   return aliases[s] || s;
 }
 async function init(){
-  await initSite();
-  const _secsNav = await DB.getSecciones().catch(() => []);
+  const [_secsNav] = await Promise.all([
+    DB.getSecciones().catch(() => []),
+    initSite(),
+  ]);
   _renderNavSecs(_secsNav);
   aplicarSEO({titulo:'Nosotros',desc:'Quiénes hacemos La Enbajada. Revista cultural del Caribe colombiano.'});
 
@@ -467,6 +469,6 @@ async function init(){
 }
 init();
 </script>
-<script src="/assets/tracking.js"></script>
+<script src="/assets/tracking.js?v=v10"></script>
 </body>
 </html>

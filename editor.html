@@ -20,7 +20,7 @@
   <meta name="twitter:description" content="Conoce al equipo editorial de La Enbajada, revista cultural del Caribe colombiano.">
   <meta name="twitter:image" content="https://laenbajada.com/assets/og-image.jpg">
   <link rel="canonical" href="https://laenbajada.com/sobre.html" id="canonical">
-<link rel="stylesheet" href="/assets/styles.css">
+<link rel="stylesheet" href="/assets/styles.css?v=v10">
 <style>
 
 /* ── RESPONSIVE BASE — Fixes globales ── */
@@ -297,7 +297,7 @@ html.dark .search-modal { background:var(--bg); }
   <div class="search-modal-results" id="search-modal-results"></div>
 </div>
 
-<script src="/assets/app.js"></script>
+<script src="/assets/app.js?v=v10"></script>
 <script>
 
 /* ── Sanitize XSS — escapar datos de BD antes de innerHTML ── */
@@ -368,8 +368,10 @@ function normTag(v) {
 }
 
 async function init(){
-  await initSite();
-  const _secsNav = await DB.getSecciones().catch(() => []);
+  const [_secsNav] = await Promise.all([
+    DB.getSecciones().catch(() => []),
+    initSite(),
+  ]);
   _renderNavSecs(_secsNav);
   const params=new URLSearchParams(location.search);
   /* Soportar tanto ?slug= como /sobre/equipo/slug */
@@ -451,6 +453,6 @@ async function init(){
 }
 init();
 </script>
-<script src="/assets/tracking.js"></script>
+<script src="/assets/tracking.js?v=v10"></script>
 </body>
 </html>

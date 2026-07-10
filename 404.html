@@ -17,7 +17,7 @@
   <meta name="twitter:description" content="La página que buscas no existe. Explora La Enbajada, revista cultural del Caribe colombiano.">
 <title>Página no encontrada — La Enbajada</title>
   <meta name="robots" content="noindex, follow">
-<link rel="stylesheet" href="/assets/styles.css">
+<link rel="stylesheet" href="/assets/styles.css?v=v10">
 <style>
 
 /* ── RESPONSIVE BASE — Fixes globales ── */
@@ -347,7 +347,7 @@ html.dark .search-modal { background:var(--bg); }
   <div class="search-modal-results" id="search-modal-results"></div>
 </div>
 
-<script src="/assets/app.js?v=86c552e1"></script>
+<script src="/assets/app.js?v=v10"></script>
 <script>
 /* ── ARTÍCULOS LEÍDOS ── */
 const _LEIDOS_KEY = 'le_leidos';
@@ -429,8 +429,10 @@ function _animarHero(){
 }
 
 async function init(){
-  await initSite();
-  const _secsNav = await DB.getSecciones().catch(() => []);
+  const [_secsNav] = await Promise.all([
+    DB.getSecciones().catch(() => []),
+    initSite(),
+  ]);
   _renderNavSecs(_secsNav);
   aplicarSEO({titulo:'Página no encontrada',desc:'La dirección que buscas no existe. Vuelve al inicio de La Enbajada.'});
   _animarHero();
@@ -466,6 +468,6 @@ async function init(){
 }
 init();
 </script>
-<script src="/assets/tracking.js"></script>
+<script src="/assets/tracking.js?v=v10"></script>
 </body>
 </html>

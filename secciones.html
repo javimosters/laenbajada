@@ -17,7 +17,7 @@
   <meta name="twitter:description" content="Explora las secciones de La Enbajada: Historias, Conversaciones, Recomendados y más. Revista cultural del Caribe colombiano.">
 <title>La Enbajada — Secciones</title>
   <meta name="robots" content="index, follow">
-<link rel="stylesheet" href="/assets/styles.css">
+<link rel="stylesheet" href="/assets/styles.css?v=v10">
 <style>
 
 /* ── RESPONSIVE BASE — Fixes globales ── */
@@ -334,7 +334,7 @@ html.dark .search-modal { background:var(--bg); }
   <div class="search-modal-results" id="search-modal-results"></div>
 </div>
 
-<script src="/assets/app.js?v=86c552e1"></script>
+<script src="/assets/app.js?v=v10"></script>
 <script>
 /* ── ARTÍCULOS LEÍDOS ── */
 const _LEIDOS_KEY = 'le_leidos';
@@ -579,7 +579,7 @@ function normTag(v) {
 }
 
 async function init() {
-  await initSite();
+  const _sitePromise = initSite();
   const params = new URLSearchParams(location.search);
   /* Soportar tanto ?sec=tag como /secciones/:tag */
   const pathParts = location.pathname.split('/').filter(Boolean);
@@ -591,6 +591,7 @@ async function init() {
   const [secs, arts] = await Promise.all([
     DB.getSecciones().catch(() => []),
     DB.getPublicados().catch(() => []),   /* ya filtra publicados en Supabase */
+    _sitePromise,
   ]);
 
   /* Fuente de verdad 100% Supabase.
@@ -650,6 +651,6 @@ window.addEventListener('popstate', () => {
 
 init();
 </script>
-<script src="/assets/tracking.js"></script>
+<script src="/assets/tracking.js?v=v10"></script>
 </body>
 </html>
