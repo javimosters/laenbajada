@@ -940,6 +940,27 @@ async function suscribirse() {
   await suscribirBoletin(input, feedback);
 }
 
+/* ── Modal de suscripción — reemplaza la sección de boletín embebida ── */
+function openSubscribe() {
+  const m = document.getElementById('sub-modal');
+  if (!m) return;
+  m.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('boletin-email')?.focus(), 80);
+}
+function closeSubscribe() {
+  const m = document.getElementById('sub-modal');
+  if (!m) return;
+  m.classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('sub-modal')?.addEventListener('click', function(e) {
+    if (e.target === this) closeSubscribe();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSubscribe(); });
+});
+
 /* ══════════════════════════════════════════════════════════════
    NAVEGACIÓN A ARTÍCULO — con slug en URL
    ══════════════════════════════════════════════════════════════ */

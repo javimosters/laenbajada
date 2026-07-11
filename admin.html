@@ -1110,7 +1110,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
 </style>
 
 <!-- MOTOR PRINCIPAL -->
-<script src="/assets/app.js?v=v10"></script>
+<script src="/assets/app.js?v=v11"></script>
 
 <!-- ════════════════ NOTIF / LOADING / AUTOSAVE ════════════════ -->
 <div class="notif" id="notif" role="status" aria-live="polite">
@@ -1320,7 +1320,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
         <!-- Edición activa info -->
         <div class="ed-activa-card" id="dash-ed-activa">
           <div class="ed-activa-label" id="da-label">Edición actual</div>
-          <div class="ed-activa-num" id="da-num">N.º —</div>
+          <div class="ed-activa-num" id="da-num">—</div>
           <div class="ed-activa-titulo" id="da-titulo">—</div>
           <div class="ed-activa-sub" id="da-sub"></div>
           <div class="ed-activa-stats">
@@ -2474,7 +2474,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
             <div class="fr fr-2" style="margin-bottom:14px">
               <div class="fg">
                 <label class="fl">Asunto del correo</label>
-                <input class="fi" type="text" id="bol-asunto" placeholder="La Enbajada N.º 01 — La nación dentro de la nación"
+                <input class="fi" type="text" id="bol-asunto" placeholder="La Enbajada — Los pueblos tienen cosas que decir"
                   oninput="_actualizarBoletinPreview()" style="font-size:13px">
               </div>
               <div class="fg">
@@ -2502,7 +2502,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
               </div>
               <!-- Cuerpo -->
               <div style="padding:28px;background:#fff;font-family:Georgia,serif">
-                <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#004AAD;margin-bottom:10px" id="bol-prev-num-label">Edición N.º —</div>
+                <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#004AAD;margin-bottom:10px" id="bol-prev-num-label">Contenido destacado</div>
                 <div style="font-size:22px;font-weight:900;color:#0c0b09;line-height:1.2;margin-bottom:14px;font-style:italic" id="bol-prev-titulo">Título de la edición</div>
                 <div style="font-size:13px;color:#555;line-height:1.8;margin-bottom:20px;font-style:italic" id="bol-prev-mensaje">El mensaje introductorio aparecerá aquí…</div>
                 <a id="bol-prev-cta" href="#" style="display:inline-block;background:#004AAD;color:#fff;padding:12px 24px;font-family:Arial,sans-serif;font-size:12px;font-weight:700;text-decoration:none;letter-spacing:.08em;text-transform:uppercase">Leer edición →</a>
@@ -2690,7 +2690,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
         <div class="sc-body" style="font-size:13px;color:var(--t2);line-height:1.7;display:flex;flex-direction:column;gap:10px">
           <p>Cada visita a una página del sitio se registra en la tabla <code style="font-family:var(--mono);font-size:12px;background:var(--paper2);padding:1px 6px;border-radius:2px">visitas</code> de Supabase con sesión anónima.</p>
           <div style="background:var(--paper2);padding:12px 16px;border-radius:3px;border-left:2px solid var(--azul);font-family:var(--mono);font-size:11px;color:var(--t2)">/* Agregar en cada .html antes de &lt;/body&gt; */
-&lt;script src="/assets/tracking.js?v=v10"&gt;&lt;/script&gt;</div>
+&lt;script src="/assets/tracking.js?v=v11"&gt;&lt;/script&gt;</div>
           <button class="ab ab-s ab-sm" onclick="generarSQLMetricas()" style="align-self:flex-start">↓ Descargar SQL de métricas</button>
         </div>
       </div>
@@ -3220,7 +3220,7 @@ async function updateStats() {
     const activa = (nums||[]).find(n => n.estado === 'activo') || (nums||[])[0];
     if (activa) {
       if (g('da-label')) g('da-label').textContent = 'Contenido destacado';
-      if (g('da-num'))    g('da-num').textContent    = 'N.º ' + String(activa.orden||'').padStart(2,'0');
+      if (g('da-num'))    g('da-num').textContent    = activa.estado === 'activo' ? '◎ Activo' : activa.estado;
       if (g('da-titulo')) g('da-titulo').textContent = activa.titulo || '—';
       if (g('da-sub'))    g('da-sub').textContent    = activa.subtitulo || '';
       const artsActiva = (arts||[]).filter(a => a.contenido_id === activa.id);
@@ -3238,7 +3238,7 @@ async function updateStats() {
           `<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;opacity:.8;cursor:pointer;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.08)"
             onclick="irTab('numeros',null)">
             <span style="font-family:var(--sans,sans-serif)">
-              ${estadoIcon[n.estado]||'○'} N.º ${String(n.orden||'').padStart(2,'0')} — ${(n.titulo||'').slice(0,22)}${(n.titulo||'').length>22?'…':''}
+              ${estadoIcon[n.estado]||'○'} ${(n.titulo||'').slice(0,28)}${(n.titulo||'').length>28?'…':''}
             </span>
             <span style="font-size:9px;opacity:.6;text-transform:uppercase;letter-spacing:.08em">${n.estado}</span>
           </div>`
@@ -3405,11 +3405,11 @@ async function cargarArticulos() {
     secLabels['conversacion'] = secLabels['la-conversacion'];
     secLabels['curatia']      = secLabels['la-curaturia'];
 
-    /* Lookup de contenidos — para mostrar "N.º X" en vez del uuid crudo */
+    /* Lookup de contenidos — para mostrar el título en vez del uuid crudo */
     let contLabels = {};
     try {
       const contsData = await DB.getContenidos();
-      contsData.forEach(c => { contLabels[c.id] = 'N.º ' + String(c.orden||'').padStart(2,'0'); });
+      contsData.forEach(c => { contLabels[c.id] = c.titulo || ''; });
     } catch(_) {}
 
     tbody.innerHTML = arts.map(a => {
@@ -3454,7 +3454,7 @@ async function rellenarNumerosSelect(targetId = 'f-numero') {
       const prefix = sel.id === 'filtro-num' ? '<option value="">Todo el contenido</option>' : '';
       sel.innerHTML = prefix + nums.map(n => {
         const lbl = n.estado === 'activo' ? ' ◎' : '';
-        return `<option value="${n.id}" ${n.id===cur?'selected':''}>N.º ${String(n.orden||'').padStart(2,'0')} — ${n.titulo}${lbl}</option>`;
+        return `<option value="${n.id}" ${n.id===cur?'selected':''}>${n.titulo}${lbl}</option>`;
       }).join('');
     });
   } catch(e) {}
@@ -5065,16 +5065,16 @@ async function cargarMetricas() {
       } else {
         const maxE = edsSorted[0]?.[1] || 1;
         listEds.innerHTML = edsSorted.map(([slugRef, cnt]) => {
-          const num = numeros.find(n => n.slug === slugRef || n.id === slugRef);
+          const num = numeros.find(n => n.titulo === slugRef || n.slug === slugRef || n.id === slugRef);
           const pct = Math.round(cnt/maxE*100);
           const titulo = num ? num.titulo : `Contenido eliminado`;
-          const numLabel = num ? `N.º ${String(num.orden||'').padStart(2,'0')}` : slugRef;
+          const numLabel = num ? '' : slugRef;
           return `<div style="display:grid;grid-template-columns:28px 1fr 60px;gap:10px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--bd)">
             <div style="text-align:center;font-size:14px">📖</div>
             <div>
               <div style="font-family:var(--serif);font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                <a href="contenido/${slugRef}" target="_blank" style="color:inherit;text-decoration:none;font-style:italic">${titulo}</a>
-                <span style="font-size:9px;font-family:var(--mono);color:var(--t4);background:var(--paper2);padding:1px 7px;border-radius:2px">${numLabel}</span>
+                <a href="contenido.html?tipo=${encodeURIComponent(titulo)}" target="_blank" style="color:inherit;text-decoration:none;font-style:italic">${titulo}</a>
+                ${numLabel ? `<span style="font-size:9px;font-family:var(--mono);color:var(--t4);background:var(--paper2);padding:1px 7px;border-radius:2px">${numLabel}</span>` : ''}
               </div>
               <div style="height:3px;background:var(--bg2);border-radius:2px"><div style="height:3px;background:var(--azul);border-radius:2px;width:${pct}%;transition:width .6s var(--ease)"></div></div>
             </div>
@@ -5154,27 +5154,7 @@ function _renderNumCard(n) {
     'archivado':      { lbl: '◫ Archivado',  cls: 'badge-bor', dot: 'var(--t4)' },
   };
   const eb = estadoBadge[n.estado] || estadoBadge['activo'];
-  const hasImg = n.imagen_url && n.imagen_url.length > 4 && !n.imagen_url.startsWith('data:');
-  const imgData = n.imagen_url && n.imagen_url.startsWith('data:') ? n.imagen_url : '';
-  const imgUrl  = hasImg ? n.imagen_url : '';
-
   const cardStyle = `border-top:3px solid ${eb.dot};`;
-
-  const imgPreview = imgData
-    ? `<div class="up-prev" id="num-up-prev-${n.id}" style="display:flex;position:relative;flex-shrink:0">
-        <img id="num-up-img-${n.id}" src="${imgData}" alt="" style="max-height:80px;max-width:120px;object-fit:cover;border-radius:3px;display:block">
-        <button class="up-rm" onclick="quitarImgNum('${n.id}')" style="position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:#c0392b;color:#fff;border:none;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700">✕</button>
-      </div>
-      <div class="up-area" id="num-up-area-${n.id}" style="display:none;flex:0 0 auto;width:110px;padding:14px" onclick="document.getElementById('num-file-${n.id}').click()">
-        <div class="up-icon" style="font-size:16px">📷</div><div class="up-txt" style="font-size:11px">Cambiar</div>
-      </div>`
-    : `<div class="up-area" id="num-up-area-${n.id}" style="flex:0 0 auto;width:110px;padding:14px${imgUrl?';display:none':''}" onclick="document.getElementById('num-file-${n.id}').click()">
-        <div class="up-icon" style="font-size:16px">📷</div><div class="up-txt" style="font-size:11px">Subir imagen</div>
-      </div>
-      <div class="up-prev" id="num-up-prev-${n.id}" style="${imgUrl?'display:flex':'display:none'};position:relative;flex-shrink:0">
-        <img id="num-up-img-${n.id}" src="${imgUrl}" alt="" style="max-height:80px;max-width:120px;object-fit:cover;border-radius:3px;display:block">
-        <button class="up-rm" onclick="quitarImgNum('${n.id}')" style="position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:#c0392b;color:#fff;border:none;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700">✕</button>
-      </div>`;
 
   return `
   <div class="sc" style="margin-bottom:14px;${cardStyle}">
@@ -5183,7 +5163,7 @@ function _renderNumCard(n) {
         <div style="width:10px;height:10px;border-radius:50%;background:${eb.dot};flex-shrink:0"></div>
         <div>
           <div class="sc-title" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-            N.º ${String(n.orden||'').padStart(2,'0')} — ${n.titulo || 'Sin título'}
+            ${n.titulo || 'Sin título'}
             <span class="badge ${eb.cls}" style="font-size:9px">${eb.lbl}</span>
           </div>
         </div>
@@ -5206,35 +5186,8 @@ function _renderNumCard(n) {
           </select>
         </div>
       </div>
-      <div class="fr fr-3" style="margin-top:12px">
-        <div class="fg"><label class="fl">Subtítulo</label>
-          <input class="fi" type="text" id="num-sub-${n.id}" value="${(n.subtitulo||'').replace(/"/g,'&quot;')}" style="font-family:var(--serif);font-style:italic">
-        </div>
-        <div class="fg"><label class="fl">Slug (URL)</label>
-          <input class="fi" type="text" id="num-slug-${n.id}" value="${(n.slug||'').replace(/"/g,'&quot;')}" style="font-family:var(--mono)">
-          <div class="fh">/contenido/${n.slug||'…'}</div>
-        </div>
-        <div class="fg"><label class="fl">Tipo de contenido</label>
-          <input class="fi" type="text" id="num-tipo-${n.id}" value="${(n.tipo||'').replace(/"/g,'&quot;')}" placeholder="Ej: Dossier, Especial…">
-        </div>
-      </div>
-      <div class="fg" style="margin-top:12px">
-        <label class="fl">Imagen de portada</label>
-        <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap">
-          ${imgPreview}
-          <div style="flex:2;min-width:200px">
-            <input class="fi" type="url" id="num-img-url-${n.id}"
-              placeholder="O pega una URL de imagen (https://…)"
-              value="${imgUrl}"
-              oninput="prevNumImg('${n.id}',this.value)">
-            <div class="fh">Sube desde tu computador o pega la URL directa.</div>
-          </div>
-        </div>
-        <input type="file" id="num-file-${n.id}" accept="image/*" style="display:none" onchange="cargarImgNum('${n.id}',this)">
-        <input type="hidden" id="num-img-data-${n.id}" value="${imgData ? 'loaded' : ''}">
-      </div>
       <div class="btn-row">
-        <button class="ab ab-p ab-sm" onclick="guardarNumero('${n.id}')">💾 Guardar contenido</button>
+        <button class="ab ab-p ab-sm" onclick="guardarNumero('${n.id}')">💾 Guardar</button>
       </div>
     </div>
   </div>`;
@@ -5249,11 +5202,7 @@ async function cargarNumerosAdmin(filtro) {
 
     /* Buscador */
     const q = (filtro || g('num-search')?.value || '').toLowerCase().trim();
-    if (q) nums = nums.filter(n =>
-      (n.titulo||'').toLowerCase().includes(q) ||
-      (n.subtitulo||'').toLowerCase().includes(q) ||
-      (n.slug||'').toLowerCase().includes(q)
-    );
+    if (q) nums = nums.filter(n => (n.titulo||'').toLowerCase().includes(q));
 
     /* Orden: por la columna 'orden' — el primer 'activo' es el destacado */
     nums.sort((a,b) => (a.orden||0) - (b.orden||0));
@@ -5265,12 +5214,6 @@ async function cargarNumerosAdmin(filtro) {
 
     /* Renderizar cada tarjeta con función separada para evitar template-literal anidado */
     list.innerHTML = nums.map(n => _renderNumCard(n)).join('');
-    /* Guardar data URLs en el store para que guardarNumero las pueda leer */
-    nums.forEach(n => {
-      if (n.imagen_url && n.imagen_url.startsWith('data:')) {
-        _numImgDataStore[n.id] = n.imagen_url;
-      }
-    });
 
   } catch(e) { notif('Error cargando contenido: ' + e.message, 'err'); }
 }
@@ -5278,39 +5221,6 @@ async function cargarNumerosAdmin(filtro) {
 async function guardarNumero(id) {
   const overlay = g('loading-overlay'); if (overlay) overlay.classList.add('show');
   try {
-    const imgData  = _numImgDataStore[id] || g(`num-img-data-${id}`)?.value || '';
-    const imgUrl   = g(`num-img-url-${id}`)?.value?.trim() || '';
-    const nuevaImg = imgData || imgUrl || null;
-    const quitada  = _imgNumQuitada[id] === true;
-
-    /* Subir imagen a Storage si es base64 */
-    let imagen_url = null;
-    if (imgData && imgData.startsWith('data:')) {
-      try {
-        const blob  = await fetch(imgData).then(r => r.blob());
-        const ext   = blob.type.includes('png') ? 'png' : 'jpg';
-        const nombre = `numeros/num-${id}-${Date.now()}.${ext}`;
-        const res   = await fetch(`${SUPA_URL}/storage/v1/object/imagenes/${nombre}`, {
-          method: 'POST',
-          headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}`, 'Content-Type': blob.type, 'x-upsert': 'true' },
-          body: blob,
-        });
-        if (res.ok) {
-          imagen_url = `${SUPA_URL}/storage/v1/object/public/imagenes/${nombre}`;
-          if (g(`num-img-url-${id}`)) g(`num-img-url-${id}`).value = imagen_url;
-          if (g(`num-img-data-${id}`)) g(`num-img-data-${id}`).value = '';
-        } else {
-          imagen_url = imgData; /* fallback base64 */
-        }
-      } catch(e) { imagen_url = imgData; }
-    } else if (imgUrl) {
-      imagen_url = imgUrl;
-    } else if (quitada) {
-      imagen_url = null; /* borrar imagen explícitamente */
-    } else {
-      imagen_url = undefined; /* no cambiar — sin nuevas instrucciones */
-    }
-
     const titVal = (g(`num-titulo-${id}`)?.value || '').trim();
     /* Si el input no existe en el DOM (edge case), leer de Supabase */
     let tituloFinal = titVal;
@@ -5320,20 +5230,14 @@ async function guardarNumero(id) {
     }
     if (!tituloFinal) { notif('El título no puede estar vacío', 'err'); return; }
 
-    const slugVal = (g(`num-slug-${id}`)?.value || '').trim() || _slugify(tituloFinal);
-
     const payload = {
-      titulo:    tituloFinal,
-      subtitulo: (g(`num-sub-${id}`)?.value || '').trim() || null,
-      slug:      slugVal,
-      tipo:      (g(`num-tipo-${id}`)?.value || '').trim() || null,
-      orden:     parseInt(g(`num-orden-${id}`)?.value, 10) || 0,
-      estado:    g(`num-estado-${id}`)?.value || 'activo',
+      titulo: tituloFinal,
+      slug:   _slugify(tituloFinal), /* interno — no se muestra en el admin */
+      orden:  parseInt(g(`num-orden-${id}`)?.value, 10) || 0,
+      estado: g(`num-estado-${id}`)?.value || 'activo',
     };
-    if (imagen_url !== undefined) payload.imagen_url = imagen_url;
 
     await DB.setContenido(id, payload);
-    delete _imgNumQuitada[id];
     _invalidarCache();
     notif('Contenido guardado ✓', 'ok');
     await cargarNumerosAdmin();
@@ -5356,75 +5260,16 @@ async function eliminarNumero(id) {
   finally { if (overlay) overlay.classList.remove('show'); }
 }
 
-/* ── Imagen para contenido ── */
-async function cargarImgNum(id, input) {
-  const file = input.files?.[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = async e => {
-    const compressed = await comprimirImagen(e.target.result, 1200, 800, 0.85);
-    const img = g(`num-up-img-${id}`);
-    if (img) { img.src = compressed; }
-    /* Guardar en store global — el hidden solo guarda 'loaded' como marcador */
-    _numImgDataStore[id] = compressed;
-    const data = g(`num-img-data-${id}`);
-    if (data) data.value = 'loaded';
-    const area = g(`num-up-area-${id}`);
-    if (area) area.style.display = 'none';
-    const prev = g(`num-up-prev-${id}`);
-    if (prev) prev.style.display = 'flex';
-    const urlInput = g(`num-img-url-${id}`);
-    if (urlInput) urlInput.value = '';
-    delete _imgNumQuitada[id];
-  };
-  reader.readAsDataURL(file);
-}
-
-function prevNumImg(id, url) {
-  if (!url || !url.startsWith('http')) return;
-  const img = g(`num-up-img-${id}`);
-  if (img) img.src = url;
-  const area = g(`num-up-area-${id}`);
-  if (area) area.style.display = 'none';
-  const prev = g(`num-up-prev-${id}`);
-  if (prev) prev.style.display = 'flex';
-  const data = g(`num-img-data-${id}`);
-  if (data) data.value = '';
-}
-
-const _imgNumQuitada = {}; /* rastrea qué contenidos tuvieron su imagen quitada */
-const _numImgDataStore = {}; /* data URLs de imágenes de contenido cargadas */
-
-function quitarImgNum(id) {
-  const img = g(`num-up-img-${id}`);
-  if (img) img.src = '';
-  const data = g(`num-img-data-${id}`);
-  if (data) data.value = '';
-  const urlInput = g(`num-img-url-${id}`);
-  if (urlInput) urlInput.value = '';
-  const area = g(`num-up-area-${id}`);
-  if (area) area.style.display = '';
-  const prev = g(`num-up-prev-${id}`);
-  if (prev) prev.style.display = 'none';
-  /* Marcar que se quitó la imagen para que guardarNumero guarde null */
-  _imgNumQuitada[id] = true;
-}
-
 async function guardarNumeros() {
   /* Guarda todo el contenido visible en pantalla */
   const overlay = g('loading-overlay'); if (overlay) overlay.classList.add('show');
   try {
     const nums = await DB.getContenidos();
     for (const n of nums) {
-      const titulo    = g(`num-titulo-${n.id}`)?.value?.trim();
-      const subtitulo = g(`num-sub-${n.id}`)?.value?.trim() || null;
-      const slug      = g(`num-slug-${n.id}`)?.value?.trim() || n.slug;
-      const tipo      = g(`num-tipo-${n.id}`)?.value?.trim() || null;
-      const orden     = parseInt(g(`num-orden-${n.id}`)?.value, 10) || n.orden || 0;
-      const estado    = g(`num-estado-${n.id}`)?.value;
-      const imgData   = g(`num-img-data-${n.id}`)?.value;
-      const imgUrl    = g(`num-img-url-${n.id}`)?.value?.trim();
-      const imagen_url = imgData || imgUrl || n.imagen_url || null;
-      await DB.setContenido(n.id, { titulo: titulo || n.titulo, subtitulo, slug, tipo, orden, estado: estado || n.estado, imagen_url });
+      const titulo = g(`num-titulo-${n.id}`)?.value?.trim() || n.titulo;
+      const orden  = parseInt(g(`num-orden-${n.id}`)?.value, 10) || n.orden || 0;
+      const estado = g(`num-estado-${n.id}`)?.value || n.estado;
+      await DB.setContenido(n.id, { titulo, slug: _slugify(titulo), orden, estado });
     }
     _invalidarCache();
     notif('Todo el contenido guardado ✓', 'ok');
@@ -5445,14 +5290,14 @@ async function crearNumero() {
     const orden = Number.isFinite(ordenIn) && ordenIn > 0 ? ordenIn : (todos.length + 1);
     await DB.crearContenido({ titulo, slug, orden, estado });
     _invalidarCache();
-    notif(`Contenido "${titulo}" creado ✓ — agrega subtítulo, tipo o imagen en la tarjeta de abajo`, 'ok');
+    notif(`Contenido "${titulo}" creado ✓`, 'ok');
     if (g('new-num-orden'))  g('new-num-orden').value  = '';
     if (g('new-num-titulo')) g('new-num-titulo').value = '';
     if (g('new-num-estado')) g('new-num-estado').value = 'activo';
     cargarNumerosAdmin();
     /* Actualizar el select de contenido en el form de artículos */
     rellenarNumerosSelect('f-numero');
-  } catch(e) { notif('Error: ' + (e.message.includes('duplicate') ? `Ese slug ya existe` : e.message), 'err'); }
+  } catch(e) { notif('Error: ' + (e.message.includes('duplicate') ? `Ese título ya existe` : e.message), 'err'); }
   finally { if (overlay) overlay.classList.remove('show'); }
 }
 
@@ -5970,7 +5815,7 @@ async function _cargarNumerosBoletinSel() {
   const nums = await DB.getContenidos().catch(() => []);
   const cur = sel.value;
   sel.innerHTML = '<option value="">— Selecciona un contenido —</option>' +
-    nums.map(n => `<option value="${n.id}" ${n.id===cur?'selected':''}>N.º ${String(n.orden||'').padStart(2,'0')} — ${n.titulo} ${n.estado==='activo'?'◎':''}</option>`).join('');
+    nums.map(n => `<option value="${n.id}" ${n.id===cur?'selected':''}>${n.titulo} ${n.estado==='activo'?'◎':''}</option>`).join('');
   /* Cargar suscriptores frescos para el contador */
   try {
     const todos = await SB.select('suscriptores', 'order=created_at.desc');
@@ -5990,7 +5835,7 @@ function _onBoletinNumChange(numId) {
     if (!n) return;
     /* Autocompletar asunto */
     const asuEl = g('bol-asunto');
-    if (asuEl && !asuEl.value) asuEl.value = `La Enbajada N.º ${String(n.orden||'').padStart(2,'0')} — ${n.titulo}`;
+    if (asuEl && !asuEl.value) asuEl.value = `La Enbajada — ${n.titulo}`;
     /* URL del contenido: el slug ya es la ruta pública limpia */
     const urlEl = g('bol-url');
     if (urlEl && !urlEl.value && n.slug) {
@@ -6006,7 +5851,7 @@ function _actualizarBoletinPreview() {
   const url   = g('bol-url')?.value?.trim()     || '#';
   DB.getContenidos().then(nums => {
     const n = nums.find(x => x.id === numId);
-    if (g('bol-prev-num-label')) g('bol-prev-num-label').textContent = n ? `N.º ${String(n.orden||'').padStart(2,'0')}` : 'N.º —';
+    if (g('bol-prev-num-label')) g('bol-prev-num-label').textContent = n ? n.titulo : 'Contenido destacado';
     if (g('bol-prev-titulo'))   g('bol-prev-titulo').textContent   = n?.titulo || 'Título del contenido';
     if (g('bol-prev-mensaje'))  g('bol-prev-mensaje').textContent  = msg || 'El mensaje introductorio aparecerá aquí…';
     const cta = g('bol-prev-cta'); if (cta) cta.href = url;

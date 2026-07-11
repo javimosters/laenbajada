@@ -19,8 +19,8 @@
 <!-- Preconexión temprana a Supabase — elimina DNS+TCP+TLS en el primer fetch -->
 <link rel="preconnect" href="https://pkilwzcypcyhxjuknkho.supabase.co" crossorigin>
 <!-- Preload de app.js — empieza a descargarlo mientras se parsea el head -->
-<link rel="preload" href="/assets/app.js?v=v10" as="script">
-<link rel="stylesheet" href="/assets/styles.css?v=v10">
+<link rel="preload" href="/assets/app.js?v=v11" as="script">
+<link rel="stylesheet" href="/assets/styles.css?v=v11">
 <style>
 
 /* ── RESPONSIVE BASE — Fixes globales ── */
@@ -207,42 +207,6 @@ input, textarea, select, button { max-width: 100% }
 @media(max-width:860px){.idx-ruptura-lista{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:500px){.idx-ruptura-lista{grid-template-columns:1fr}}
 
-/* ═══════════════════════════════════
-   EDICIONES
-   ═══════════════════════════════════ */
-.idx-numeros{padding:clamp(44px,6vw,60px) clamp(24px,3.5vw,48px) clamp(36px,5vw,52px);background:var(--negro);border-top:1.5px solid rgba(242,237,228,.06);position:relative;overflow:hidden}
-.idx-numeros::after{content:'N.º';position:absolute;right:-10px;bottom:-30px;font-family:var(--serif);font-style:italic;font-weight:700;font-size:clamp(80px,16vw,200px);color:rgba(242,237,228,.02);line-height:.8;pointer-events:none}
-.idx-num-hdr{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:clamp(20px,3vw,36px);flex-wrap:wrap}
-.idx-num-titulo{font-family:var(--serif);font-style:italic;font-weight:700;font-size:clamp(26px,4vw,40px);color:rgba(242,237,228,.88);line-height:.92;letter-spacing:-.03em}
-.idx-num-ver{font-family:var(--ui);font-size:8px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(242,237,228,.26);text-decoration:none;transition:color .18s}
-.idx-num-ver::after{content:' →'}
-.idx-num-ver:hover{color:var(--oro)}
-.idx-num-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(242,237,228,.07)}
-@media(max-width:720px){.idx-num-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:440px){.idx-num-grid{grid-template-columns:1fr}}
-.idx-num-card{background:var(--negro);display:flex;flex-direction:column;text-decoration:none;color:#fff;transition:background .18s;cursor:pointer;position:relative}
-.idx-num-card:hover{background:#0f0e0c}
-.idx-num-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--azul);transform:scaleX(0);transform-origin:left;transition:transform .22s var(--sharp)}
-.idx-num-card:hover::after,.idx-num-card.activo::after{transform:scaleX(1)}
-.idx-num-card.activo::after{background:var(--oro)}
-.idx-num-img{aspect-ratio:16/9;overflow:hidden;background:linear-gradient(155deg,#060e1f,#004AAD);position:relative;flex-shrink:0}
-.idx-num-img img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.82);transition:transform 9s ease,filter .3s}
-.idx-num-card:hover .idx-num-img img{transform:scale(1.04);filter:brightness(.92)}
-.idx-num-img-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 55%)}
-.idx-num-ghost{position:absolute;top:6px;left:10px;font-family:var(--serif);font-style:italic;font-weight:700;font-size:42px;color:rgba(242,237,228,.09);line-height:1;user-select:none}
-.idx-num-badge{position:absolute;top:8px;right:8px;font-family:var(--ui);font-size:6.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:3px 8px}
-.idx-num-badge.activo{background:rgba(200,169,110,.16);color:var(--oro)}
-.idx-num-badge.archivado{background:rgba(0,74,173,.18);color:#6B9FE4}
-.idx-num-badge.proximo{background:rgba(242,237,228,.05);color:rgba(242,237,228,.28)}
-.idx-num-badge.publicado{background:rgba(242,237,228,.08);color:rgba(242,237,228,.55)}
-.idx-num-body{padding:14px 16px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
-.idx-num-id{font-family:var(--ui);font-size:7px;font-weight:700;letter-spacing:.20em;text-transform:uppercase;color:rgba(242,237,228,.20)}
-.idx-num-card-titulo{font-family:var(--serif);font-style:italic;font-weight:700;font-size:clamp(14px,1.8vw,18px);line-height:1.12;color:rgba(242,237,228,.86)}
-.idx-num-card-sub{font-family:var(--ui);font-size:12px;font-weight:700;color:rgba(242,237,228,.28);line-height:1.5}
-.idx-num-cta{font-family:var(--ui);font-size:8px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--azul);margin-top:auto;padding-top:8px;border-top:1px solid rgba(242,237,228,.06)}
-.idx-num-card.activo .idx-num-cta{color:var(--oro)}
-.idx-num-card.proximo{opacity:.40;pointer-events:none}
-
 /* frase eliminada */
 
 /* ═══════════════════════════════════
@@ -385,7 +349,7 @@ input, textarea, select, button { max-width: 100% }
       <a class="nav-ig-btn js-footer-ig" href="#" target="_blank" rel="noopener" aria-label="Instagram">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
       </a>
-      <a href="#sec-boletin" class="nav-cta">
+      <a href="#" class="nav-cta" onclick="openSubscribe();return false;">
         Suscribirse
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
@@ -402,7 +366,7 @@ input, textarea, select, button { max-width: 100% }
     <div class="mm-sep"></div>
     <a href="/sobre.html">Nosotros</a>
     <div class="mm-sep"></div>
-    <a href="#sec-boletin" class="mm-cta" onclick="closeMobileMenu()">Suscribirse →</a>
+    <a href="#" class="mm-cta" onclick="openSubscribe();toggleMenu();return false;">Suscribirse →</a>
   </nav>
 </header>
 
@@ -454,36 +418,9 @@ input, textarea, select, button { max-width: 100% }
 
   <!-- ruptura eliminada — un solo grid -->
 
-  <!-- EDICIONES -->
-  <section class="idx-numeros" id="sec-numeros" aria-label="Ediciones">
-    <div class="idx-num-hdr">
-      <h2 class="idx-num-titulo" id="idx-num-titulo"></h2>
-      <a href="/contenido.html" class="idx-num-ver">Ver contenido</a>
-    </div>
-    <div class="idx-num-grid reveal" id="idx-num-grid"></div>
-  </section>
-
   <!-- frase eliminada del index -->
 
   <!-- BOLETÍN -->
-  <section class="boletin-wrap" id="sec-boletin" aria-label="Boletín editorial">
-    <div class="boletin-inner reveal">
-      <div>
-        <div class="boletin-kicker js-boletin-kicker">Boletín editorial</div>
-        <h2 class="boletin-titulo js-boletin-titulo"></h2>
-        <p class="boletin-texto js-boletin-texto"></p>
-      </div>
-      <div>
-        <div class="boletin-form">
-          <input class="boletin-input" type="email" id="boletin-email" placeholder="tu@correo.com" autocomplete="email">
-          <button class="boletin-btn js-boletin-btn" onclick="suscribirseBtn(this)">Suscribirse</button>
-        </div>
-        <p class="boletin-feedback" id="boletin-feedback"></p>
-        <p class="boletin-nota js-boletin-nota"></p>
-      </div>
-    </div>
-  </section>
-
 </main>
 
 <footer class="site-footer">
@@ -542,7 +479,25 @@ input, textarea, select, button { max-width: 100% }
   <div class="search-modal-results" id="search-modal-results"></div>
 </div>
 
-<script src="/assets/app.js?v=v10"></script>
+<!-- ══ MODAL SUSCRIBIRSE ══ -->
+<div class="sub-modal" id="sub-modal" role="dialog" aria-modal="true" aria-label="Suscribirse al boletín">
+  <div class="sub-modal-box">
+    <div class="sub-modal-deco" aria-hidden="true">@</div>
+    <button class="sub-modal-close" onclick="closeSubscribe()" aria-label="Cerrar">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="sub-modal-kicker">Boletín editorial</div>
+    <h2 class="sub-modal-titulo js-boletin-titulo">Recibe cada número en tu correo</h2>
+    <p class="sub-modal-texto js-boletin-texto">La Enbajada llega a tu bandeja cuando hay algo que vale la pena leer.</p>
+    <div class="sub-modal-form">
+      <input class="sub-modal-input" type="email" id="boletin-email" placeholder="tu@correo.com" autocomplete="email">
+      <button class="sub-modal-btn" onclick="suscribirse()">Suscribirse</button>
+    </div>
+    <p class="sub-modal-feedback" id="boletin-feedback"></p>
+  </div>
+</div>
+
+<script src="/assets/app.js?v=v11"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════
    La Enbajada — index.html v11
@@ -773,37 +728,6 @@ function _renderRuptura(){
 /* ════════════════════════════════════════
    RENDER: EDICIONES
    ════════════════════════════════════════ */
-function _renderNumeros(nums,idxCfg){
-  var grid=document.getElementById('idx-num-grid');
-  var titulo=document.getElementById('idx-num-titulo');
-  if(!grid) return;
-  if(titulo){var t=idxCfg.tituloArchivo||'Contenido de La Enbajada';titulo.innerHTML=t.replace('La Enbajada','<em>La Enbajada</em>')}
-  if(!nums||!nums.length){grid.innerHTML='<div style="padding:40px;text-align:center;color:rgba(242,237,228,.22);font-family:var(--ui);font-size:10px;letter-spacing:.18em;text-transform:uppercase;grid-column:1/-1">Sin contenido publicado aún</div>';return}
-  /* Cada tarjeta muestra la etiqueta de su propio estado (activo/proximo/
-     archivado). El orden ya viene de Supabase (columna 'orden'), así que
-     el primero de la lista es naturalmente el destacado. */
-  grid.innerHTML=nums.slice(0,6).map(function(n){
-    var isActivo=n.estado==='activo';
-    var esNav=n.estado!=='proximo';
-    var href=esNav?'/contenido/'+n.slug:'#';
-    var np=String(n.orden||'').padStart(2,'0');
-    var imgOk=n.imagen_url&&(n.imagen_url.startsWith('http')||n.imagen_url.startsWith('data:'));
-    var eLabel=n.estado==='activo'?'Activo':n.estado==='proximo'?'Próximo':n.estado==='archivado'?'Archivado':'';
-    var eClass=n.estado==='activo'?'activo':n.estado==='proximo'?'proximo':n.estado==='archivado'?'archivado':'';
-    return '<a class="idx-num-card'+(isActivo?' activo':'')+(n.estado==='proximo'?' proximo':'')+'" href="'+href+'">'+
-      '<div class="idx-num-img">'+
-      (imgOk?'<img src="'+_esc(n.imagen_url)+'" alt="'+_esc(n.titulo)+'" loading="lazy">':'<div style="width:100%;height:100%;background:linear-gradient(160deg,#060e1f,#004AAD)"></div>')+
-      '<div class="idx-num-img-ov"></div>'+
-      '<div class="idx-num-ghost" aria-hidden="true">'+np+'</div>'+
-      (eLabel?'<div class="idx-num-badge '+eClass+'">'+eLabel+'</div>':'')+'</div>'+
-      '<div class="idx-num-body">'+
-      '<div class="idx-num-id">N.º '+np+'</div>'+
-      '<div class="idx-num-card-titulo">'+_esc(n.titulo||'')+'</div>'+
-      (n.subtitulo?'<div class="idx-num-card-sub">'+_esc(n.subtitulo)+'</div>':'')+
-      (esNav?'<div class="idx-num-cta">Leer →</div>':'')+
-      '</div></a>';
-  }).join('');
-}
 
 
 
@@ -832,17 +756,6 @@ async function init(){
     var portadaId=await _renderHero(cfg,contenidoDestacado,secciones,arts);
     _renderGrid(arts,[portadaId],secciones,idxCfg.maxArtsGrid,idxCfg.colsGrid);
     _renderRuptura();
-    /* Ediciones — condicional según admin */
-    if(idxCfg.mostrarArchivo !== false){
-      _renderNumeros(nums,idxCfg);
-    } else {
-      var numSec=document.getElementById('sec-numeros');
-      if(numSec) numSec.style.display='none';
-    }
-    /* Boletín — condicional según admin */
-    var bolSec=document.getElementById('sec-boletin');
-    if(bolSec) bolSec.style.display=(idxCfg.mostrarBoletin!==false)?'':'none';
-
     /* Boletín desde admin */
     var kickerEl=document.querySelector('.js-boletin-kicker');
     if(kickerEl&&idxCfg.kickerBoletin) kickerEl.textContent=idxCfg.kickerBoletin;
@@ -866,6 +779,6 @@ async function init(){
 init();
 window.addEventListener('pageshow',function(e){if(e.persisted) init()});
 </script>
-<script src="/assets/tracking.js?v=v10"></script>
+<script src="/assets/tracking.js?v=v11"></script>
 </body>
 </html>

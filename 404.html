@@ -17,7 +17,7 @@
   <meta name="twitter:description" content="La página que buscas no existe. Explora La Enbajada, revista cultural del Caribe colombiano.">
 <title>Página no encontrada — La Enbajada</title>
   <meta name="robots" content="noindex, follow">
-<link rel="stylesheet" href="/assets/styles.css?v=v10">
+<link rel="stylesheet" href="/assets/styles.css?v=v11">
 <style>
 
 /* ── RESPONSIVE BASE — Fixes globales ── */
@@ -226,7 +226,7 @@ html.dark .search-modal { background:var(--bg); }
     <nav class="nav-right">
       <div class="nav-search-wrap" id="search-wrap"><button class="nav-search-icon" id="search-icon-btn" onclick="openSearch()" aria-label="Buscar" aria-expanded="false"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button></div>
       <a class="nav-ig-btn js-footer-ig" href="https://instagram.com/laenbajada" target="_blank" rel="noopener" aria-label="Instagram"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
-      <a href="/#sec-boletin" class="nav-cta">Suscribirse<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      <a href="#" class="nav-cta" onclick="openSubscribe();return false;">Suscribirse<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
       <button class="hamburger" id="hamburger-btn" onclick="toggleMenu()" aria-label="Menú"><div class="hamburger-icon"><span></span><span></span><span></span></div></button>
     </nav>
   </div>
@@ -238,7 +238,7 @@ html.dark .search-modal { background:var(--bg); }
     <div class="mm-sep"></div>
     <a href="/sobre.html">Nosotros</a>
     <div class="mm-sep"></div>
-    <a href="/#sec-boletin" class="mm-cta">Suscribirse →</a>
+    <a href="#" class="mm-cta" onclick="openSubscribe();toggleMenu();return false;">Suscribirse →</a>
   </nav>
 </header>
 
@@ -281,24 +281,6 @@ html.dark .search-modal { background:var(--bg); }
   </div>
 
   <!-- BOLETÍN -->
-  <section class="boletin-wrap" id="sec-boletin">
-    <div class="boletin-deco" aria-hidden="true">@</div>
-    <div class="boletin-inner">
-      <div class="boletin-col-left">
-        <div class="boletin-kicker">Boletín editorial</div>
-        <h2 class="boletin-titulo js-boletin-titulo">Recibe cada número en tu correo</h2>
-        <p class="boletin-texto js-boletin-texto">La Enbajada llega a tu bandeja cuando hay algo que vale la pena leer.</p>
-      </div>
-      <div class="boletin-col-right">
-        <div class="boletin-form">
-          <input class="boletin-input" type="email" id="boletin-email" placeholder="tu@correo.com" autocomplete="email">
-          <button class="boletin-btn" onclick="suscribirse()">Suscribirse</button>
-        </div>
-        <p class="boletin-feedback" id="boletin-feedback"></p>
-      </div>
-    </div>
-  </section>
-
 </main>
 
 <footer class="site-footer">
@@ -347,7 +329,25 @@ html.dark .search-modal { background:var(--bg); }
   <div class="search-modal-results" id="search-modal-results"></div>
 </div>
 
-<script src="/assets/app.js?v=v10"></script>
+<!-- ══ MODAL SUSCRIBIRSE ══ -->
+<div class="sub-modal" id="sub-modal" role="dialog" aria-modal="true" aria-label="Suscribirse al boletín">
+  <div class="sub-modal-box">
+    <div class="sub-modal-deco" aria-hidden="true">@</div>
+    <button class="sub-modal-close" onclick="closeSubscribe()" aria-label="Cerrar">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="sub-modal-kicker">Boletín editorial</div>
+    <h2 class="sub-modal-titulo js-boletin-titulo">Recibe cada número en tu correo</h2>
+    <p class="sub-modal-texto js-boletin-texto">La Enbajada llega a tu bandeja cuando hay algo que vale la pena leer.</p>
+    <div class="sub-modal-form">
+      <input class="sub-modal-input" type="email" id="boletin-email" placeholder="tu@correo.com" autocomplete="email">
+      <button class="sub-modal-btn" onclick="suscribirse()">Suscribirse</button>
+    </div>
+    <p class="sub-modal-feedback" id="boletin-feedback"></p>
+  </div>
+</div>
+
+<script src="/assets/app.js?v=v11"></script>
 <script>
 /* ── ARTÍCULOS LEÍDOS ── */
 const _LEIDOS_KEY = 'le_leidos';
@@ -468,6 +468,6 @@ async function init(){
 }
 init();
 </script>
-<script src="/assets/tracking.js?v=v10"></script>
+<script src="/assets/tracking.js?v=v11"></script>
 </body>
 </html>
