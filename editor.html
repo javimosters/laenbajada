@@ -64,7 +64,7 @@ input, textarea, select, button { max-width: 100% }
 .ed-hero-cita { font-family:var(--serif); font-size:clamp(13px,1.6vw,15px); font-style:italic; color:rgba(255,255,255,.55); border-left:2px solid var(--azul); padding-left:14px; margin:0; max-width:340px; line-height:1.5; }
 .ed-hero-temas { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; opacity:0; animation:edFadeUp .6s var(--ease) .3s forwards; }
 .ed-hero-tema { font-family:var(--ui); font-size:9px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#9fc2ec; background:rgba(0,74,173,.18); border:1px solid rgba(0,74,173,.35); padding:6px 13px; border-radius:20px; }
-@media(max-width:700px) { .ed-hero-links-row { flex-direction:column; align-items:flex-start; } .ed-hero-cita { border-left:none; border-top:2px solid var(--azul); padding-left:0; padding-top:10px; max-width:100%; } }
+@media(max-width:700px) { .ed-hero-links-row { flex-direction:column; align-items:center; justify-content:center; } .ed-hero-links { justify-content:center; } .ed-hero-cita { border-left:none; border-top:2px solid var(--azul); padding-left:0; padding-top:10px; max-width:100%; text-align:center; } }
 @keyframes edFadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:none} }
 @media(prefers-reduced-motion:reduce) { .ed-hero-kicker,.ed-hero-nombre,.ed-hero-cargo,.ed-hero-bio,.ed-hero-temas,.ed-hero-links-row { animation:none !important; opacity:1 !important; } }
 /* ed-stats CSS eliminado */
