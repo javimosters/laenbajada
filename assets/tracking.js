@@ -51,6 +51,10 @@
         slug: parts[1],
       };
     }
+    /* /contenido/:slug → tipo de contenido elegido */
+    if (parts[0] === 'contenido' && parts[1]) {
+      return { pagina: 'contenido', tipo: 'contenido', referencia_id: parts[1] || params.get('slug') || null, slug: parts[1] };
+    }
     /* /sobre/equipo/:slug → perfil de editor (revisar ANTES que /sobre genérico) */
     if (parts[0] === 'sobre' && parts[1] === 'equipo') {
       return { pagina: 'editor', tipo: 'pagina', referencia_id: parts[2] || params.get('slug') || null };
@@ -70,12 +74,10 @@
     if (path.includes('contenido'))
       return {
         pagina: 'contenido',
-        /* El tipo elegido va en ?tipo= (el modelo ya no usa /contenido/:slug).
-           Si no hay ?tipo= (alias genérico /contenido.html sin elegir nada),
-           contenido.html no llega a exponer window._lae_contenido_slug, así
-           que se registra como visita de página general. */
-        tipo: (params.get('tipo') || window._lae_contenido_slug) ? 'contenido' : 'pagina',
-        referencia_id: params.get('tipo') || window._lae_contenido_slug || null
+        /* Alias genérico /contenido.html sin slug en la URL — página de
+           selección, sin un tipo específico elegido todavía. */
+        tipo: 'pagina',
+        referencia_id: null
       };
     if (path.includes('secciones'))                           return { pagina: 'secciones',  tipo: 'pagina', referencia_id: params.get('sec') || null };
     if (path.includes('editor'))                              return { pagina: 'editor',     tipo: 'pagina', referencia_id: params.get('slug') || null };

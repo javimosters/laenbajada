@@ -19,7 +19,7 @@
   <meta name="twitter:description" content="" id="tw-desc">
   <meta name="twitter:image" content="" id="tw-image">
   <link rel="canonical" href="" id="canonical">
-<link rel="stylesheet" href="/assets/styles.css?v=v11">
+<link rel="stylesheet" href="/assets/styles.css?v=v13">
 <style>
 
 /* ── RESPONSIVE BASE — Fixes globales ── */
@@ -66,7 +66,12 @@ input, textarea, select, button { max-width: 100% }
   font-family:var(--serif); font-size:clamp(32px,6vw,80px);
   font-weight:700; color:#fff; letter-spacing:-.04em; line-height:.9;
   margin-bottom:clamp(14px,2vw,22px);
+  animation:artFadeIn .5s var(--ease);
 }
+.art-h1-loading { animation:artPulse 1.7s ease-in-out infinite; opacity:.55; }
+@keyframes artPulse { 0%,100%{opacity:.4} 50%{opacity:.75} }
+@keyframes artFadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+@media(prefers-reduced-motion:reduce) { .art-h1, .art-h1-loading { animation:none !important; } }
 .art-h1 em { font-style:italic; color:rgba(255,255,255,.82); }
 .art-hero-sub {
   font-family:var(--body); font-size:clamp(15px,2vw,20px);
@@ -595,7 +600,7 @@ html.dark .search-modal { background:var(--bg); }
     <div class="art-hero-accent"></div>
     <div class="art-hero-body">
       <div class="art-hero-tag" id="art-hero-tag"></div>
-      <h1 class="art-h1" id="art-h1">Cargando…</h1>
+      <h1 class="art-h1 art-h1-loading" id="art-h1">Aterrizando la historia…</h1>
       <p class="art-hero-sub" id="art-hero-sub" style="display:none"></p>
       <div class="art-hero-autor-row" id="art-hero-autor-row"></div>
     </div>
@@ -721,14 +726,14 @@ html.dark .search-modal { background:var(--bg); }
     <h2 class="sub-modal-titulo js-boletin-titulo">Recibe cada número en tu correo</h2>
     <p class="sub-modal-texto js-boletin-texto">La Enbajada llega a tu bandeja cuando hay algo que vale la pena leer.</p>
     <div class="sub-modal-form">
-      <input class="sub-modal-input" type="email" id="boletin-email" placeholder="tu@correo.com" autocomplete="email">
-      <button class="sub-modal-btn" onclick="suscribirse()">Suscribirse</button>
+      <input class="sub-modal-input" type="email" id="boletin-email" placeholder="tu@correo.com" autocomplete="email" onkeydown="if(event.key==='Enter')suscribirse(this.nextElementSibling)">
+      <button class="sub-modal-btn" onclick="suscribirse(this)">Suscribirse</button>
     </div>
     <p class="sub-modal-feedback" id="boletin-feedback"></p>
   </div>
 </div>
 
-<script src="/assets/app.js?v=v11"></script>
+<script src="/assets/app.js?v=v13"></script>
 <script>
   /* OG image dinámica */
   function _setOGImage(url) {
@@ -1099,7 +1104,12 @@ async function init() {
     tagRow.innerHTML = `<a class="art-hero-tag-pill" href="${secUrl}">${a.seccion_tag||a.tipo||'La Enbajada'}</a>`;
   }
   const h1 = document.getElementById('art-h1');
-  if (h1) h1.innerHTML = a.titulo.replace(/([^ ]+)$/, '<em>$1</em>');
+  if (h1) {
+    h1.classList.remove('art-h1-loading');
+    h1.style.animation = 'none'; void h1.offsetWidth; /* forzar reinicio del fade */
+    h1.innerHTML = a.titulo.replace(/([^ ]+)$/, '<em>$1</em>');
+    h1.style.animation = '';
+  }
   const sub = document.getElementById('art-hero-sub');
   if (sub && a.subtitulo) { sub.textContent = a.subtitulo; sub.style.display = ''; }
 
@@ -1190,6 +1200,6 @@ function _getSesionId() {
 
 init();
 </script>
-<script src="/assets/tracking.js?v=v11"></script>
+<script src="/assets/tracking.js?v=v13"></script>
 </body>
 </html>

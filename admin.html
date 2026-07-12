@@ -1110,7 +1110,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
 </style>
 
 <!-- MOTOR PRINCIPAL -->
-<script src="/assets/app.js?v=v11"></script>
+<script src="/assets/app.js?v=v13"></script>
 
 <!-- ════════════════ NOTIF / LOADING / AUTOSAVE ════════════════ -->
 <div class="notif" id="notif" role="status" aria-live="polite">
@@ -1888,6 +1888,30 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
           <div class="fg" style="margin-top:12px">
             <label class="fl" for="ed-bio">Biografía</label>
             <textarea class="fta" id="ed-bio" placeholder="Breve presentación del autor/editor. 2–4 oraciones." style="min-height:90px;font-family:var(--serif);line-height:1.7"></textarea>
+          </div>
+          <div class="fg" style="margin-top:12px">
+            <label class="fl" for="ed-cita">Frase o cita personal (opcional)</label>
+            <input class="fi" type="text" id="ed-cita" placeholder="Ej: Mi misión es conectar relatos que enriquezcan nuestras vidas." style="font-family:var(--serif);font-style:italic">
+            <div class="fh">Aparece junto a las redes en el perfil público. Déjalo vacío si no aplica.</div>
+          </div>
+          <div class="fg" style="margin-top:12px">
+            <label class="fl" for="ed-temas">Temas que cubre (opcional)</label>
+            <input class="fi" type="text" id="ed-temas" placeholder="Ej: Periodismo cultural, Humanismo, Comunicación social">
+            <div class="fh">Separados por comas — se muestran como etiquetas en el perfil.</div>
+          </div>
+          <div class="fr fr-3" style="margin-top:12px">
+            <div class="fg">
+              <label class="fl" for="ed-red-twitter">Twitter / X</label>
+              <input class="fi" type="url" id="ed-red-twitter" placeholder="https://x.com/usuario">
+            </div>
+            <div class="fg">
+              <label class="fl" for="ed-red-instagram">Instagram</label>
+              <input class="fi" type="url" id="ed-red-instagram" placeholder="https://instagram.com/usuario">
+            </div>
+            <div class="fg">
+              <label class="fl" for="ed-red-linkedin">LinkedIn</label>
+              <input class="fi" type="url" id="ed-red-linkedin" placeholder="https://linkedin.com/in/usuario">
+            </div>
           </div>
           <div class="fr fr-2" style="margin-top:12px">
             <div class="fg">
@@ -2690,7 +2714,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
         <div class="sc-body" style="font-size:13px;color:var(--t2);line-height:1.7;display:flex;flex-direction:column;gap:10px">
           <p>Cada visita a una página del sitio se registra en la tabla <code style="font-family:var(--mono);font-size:12px;background:var(--paper2);padding:1px 6px;border-radius:2px">visitas</code> de Supabase con sesión anónima.</p>
           <div style="background:var(--paper2);padding:12px 16px;border-radius:3px;border-left:2px solid var(--azul);font-family:var(--mono);font-size:11px;color:var(--t2)">/* Agregar en cada .html antes de &lt;/body&gt; */
-&lt;script src="/assets/tracking.js?v=v11"&gt;&lt;/script&gt;</div>
+&lt;script src="/assets/tracking.js?v=v13"&gt;&lt;/script&gt;</div>
           <button class="ab ab-s ab-sm" onclick="generarSQLMetricas()" style="align-self:flex-start">↓ Descargar SQL de métricas</button>
         </div>
       </div>
@@ -5073,7 +5097,7 @@ async function cargarMetricas() {
             <div style="text-align:center;font-size:14px">📖</div>
             <div>
               <div style="font-family:var(--serif);font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                <a href="contenido.html?tipo=${encodeURIComponent(titulo)}" target="_blank" style="color:inherit;text-decoration:none;font-style:italic">${titulo}</a>
+                <a href="contenido/${num?num.slug:slugRef}" target="_blank" style="color:inherit;text-decoration:none;font-style:italic">${titulo}</a>
                 ${numLabel ? `<span style="font-size:9px;font-family:var(--mono);color:var(--t4);background:var(--paper2);padding:1px 7px;border-radius:2px">${numLabel}</span>` : ''}
               </div>
               <div style="height:3px;background:var(--bg2);border-radius:2px"><div style="height:3px;background:var(--azul);border-radius:2px;width:${pct}%;transition:width .6s var(--ease)"></div></div>
@@ -6939,6 +6963,13 @@ function abrirFormEditor(rawOrNull) {
   if (g('ed-slug'))     g('ed-slug').value      = ed?.slug     || '';
   if (g('ed-email'))    g('ed-email').value     = ed?.email    || '';
   if (g('ed-bio'))      g('ed-bio').value       = ed?.bio      || '';
+  if (g('ed-cita'))     g('ed-cita').value      = ed?.cita     || '';
+  if (g('ed-temas'))    g('ed-temas').value     = ed?.temas    || '';
+  const redesArr = Array.isArray(ed?.redes) ? ed.redes : [];
+  const buscarRed = plat => redesArr.find(r => (r.plataforma||'').toLowerCase().includes(plat))?.url || '';
+  if (g('ed-red-twitter'))   g('ed-red-twitter').value   = buscarRed('twitter') || buscarRed('x.com') || '';
+  if (g('ed-red-instagram')) g('ed-red-instagram').value = buscarRed('instagram') || '';
+  if (g('ed-red-linkedin'))  g('ed-red-linkedin').value  = buscarRed('linkedin') || '';
   if (g('ed-foto-url')) g('ed-foto-url').value  = ed?.foto_url || '';
   const hasPhoto = !!ed?.foto_url;
   if (g('up-ed-img'))  g('up-ed-img').src  = ed?.foto_url || '';
@@ -7001,6 +7032,15 @@ async function guardarEditor() {
     } else if (!foto) {
       foto = fotoData || null;
     }
+    /* Redes — solo las que el autor llenó, nada de filas vacías guardadas */
+    const redes = [];
+    const tw = (g('ed-red-twitter')?.value||'').trim();
+    const ig = (g('ed-red-instagram')?.value||'').trim();
+    const li = (g('ed-red-linkedin')?.value||'').trim();
+    if (tw) redes.push({ plataforma: 'Twitter', url: tw });
+    if (ig) redes.push({ plataforma: 'Instagram', url: ig });
+    if (li) redes.push({ plataforma: 'LinkedIn', url: li });
+
     const payload  = {
       nombre, foto_url: foto, activo: true,
       slug:  _slugify(g('ed-slug')?.value || nombre),
@@ -7008,6 +7048,9 @@ async function guardarEditor() {
       orden: parseInt(g('ed-orden')?.value) || (_editoresData.length + 1),
       email: (g('ed-email')?.value||'').trim() || null,
       bio:   (g('ed-bio')?.value||'').trim()   || null,
+      cita:  (g('ed-cita')?.value||'').trim()  || null,
+      temas: (g('ed-temas')?.value||'').trim() || null,
+      redes,
     };
     const id = g('ed-id')?.value;
     if (id) {

@@ -19,8 +19,8 @@
 <!-- Preconexión temprana a Supabase — elimina DNS+TCP+TLS en el primer fetch -->
 <link rel="preconnect" href="https://pkilwzcypcyhxjuknkho.supabase.co" crossorigin>
 <!-- Preload de app.js — empieza a descargarlo mientras se parsea el head -->
-<link rel="preload" href="/assets/app.js?v=v11" as="script">
-<link rel="stylesheet" href="/assets/styles.css?v=v11">
+<link rel="preload" href="/assets/app.js?v=v13" as="script">
+<link rel="stylesheet" href="/assets/styles.css?v=v13">
 <style>
 
 /* ── RESPONSIVE BASE — Fixes globales ── */
@@ -490,14 +490,14 @@ input, textarea, select, button { max-width: 100% }
     <h2 class="sub-modal-titulo js-boletin-titulo">Recibe cada número en tu correo</h2>
     <p class="sub-modal-texto js-boletin-texto">La Enbajada llega a tu bandeja cuando hay algo que vale la pena leer.</p>
     <div class="sub-modal-form">
-      <input class="sub-modal-input" type="email" id="boletin-email" placeholder="tu@correo.com" autocomplete="email">
-      <button class="sub-modal-btn" onclick="suscribirse()">Suscribirse</button>
+      <input class="sub-modal-input" type="email" id="boletin-email" placeholder="tu@correo.com" autocomplete="email" onkeydown="if(event.key==='Enter')suscribirse(this.nextElementSibling)">
+      <button class="sub-modal-btn" onclick="suscribirse(this)">Suscribirse</button>
     </div>
     <p class="sub-modal-feedback" id="boletin-feedback"></p>
   </div>
 </div>
 
-<script src="/assets/app.js?v=v11"></script>
+<script src="/assets/app.js?v=v13"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════
    La Enbajada — index.html v11
@@ -634,7 +634,11 @@ async function _renderHero(cfg,contenidoDestacado,secciones,pubs){
 
   /* Título — un solo bloque */
   var h1=document.getElementById('idx-hero-h1');
-  if(h1) h1.textContent=(portada.titulo||'').trim();
+  if(h1){
+    h1.style.animation='none'; void h1.offsetWidth; /* forzar reinicio del fade al pasar del skeleton al título real */
+    h1.textContent=(portada.titulo||'').trim();
+    h1.style.animation='fadeUp .5s var(--ease) both';
+  }
 
   /* Extracto */
   var ext=document.getElementById('idx-hero-extracto');
@@ -779,6 +783,6 @@ async function init(){
 init();
 window.addEventListener('pageshow',function(e){if(e.persisted) init()});
 </script>
-<script src="/assets/tracking.js?v=v11"></script>
+<script src="/assets/tracking.js?v=v13"></script>
 </body>
 </html>

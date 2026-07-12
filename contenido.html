@@ -17,7 +17,7 @@
   <meta name="twitter:description" content="El contenido de La Enbajada, revista cultural del Caribe colombiano. Artículos, historias y conversaciones.">
 <title>Contenido — La Enbajada</title>
   <meta name="robots" content="index, follow">
-<link rel="stylesheet" href="/assets/styles.css?v=v11">
+<link rel="stylesheet" href="/assets/styles.css?v=v13">
 <style>
 
 /* ── RESPONSIVE BASE — Fixes globales ── */
@@ -41,7 +41,9 @@ input, textarea, select, button { max-width: 100% }
 .cont-eyebrow { display:flex; align-items:center; gap:10px; margin-bottom:clamp(14px,2vw,22px); }
 .cont-eyebrow-line { width:22px; height:1px; background:var(--azul); }
 .cont-eyebrow-txt { font-family:var(--ui); font-size:8.5px; font-weight:700; letter-spacing:.28em; text-transform:uppercase; color:var(--azul); }
-.cont-h1 { font-family:var(--serif); font-size:clamp(40px,8vw,88px); font-style:italic; font-weight:700; color:rgba(255,255,255,.92); letter-spacing:-.04em; line-height:.95; margin-bottom:clamp(20px,3vw,30px); }
+.cont-h1 { font-family:var(--serif); font-size:clamp(40px,8vw,88px); font-style:italic; font-weight:700; color:rgba(255,255,255,.92); letter-spacing:-.04em; line-height:.95; margin-bottom:clamp(24px,3.5vw,34px); transition:opacity .3s var(--ease); }
+.cont-h1.fading { opacity:0; }
+
 
 /* Selector — siempre visible, arriba del todo */
 .cont-select-wrap { max-width:420px; }
@@ -60,6 +62,17 @@ input, textarea, select, button { max-width: 100% }
 /* Cuerpo: grid de artículos del tipo elegido */
 .cont-body { max-width:1280px; margin:0 auto; padding:clamp(36px,5vw,64px) var(--pad); }
 @media(min-width:1400px) { .cont-body { max-width:1440px; } }
+
+/* Cards del grid con aparición escalonada (además del .reveal genérico) */
+.curatia-grid > a { opacity:0; transform:translateY(14px); animation:contCardIn .55s var(--ease) forwards; }
+.curatia-grid > a:nth-child(1) { animation-delay:.02s; }
+.curatia-grid > a:nth-child(2) { animation-delay:.08s; }
+.curatia-grid > a:nth-child(3) { animation-delay:.14s; }
+.curatia-grid > a:nth-child(4) { animation-delay:.20s; }
+.curatia-grid > a:nth-child(5) { animation-delay:.26s; }
+.curatia-grid > a:nth-child(6) { animation-delay:.32s; }
+.curatia-grid > a:nth-child(n+7) { animation-delay:.36s; }
+@keyframes contCardIn { to { opacity:1; transform:none; } }
 
 .ed-empty { padding:56px var(--pad); text-align:center; color:var(--t4); }
 .ed-empty-ic { font-size:32px; margin-bottom:14px; opacity:.3; }
@@ -178,6 +191,7 @@ html.dark .search-modal { background:var(--bg); }
     <div class="cont-hero-inner">
       <div class="cont-eyebrow"><div class="cont-eyebrow-line"></div><div class="cont-eyebrow-txt">La Enbajada</div></div>
       <h1 class="cont-h1" id="cont-h1"><em>Contenido</em></h1>
+
       <div class="cont-select-wrap">
         <label class="cont-select-label" for="cont-select">Explora por tipo</label>
         <select class="cont-select" id="cont-select" onchange="_cambiarTipo(this.value)">
@@ -188,12 +202,17 @@ html.dark .search-modal { background:var(--bg); }
   </div>
 
   <div class="cont-body" id="cont-body">
-    <div id="cont-empty" class="ed-empty">
+    <div id="cont-empty" class="ed-empty reveal">
       <div class="ed-empty-ic">◈</div>
       <h3>Elige un tipo arriba</h3>
       <p>Selecciona un tipo de contenido para ver sus artículos.</p>
     </div>
-    <div id="cont-grid" class="curatia-grid reveal" style="display:none"></div>
+    <div id="cont-skeleton" class="curatia-grid" style="display:none">
+      <div class="skeleton" style="aspect-ratio:4/3"></div>
+      <div class="skeleton" style="aspect-ratio:4/3"></div>
+      <div class="skeleton" style="aspect-ratio:4/3"></div>
+    </div>
+    <div id="cont-grid" class="curatia-grid" style="display:none"></div>
   </div>
 </main>
 
@@ -256,14 +275,14 @@ html.dark .search-modal { background:var(--bg); }
     <h2 class="sub-modal-titulo js-boletin-titulo">Recibe cada número en tu correo</h2>
     <p class="sub-modal-texto js-boletin-texto">La Enbajada llega a tu bandeja cuando hay algo que vale la pena leer.</p>
     <div class="sub-modal-form">
-      <input class="sub-modal-input" type="email" id="boletin-email" placeholder="tu@correo.com" autocomplete="email">
-      <button class="sub-modal-btn" onclick="suscribirse()">Suscribirse</button>
+      <input class="sub-modal-input" type="email" id="boletin-email" placeholder="tu@correo.com" autocomplete="email" onkeydown="if(event.key==='Enter')suscribirse(this.nextElementSibling)">
+      <button class="sub-modal-btn" onclick="suscribirse(this)">Suscribirse</button>
     </div>
     <p class="sub-modal-feedback" id="boletin-feedback"></p>
   </div>
 </div>
 
-<script src="/assets/app.js?v=v11"></script>
+<script src="/assets/app.js?v=v13"></script>
 <script>
 /* ── ARTÍCULOS LEÍDOS ── */
 const _LEIDOS_KEY = 'le_leidos';
@@ -424,46 +443,61 @@ function normTag(v) {
 
 /* ── SELECTOR DE CONTENIDO (cada fila de `contenidos` es un tipo/categoría) ── */
 
-function _renderSelect(nums) {
+function _renderSelect(nums, valorActual) {
   const sel = document.getElementById('cont-select');
   if (!sel) return;
   const activos = nums.filter(n => n.estado !== 'archivado');
   sel.innerHTML = '<option value="">Selecciona un tipo de contenido…</option>' +
-    activos.map(n => `<option value="${_esc(n.titulo)}">${_esc(n.titulo)}${n.estado==='proximo'?' (próximamente)':''}</option>`).join('');
+    activos.map(n => `<option value="${n.slug}" ${n.slug===valorActual?'selected':''}>${_esc(n.titulo)}${n.estado==='proximo'?' (próximamente)':''}</option>`).join('');
 }
 
-function _cambiarTipo(titulo) {
-  if (!titulo) { location.href = '/contenido.html'; return; }
-  location.href = '/contenido.html?tipo=' + encodeURIComponent(titulo);
+function _cambiarTipo(slug) {
+  location.href = slug ? '/contenido/' + slug : '/contenido.html';
 }
 
-async function _cargarContenidoDeTipo(nums, tipo) {
+/* Transición suave del título al cambiar de tipo — un pequeño fade
+   en vez de un salto seco, para que se sienta como una página que
+   respira y no un reemplazo brusco de texto. */
+function _fadeSwap(el, nuevoHtml) {
+  if (!el) return;
+  el.classList.add('fading');
+  setTimeout(() => { el.innerHTML = nuevoHtml; el.classList.remove('fading'); }, 220);
+}
+
+async function _cargarContenidoDeTipo(nums, slugParam) {
   const h1     = document.getElementById('cont-h1');
   const sel    = document.getElementById('cont-select');
   const empty  = document.getElementById('cont-empty');
   const grid   = document.getElementById('cont-grid');
+  const sk     = document.getElementById('cont-skeleton');
 
-  const cont = nums.find(n => n.titulo === tipo);
-  if (sel) sel.value = cont ? cont.titulo : '';
+  const cont = nums.find(n => n.slug === slugParam);
+  if (sel) sel.value = cont ? cont.slug : '';
 
   if (!cont) {
-    if (h1) h1.innerHTML = '<em>Contenido</em>';
-    if (empty) { empty.style.display = ''; empty.querySelector('h3').textContent = 'No encontramos ese tipo'; }
-    if (grid) grid.style.display = 'none';
+    _fadeSwap(h1, '<em>Contenido</em>');
+    empty.style.display = ''; empty.querySelector('h3').textContent = 'No encontramos ese tipo';
+    empty.querySelector('p').textContent = 'Elige otro tipo en el selector de arriba.';
+    grid.style.display = 'none'; sk.style.display = 'none';
     return;
   }
 
-  if (h1) h1.innerHTML = `<em>${_esc(cont.titulo)}</em>`;
-  window._lae_contenido_slug = cont.slug || cont.titulo; /* para tracking.js */
+  /* Loading state — breve, pero le da a la página una sensación de
+     que "algo está pasando" en vez de un salto instantáneo de texto. */
+  sk.style.display = ''; empty.style.display = 'none'; grid.style.display = 'none';
+
+  _fadeSwap(h1, `<em>${_esc(cont.titulo)}</em>`);
+  window._lae_contenido_slug = cont.slug; /* para tracking.js */
 
   const canonicalEl = document.getElementById('canonical');
-  if (canonicalEl) canonicalEl.href = `https://laenbajada.com/contenido.html?tipo=${encodeURIComponent(cont.titulo)}`;
+  if (canonicalEl) canonicalEl.href = `https://laenbajada.com/contenido/${encodeURIComponent(cont.slug)}`;
   const ogUrlEl = document.getElementById('og-url');
-  if (ogUrlEl) ogUrlEl.setAttribute('content', `https://laenbajada.com/contenido.html?tipo=${encodeURIComponent(cont.titulo)}`);
+  if (ogUrlEl) ogUrlEl.setAttribute('content', `https://laenbajada.com/contenido/${encodeURIComponent(cont.slug)}`);
 
   if (cont.estado === 'proximo') {
-    if (empty) { empty.style.display = ''; empty.querySelector('h3').textContent = 'Próximamente'; empty.querySelector('p').textContent = 'Este contenido todavía no está disponible.'; }
-    if (grid) grid.style.display = 'none';
+    sk.style.display = 'none';
+    empty.style.display = ''; empty.querySelector('h3').textContent = 'Próximamente';
+    empty.querySelector('p').textContent = 'Este contenido todavía no está disponible — vuelve pronto.';
     aplicarSEO({ titulo: cont.titulo, desc: `${cont.titulo} — próximamente en La Enbajada.` });
     return;
   }
@@ -472,12 +506,15 @@ async function _cargarContenidoDeTipo(nums, tipo) {
     `contenido_id=eq.${encodeURIComponent(cont.id)}&estado=eq.publicado&select=id,titulo,subtitulo,extracto,imagen_url,slug,estado,tipo,seccion_tag,contenido_id,orden,autor,editor_id,fecha_publicacion,created_at&order=orden.asc,fecha_publicacion.desc`
   ).then(rows => (rows||[]).map(a=>({...a, seccion_tag:(a.seccion_tag||'').replace(/#/g,'').trim(), autor: a.autor||''}))).catch(() => []);
 
+  sk.style.display = 'none';
+
   if (!arts.length) {
-    if (empty) { empty.style.display = ''; empty.querySelector('h3').textContent = 'Sin artículos aún'; empty.querySelector('p').textContent = 'Este tipo de contenido todavía no tiene artículos publicados.'; }
-    if (grid) grid.style.display = 'none';
+    empty.style.display = '';
+    empty.querySelector('h3').textContent = 'Sin artículos aún';
+    empty.querySelector('p').textContent = 'Este tipo de contenido todavía no tiene artículos publicados — vuelve pronto.';
   } else {
-    if (empty) empty.style.display = 'none';
-    if (grid) { grid.style.display = ''; grid.innerHTML = arts.map(renderCuratiaCard).join(''); }
+    grid.style.display = '';
+    grid.innerHTML = arts.map(renderCuratiaCard).join('');
     setTimeout(() => _marcarLeidosEnGrid('a[href*="articulo"], a[href*="secciones"], a[href*="historias"]'), 400);
   }
 
@@ -488,7 +525,8 @@ async function _cargarContenidoDeTipo(nums, tipo) {
 async function init() {
   const _sitePromise = initSite();
   const params    = new URLSearchParams(location.search);
-  const tipoParam = params.get('tipo');
+  const pathParts = location.pathname.split('/').filter(Boolean);
+  const slugParam = params.get('slug') || (pathParts[0] === 'contenido' && pathParts[1] ? pathParts[1] : null);
 
   const [nums, secsDB] = await Promise.all([
     DB.getContenidos(),
@@ -498,17 +536,18 @@ async function init() {
 
   _SECCIONES = secsDB;
   _renderNavSecs(secsDB);   /* siempre — sin importar si hay tipo elegido o no */
-  _renderSelect(nums);
+  _renderSelect(nums, slugParam);
 
-  if (tipoParam) {
-    await _cargarContenidoDeTipo(nums, tipoParam);
+  if (slugParam) {
+    await _cargarContenidoDeTipo(nums, slugParam);
   } else {
     aplicarSEO({ titulo: 'Contenido', desc: 'Todo el contenido de La Enbajada, revista cultural del Caribe colombiano.' });
+    observeReveal();
   }
 }
 init();
 
 </script>
-<script src="/assets/tracking.js?v=v11"></script>
+<script src="/assets/tracking.js?v=v13"></script>
 </body>
 </html>

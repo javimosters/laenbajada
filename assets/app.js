@@ -934,10 +934,10 @@ function renderCuratia(items) {
 }
 
 /* ── Función global de suscripción (usada desde todos los .html) ── */
-async function suscribirse() {
+async function suscribirse(btn) {
   const input    = document.getElementById('boletin-email');
   const feedback = document.getElementById('boletin-feedback');
-  await suscribirBoletin(input, feedback);
+  await suscribirBoletin(input, feedback, btn);
 }
 
 /* ── Modal de suscripción — reemplaza la sección de boletín embebida ── */
@@ -1030,23 +1030,47 @@ function _initReadingProgress() {}
 /* ══════════════════════════════════════════════════════════════
    BOLETÍN
    ══════════════════════════════════════════════════════════════ */
-async function suscribirBoletin(inputEl, feedbackEl) {
-  const email = (inputEl?.value || '').trim();
-  if (feedbackEl) feedbackEl.textContent = 'Enviando…';
-  const result = await DB.agregarSuscriptor(email);
-  if (!feedbackEl) return;
+async function suscribirBoletin(inputEl, feedbackEl, btnEl) {
+  const raw = (inputEl?.value || '').trim();
+
+  const mostrar = (texto, tipo) => {
+    if (!feedbackEl) return;
+    feedbackEl.textContent = texto;
+    feedbackEl.className = feedbackEl.className.replace(/\bfb-\w+\b/g, '').trim() + ` fb-${tipo} fb-in`;
+    /* reiniciar la animación cada vez, aunque el mensaje sea igual al anterior */
+    void feedbackEl.offsetWidth;
+    feedbackEl.classList.add('fb-in');
+  };
+
+  /* Validación en el propio navegador, con mensajes específicos —
+     no todo error es "correo inválido" genérico. */
+  if (!raw) {
+    mostrar('Escribe tu correo para suscribirte.', 'warn');
+    inputEl?.focus();
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw.toLowerCase())) {
+    mostrar(raw.includes('@') ? 'Ese correo no se ve completo — revísalo.' : 'Falta la @ — revisa tu correo.', 'warn');
+    inputEl?.focus();
+    return;
+  }
+
+  if (btnEl) { btnEl.disabled = true; btnEl.dataset.txt = btnEl.textContent; btnEl.textContent = 'Enviando…'; }
+  mostrar('Enviando…', 'info');
+
+  const result = await DB.agregarSuscriptor(raw);
+
+  if (btnEl) { btnEl.disabled = false; btnEl.textContent = btnEl.dataset.txt || 'Suscribirse'; }
+
   if (result === true) {
-    feedbackEl.textContent = '✓ ¡Suscrito! Gracias.';
-    feedbackEl.style.color = 'var(--c-verde)';
+    mostrar('¡Gracias por suscribirte! Ya eres parte de La Enbajada.', 'ok');
     if (inputEl) inputEl.value = '';
   } else if (result === 'duplicado') {
-    feedbackEl.textContent = 'Ya estás suscrito con ese correo.';
-    feedbackEl.style.color = 'var(--c-azul)';
+    mostrar('Ya estás suscrito con ese correo — gracias por seguir ahí.', 'info');
   } else {
-    feedbackEl.textContent = 'Escribe un correo válido.';
-    feedbackEl.style.color = 'var(--c-rojo)';
+    mostrar('Algo falló de nuestro lado — intenta de nuevo en un momento.', 'warn');
   }
-  setTimeout(() => { if (feedbackEl) feedbackEl.textContent = ''; }, 4000);
+  setTimeout(() => { if (feedbackEl) { feedbackEl.textContent = ''; feedbackEl.className = feedbackEl.className.replace(/\bfb-\w+\b/g, '').trim(); } }, 5000);
 }
 
 /* ══════════════════════════════════════════════════════════════

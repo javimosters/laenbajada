@@ -18,7 +18,7 @@
   <meta name="twitter:description" content="Conoce al equipo detrás de La Enbajada, la revista cultural que aterriza la cultura del Caribe colombiano.">
 <title>Nosotros — La Enbajada</title>
   <meta name="robots" content="index, follow">
-<link rel="stylesheet" href="/assets/styles.css?v=v11">
+<link rel="stylesheet" href="/assets/styles.css?v=v13">
 <style>
 
 /* ── RESPONSIVE BASE — Fixes globales ── */
@@ -331,14 +331,14 @@ html.dark .search-modal { background:var(--bg); }
     <h2 class="sub-modal-titulo js-boletin-titulo">Recibe cada número en tu correo</h2>
     <p class="sub-modal-texto js-boletin-texto">La Enbajada llega a tu bandeja cuando hay algo que vale la pena leer.</p>
     <div class="sub-modal-form">
-      <input class="sub-modal-input" type="email" id="boletin-email" placeholder="tu@correo.com" autocomplete="email">
-      <button class="sub-modal-btn" onclick="suscribirse()">Suscribirse</button>
+      <input class="sub-modal-input" type="email" id="boletin-email" placeholder="tu@correo.com" autocomplete="email" onkeydown="if(event.key==='Enter')suscribirse(this.nextElementSibling)">
+      <button class="sub-modal-btn" onclick="suscribirse(this)">Suscribirse</button>
     </div>
     <p class="sub-modal-feedback" id="boletin-feedback"></p>
   </div>
 </div>
 
-<script src="/assets/app.js?v=v11"></script>
+<script src="/assets/app.js?v=v13"></script>
 <script>
 
 /* ── Sanitize XSS — escapar datos de BD antes de innerHTML ── */
@@ -469,6 +469,6 @@ async function init(){
 }
 init();
 </script>
-<script src="/assets/tracking.js?v=v11"></script>
+<script src="/assets/tracking.js?v=v13"></script>
 </body>
 </html>
