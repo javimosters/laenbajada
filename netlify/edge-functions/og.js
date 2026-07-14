@@ -31,7 +31,7 @@ const SOCIAL_BOT_UA = /facebookexternalhit|Facebot|Twitterbot|WhatsApp|TelegramB
    Server-rendering estos bots no es cloaking: es el mismo contenido,
    solo que ya armado — la propia documentación de Google lo respalda
    ("server-side or pre-rendering is still a great idea"). */
-const AI_SEARCH_BOT_UA = /bingbot|BingPreview|GPTBot|ChatGPT-User|OAI-SearchBot|ClaudeBot|Claude-Web|anthropic-ai|PerplexityBot|Perplexity-User|Bytespider|CCBot|Applebot-Extended|YandexBot|DuckDuckBot|Googlebot|Google-InspectionTool|GoogleOther|Google-Extended/i;
+const AI_SEARCH_BOT_UA = /bingbot|BingPreview|GPTBot|ChatGPT-User|OAI-SearchBot|ClaudeBot|Claude-User|Claude-SearchBot|Claude-Web|anthropic-ai|PerplexityBot|Perplexity-User|Bytespider|CCBot|Applebot-Extended|YandexBot|DuckDuckBot|Googlebot|Google-InspectionTool|GoogleOther|Google-Extended/i;
 
 const BOT_UA = new RegExp(SOCIAL_BOT_UA.source + '|' + AI_SEARCH_BOT_UA.source, 'i');
 
