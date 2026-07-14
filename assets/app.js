@@ -173,7 +173,6 @@ const _cache = {
   numeros:      null,
   articulos:    {},
   bloques:      {},
-  curatiaitems: {},
 };
 
 /* ══════════════════════════════════════════════════════════════
@@ -533,7 +532,6 @@ const DB = {
   async deleteArticulo(id) {
     _cache.articulos   = {};
     _cache.bloques     = {};
-    _cache.curatiaitems = {};
     return SB.delete('articulos', `id=eq.${id}`);
   },
 
@@ -555,26 +553,6 @@ const DB = {
       id: b.id || undefined,
     }));
     return SB.insert('bloques_contenido', payload);
-  },
-
-  /* ── Ítems de La Curaría ────────────────────────────────────── */
-  async getCuratiaitems(articulo_id) {
-    if (_cache.curatiaitems[articulo_id]) return _cache.curatiaitems[articulo_id];
-    const rows = await SB.select('curatia_items', `articulo_id=eq.${articulo_id}&order=orden.asc`);
-    _cache.curatiaitems[articulo_id] = rows || [];
-    return _cache.curatiaitems[articulo_id];
-  },
-  async setCuratiaitems(articulo_id, items) {
-    _cache.curatiaitems[articulo_id] = null;
-    await SB.delete('curatia_items', `articulo_id=eq.${articulo_id}`);
-    if (!items.length) return;
-    const payload = items.map((it, i) => ({
-      ...it,
-      articulo_id,
-      orden: i,
-      id: it.id || undefined,
-    }));
-    return SB.insert('curatia_items', payload);
   },
 
   /* ── Suscriptores ───────────────────────────────────────────── */
@@ -684,7 +662,6 @@ const DB = {
     _cache.contenidos  = null;
     _cache.articulos   = {};
     _cache.bloques     = {};
-    _cache.curatiaitems = {};
   },
 
   /* ── Búsqueda (alias público) ─────────────────────────────── */

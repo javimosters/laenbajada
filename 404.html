@@ -17,7 +17,7 @@
   <meta name="twitter:description" content="La página que buscas no existe. Explora La Enbajada, revista cultural del Caribe colombiano.">
 <title>Página no encontrada — La Enbajada</title>
   <meta name="robots" content="noindex, follow">
-<link rel="stylesheet" href="/assets/styles.css?v=v13">
+<link rel="stylesheet" href="/assets/styles.css?v=v14">
 <style>
 
 /* ── RESPONSIVE BASE — Fixes globales ── */
@@ -50,10 +50,6 @@ input, textarea, select, button { max-width: 100% }
   letter-spacing: -.12em; line-height: 1;
   user-select: none; pointer-events: none; z-index: 0;
 }
-.hero-404-accent {
-  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-  background: linear-gradient(to bottom, var(--azul), transparent 80%); z-index: 1;
-}
 /* FIX: puntos ocultos en móvil para no desbordarse */
 .hero-404-dots {
   position: absolute; right: clamp(24px,8vw,120px); bottom: clamp(24px,6vw,80px);
@@ -64,11 +60,13 @@ input, textarea, select, button { max-width: 100% }
 .hero-404-dots span { width: 4px; height: 4px; border-radius: 50%; background: var(--azul); display: block; }
 .hero-404-content {
   position: relative; z-index: 2;
-  display: flex; flex-direction: column; align-items: flex-start;
+  display: flex; flex-direction: column; align-items: center;
   padding: clamp(80px,12vw,140px) var(--pad) clamp(60px,10vw,100px);
   max-width: min(720px,100%);
+  margin: 0 auto;
+  text-align: center;
 }
-.e404-eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: clamp(22px,3vw,36px); }
+.e404-eyebrow { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: clamp(22px,3vw,36px); }
 .e404-eyebrow-line { width: 28px; height: 1px; background: var(--azul); flex-shrink: 0; }
 .e404-eyebrow-txt { font-family: var(--ui); font-size: 8.5px; font-weight: 700; letter-spacing: .30em; text-transform: uppercase; color: var(--azul); }
 .e404-num { font-family: var(--serif); font-size: clamp(60px,12vw,160px); font-weight: 700; color: rgba(255,255,255,.08); letter-spacing: -.08em; line-height: .85; margin-bottom: 6px; user-select: none; }
@@ -76,7 +74,7 @@ input, textarea, select, button { max-width: 100% }
 .e404-h1 em { font-style: italic; color: rgba(255,255,255,.62); }
 .e404-sep { width: 44px; height: 1px; background: rgba(255,255,255,.15); margin-bottom: clamp(28px,4vw,44px); }
 .e404-sub { font-family: var(--body); font-size: clamp(14px,1.9vw,18px); font-style: italic; color: rgba(255,255,255,.42); line-height: 1.78; max-width: 440px; margin-bottom: clamp(36px,5vw,56px); }
-.e404-btns { display: flex; flex-wrap: wrap; gap: 10px; }
+.e404-btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 .e404-btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--ui); font-size: 8.5px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; padding: 14px 26px; text-decoration: none; transition: all .22s; cursor: pointer; border: none; }
 .e404-btn-primary { background: var(--azul); color: #fff; border: 1.5px solid var(--azul); }
 .e404-btn-primary:hover { background: #0039a0; border-color: #0039a0; transform: translateX(-2px); }
@@ -247,7 +245,6 @@ html.dark .search-modal { background:var(--bg); }
   <!-- HERO -->
   <div class="hero-404">
     <div class="hero-404-deco" aria-hidden="true">404</div>
-    <div class="hero-404-accent"></div>
     <div class="hero-404-dots" aria-hidden="true">
       <span></span><span></span><span></span><span></span><span></span><span></span>
       <span></span><span></span><span></span><span></span><span></span><span></span>
@@ -347,7 +344,7 @@ html.dark .search-modal { background:var(--bg); }
   </div>
 </div>
 
-<script src="/assets/app.js?v=v13"></script>
+<script src="/assets/app.js?v=v14"></script>
 <script>
 /* ── ARTÍCULOS LEÍDOS ── */
 const _LEIDOS_KEY = 'le_leidos';
@@ -468,6 +465,6 @@ async function init(){
 }
 init();
 </script>
-<script src="/assets/tracking.js?v=v13"></script>
+<script src="/assets/tracking.js?v=v14"></script>
 </body>
 </html>

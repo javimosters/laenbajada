@@ -21,6 +21,10 @@
   function = "og"
 
 [[edge_functions]]
+  path = "/secciones/:tag"
+  function = "og"
+
+[[edge_functions]]
   path = "/historias/:slug"
   function = "og"
 

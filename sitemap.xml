@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Este archivo es un fallback estático (solo se sirve si la edge function
      netlify/edge-functions/sitemap.js llega a fallar). Por eso solo incluye
-     páginas fijas que siempre existen — nada de ediciones ni secciones
+     páginas fijas que siempre existen — nada de contenido ni secciones
      específicas, ya que esas se crean/eliminan desde el admin y aquí no
      hay forma de mantenerlas sincronizadas. El sitemap real y completo
-     lo genera sitemap.js dinámicamente desde Supabase. -->
+     lo genera sitemap.js dinámicamente desde Supabase.
+
+     IMPORTANTE: si alguna vez renombras o eliminas una página fija,
+     actualiza también este archivo — a diferencia del sitemap dinámico,
+     este NO se corrige solo. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://laenbajada.com/</loc>
@@ -12,7 +16,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://laenbajada.com/archivo</loc>
+    <loc>https://laenbajada.com/contenido</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

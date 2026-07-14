@@ -1110,7 +1110,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
 </style>
 
 <!-- MOTOR PRINCIPAL -->
-<script src="/assets/app.js?v=v13"></script>
+<script src="/assets/app.js?v=v14"></script>
 
 <!-- ════════════════ NOTIF / LOADING / AUTOSAVE ════════════════ -->
 <div class="notif" id="notif" role="status" aria-live="polite">
@@ -1708,11 +1708,6 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
             onblur="g('cursor-pos-hint').textContent='↑ Haz clic en el texto primero, luego inserta'"
             style="min-height:520px;padding:32px 40px;font-family:var(--serif);font-size:17px;line-height:1.9;color:var(--t1);outline:none;word-break:break-word"
           ></div>
-          <!-- Curatía (solo si tipo = curatia) -->
-          <div id="curatia-admin-wrap" style="display:none;padding:16px 20px;border-top:1px solid var(--bd)">
-            <div id="curatia-items-admin"></div>
-            <button class="ab ab-s" style="margin-top:12px" onclick="addCuratiaItem()">+ Añadir recomendación</button>
-          </div>
           <!-- Footer del editor -->
           <div style="padding:12px 20px;border-top:2px solid var(--bd);display:flex;justify-content:space-between;align-items:center;background:var(--paper2)">
             <span id="word-status" style="font-size:11px;color:var(--t4);font-family:var(--mono)">Listo para escribir</span>
@@ -2714,7 +2709,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
         <div class="sc-body" style="font-size:13px;color:var(--t2);line-height:1.7;display:flex;flex-direction:column;gap:10px">
           <p>Cada visita a una página del sitio se registra en la tabla <code style="font-family:var(--mono);font-size:12px;background:var(--paper2);padding:1px 6px;border-radius:2px">visitas</code> de Supabase con sesión anónima.</p>
           <div style="background:var(--paper2);padding:12px 16px;border-radius:3px;border-left:2px solid var(--azul);font-family:var(--mono);font-size:11px;color:var(--t2)">/* Agregar en cada .html antes de &lt;/body&gt; */
-&lt;script src="/assets/tracking.js?v=v13"&gt;&lt;/script&gt;</div>
+&lt;script src="/assets/tracking.js?v=v14"&gt;&lt;/script&gt;</div>
           <button class="ab ab-s ab-sm" onclick="generarSQLMetricas()" style="align-self:flex-start">↓ Descargar SQL de métricas</button>
         </div>
       </div>
@@ -3487,42 +3482,8 @@ async function rellenarNumerosSelect(targetId = 'f-numero') {
 /* ── Guardar artículo ── */
 let _tipoActual = 'cronica';
 let _bloques = [];
-let _curatiaItems = [];
 let _autosavePending = false;
 let _autosaveTimer = null;
-
-function selTipo(tipo, btn) {
-  _tipoActual = tipo;
-  document.querySelectorAll('.tipo-card').forEach(c => c.classList.remove('activo'));
-  if (btn) btn.classList.add('activo');
-
-  /* Mostrar/ocultar botón Q&A */
-  const btnQA = g('btn-qa');
-  if (btnQA) btnQA.style.display = tipo === 'conversacion' ? '' : 'none';
-
-  /* Mostrar/ocultar área de curatía vs editor normal */
-  const curatiaWrap = g('curatia-admin-wrap');
-  const bloquesWrap = g('bloques-wrap');
-  const wordEditor  = document.getElementById('word-editor')?.closest('.rich-editor-wrap') ||
-                      document.getElementById('word-toolbar')?.parentElement;
-  const isCuratia = (tipo === 'curatia' || tipo === 'la-curatia' || tipo === 'la-curaturia');
-  if (curatiaWrap) curatiaWrap.style.display = isCuratia ? '' : 'none';
-  if (bloquesWrap) bloquesWrap.style.display = isCuratia ? 'none' : '';
-
-  /* BUG FIX: Sincronizar campo oculto seccion_tag — SIEMPRE, no solo si existe mapSeccion */
-  const mapSeccion = {
-    'cronica'         : 'la-cronica',
-    'conversacion'    : 'la-conversacion',
-    'curatia'         : 'la-curatia',
-    'la-cronica'      : 'la-cronica',
-    'la-conversacion' : 'la-conversacion',
-    'la-curatia'      : 'la-curatia',
-    'la-curaturia'    : 'la-curaturia',
-  };
-  const secTag = mapSeccion[tipo] || tipo;
-  if (g('f-seccion')) g('f-seccion').value = secTag;
-  if (g('f-tipo'))    g('f-tipo').value    = tipo;
-}
 
 async function guardarArt(estadoOverride) {
   const titulo = g('f-titulo')?.value?.trim();
@@ -3561,12 +3522,10 @@ async function guardarArt(estadoOverride) {
       }
     }
 
-    /* ── seccion_tag: siempre calculado desde _tipoActual ──
-       BUG FIX: el seccion_tag estaba vacío para conversacion y curatia
-       porque el hidden f-seccion no se llenaba si no se pasaba por el paso 0 */
-    /* seccionTag: primero f-seccion (llenado dinámicamente), luego mapa de fallback */
-    const _mapSecFallback = { cronica:'la-cronica', conversacion:'la-conversacion', curatia:'la-curatia', 'la-cronica':'la-cronica', 'la-conversacion':'la-conversacion', 'la-curatia':'la-curatia', 'la-curaturia':'la-curaturia' };
-    const seccionTag = (g('f-seccion')?.value || '').replace(/#/g,'').trim() || _mapSecFallback[_tipoActual] || 'la-cronica';
+    /* seccionTag: el hidden f-seccion ya lo llena selTipoSec() con el tag
+       real de Supabase al elegir la sección — sin mapas ni fallback fijo,
+       para no forzar una sección que quizás ya no exista. */
+    const seccionTag = (g('f-seccion')?.value || '').replace(/#/g,'').trim() || _tipoActual || '';
 
     /* Generar slug limpio desde el título */
     const _slugFromTitulo = (t) => (t||'').toLowerCase()
@@ -3612,9 +3571,6 @@ async function guardarArt(estadoOverride) {
       } else if (_bloques.length) {
         await DB.setBloques(id, _bloques);
       }
-    }
-    if (id && _tipoActual === 'curatia') {
-      await DB.setCuratiaitems(id, _curatiaItems);
     }
 
     if (g('f-art-id') && id) g('f-art-id').value = id;
@@ -3697,11 +3653,6 @@ function selTipoSec(tag, nombre, btn) {
   const btnQA = g('btn-qa');
   if (btnQA) btnQA.style.display = esConversacion ? 'inline-flex' : 'none';
 
-  /* Mostrar/ocultar curatía vs editor */
-  const curatiaWrap = g('curatia-admin-wrap');
-  if (curatiaWrap) curatiaWrap.style.display = esCuratia ? '' : 'none';
-  /* word-editor siempre visible */
-
   /* Guardar el tag real de la sección (no el tipo base) */
   if (g('f-seccion')) g('f-seccion').value = tag;
   if (g('f-tipo'))    g('f-tipo').value    = tipoBase;
@@ -3721,10 +3672,10 @@ function limpiarForm() {
   if (g('f-orden'))     g('f-orden').value     = '0';
   if (g('f-estado'))    g('f-estado').value    = 'borrador';
   if (g('f-fecha'))     g('f-fecha').value     = '';
-  if (g('f-seccion'))   g('f-seccion').value   = 'la-cronica';
-  _bloques = []; _curatiaItems = [];
+  if (g('f-seccion'))   g('f-seccion').value   = '';
+  _bloques = [];
   wSetHTML('');
-  renderBloques(); renderCuratiaAdmin();
+  renderBloques();
   quitarImgArt();
   wzReset();
   /* Seleccionar crónica por defecto */
@@ -3783,13 +3734,13 @@ async function cargarArtForm(id) {
 
     /* BUG FIX: Restaurar tipo/sección correctamente
        1. _tipoActual = tipo del artículo (cronica, conversacion, curatia)
-       2. f-seccion   = seccion_tag del artículo (la-cronica, la-conversacion, etc.)
+       2. f-seccion   = seccion_tag real del artículo, tal cual está en Supabase
        3. Resaltar la tarjeta correcta en el paso 0 */
     _tipoActual = a.tipo || 'cronica';
 
-    /* seccion_tag real del artículo */
-    const mapSeccionFallback = { cronica:'la-cronica', conversacion:'la-conversacion', curatia:'la-curatia' };
-    const secTagReal = (a.seccion_tag || mapSeccionFallback[_tipoActual] || 'la-cronica').replace(/#/g,'');
+    /* seccion_tag real del artículo — si viene vacío (sección borrada),
+       se deja vacío para que el admin elija una activa, no se inventa una. */
+    const secTagReal = (a.seccion_tag || '').replace(/#/g,'');
 
     /* Resaltar tarjeta usando seccion_tag (IDs dinámicos) */
     document.querySelectorAll('.tipo-card').forEach(c => c.classList.remove('activo'));
@@ -3807,15 +3758,11 @@ async function cargarArtForm(id) {
 
     /* Aplicar comportamiento del editor según tipo */
     const esConversacionEdit = _tipoActual === 'conversacion';
-    const esCuratiaEdit = _tipoActual === 'curatia';
     const btnQAEdit = g('btn-qa');
     if (btnQAEdit) btnQAEdit.style.display = esConversacionEdit ? 'inline-flex' : 'none';
-    const curatiaWrapEdit = g('curatia-admin-wrap');
-    if (curatiaWrapEdit) curatiaWrapEdit.style.display = esCuratiaEdit ? '' : 'none';
 
     /* Bloques de contenido */
     _bloques = await DB.getBloques(id);
-    _curatiaItems = await DB.getCuratiaitems(id);
 
     /* Cargar contenido en el word-editor */
     const bodyBloque = _bloques.find(b =>
@@ -3833,7 +3780,6 @@ async function cargarArtForm(id) {
     }
 
     renderBloques();
-    renderCuratiaAdmin();
 
     g('form-title-hdr').innerHTML = `Editando: <em>${_esc(a.titulo)}</em>`;
     _mostrarAutosaveBar();
@@ -3861,7 +3807,7 @@ function limpiarFormSilencioso() {
   if (g('up-img'))      g('up-img').src = '';
   if (g('up-area-img')) g('up-area-img').style.display = '';
   if (g('up-prev-img')) g('up-prev-img').style.display = 'none';
-  _bloques = []; _curatiaItems = [];
+  _bloques = [];
   wSetHTML('');
   _ocultarAutosaveBar();
 }
@@ -4013,47 +3959,6 @@ function moverBloque(i, dir) {
   [_bloques[i], _bloques[j]] = [_bloques[j], _bloques[i]];
   renderBloques();
   _markDirty();
-}
-
-/* ── Curaturía ── */
-function renderCuratiaAdmin() {
-  const wrap = g('curatia-items-admin');
-  if (!wrap) return;
-  wrap.innerHTML = _curatiaItems.map((item, i) => `
-    <div class="sc" style="margin-bottom:12px">
-      <div class="sc-head" style="padding:10px 16px">
-        <div class="sc-head-left"><div class="sc-head-dot"></div><div><div class="sc-title">Recomendación ${i+1}</div></div></div>
-        <button class="blq-btn del" onclick="_curatiaItems.splice(${i},1);renderCuratiaAdmin()">✕</button>
-      </div>
-      <div class="sc-body">
-        <div class="fr fr-2">
-          <div class="fg"><label class="fl">Título</label>
-            <input class="fi" type="text" value="${item.titulo||''}" placeholder="Nombre de la obra" oninput="_curatiaItems[${i}].titulo=this.value">
-          </div>
-          <div class="fg"><label class="fl">Tipo</label>
-            <select class="fs" onchange="_curatiaItems[${i}].tipo_medio=this.value">
-              ${['musica','libro','pelicula','serie','podcast','articulo','documental','otro'].map(t => `<option value="${t}" ${item.tipo_medio===t?'selected':''}>${t}</option>`).join('')}
-            </select>
-          </div>
-        </div>
-        <div class="fg"><label class="fl">Descripción</label>
-          <textarea class="fta" style="min-height:60px" placeholder="¿Por qué lo recomiendas?" oninput="_curatiaItems[${i}].descripcion=this.value">${item.descripcion||''}</textarea>
-        </div>
-        <div class="fr fr-2">
-          <div class="fg"><label class="fl">URL externa</label>
-            <input class="fi" type="url" value="${item.url_externa||''}" placeholder="https://…" oninput="_curatiaItems[${i}].url_externa=this.value">
-          </div>
-          <div class="fg"><label class="fl">Imagen URL</label>
-            <input class="fi" type="url" value="${item.imagen_url||''}" placeholder="https://…" oninput="_curatiaItems[${i}].imagen_url=this.value">
-          </div>
-        </div>
-      </div>
-    </div>`).join('');
-}
-
-function addCuratiaItem() {
-  _curatiaItems.push({ titulo: '', descripcion: '', tipo_medio: 'otro', url_externa: '', imagen_url: '' });
-  renderCuratiaAdmin();
 }
 
 
@@ -7310,7 +7215,6 @@ async function initAdmin() {
   await rellenarNumerosSelect('f-numero');
   await cargarEditoresEnSelector();
   renderBloques();
-  renderCuratiaAdmin();
 
   /* Stats del dashboard */
   updateStats();
