@@ -20,7 +20,7 @@
   <meta name="twitter:description" content="Revista cultural del Caribe colombiano." id="tw-desc">
   <meta name="twitter:image" content="https://laenbajada.com/assets/og-image.jpg" id="tw-image">
   <link rel="canonical" href="" id="canonical">
-<link rel="stylesheet" href="/assets/styles.css?v=v14">
+<link rel="stylesheet" href="/assets/styles.css?v=v15">
 <style>
 
 /* ── RESPONSIVE BASE — Fixes globales ── */
@@ -221,7 +221,8 @@ html.dark .art-contenido blockquote { background: var(--surface); }
 .art-rel-card-big-img img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .4s ease; }
 .art-rel-card-big:hover .art-rel-card-big-img img { transform:scale(1.03); }
 .art-rel-card-big-body { padding:clamp(14px,2vw,20px); display:flex; flex-direction:column; gap:6px; flex:1; }
-.art-rel-card-big-cat { font-family:var(--ui); font-size:7.5px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--azul); }
+.art-rel-card-big-cat { font-family:var(--ui); font-size:7.5px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--azul); text-decoration:none; display:inline-block; align-self:flex-start; transition:opacity .15s; }
+.art-rel-card-big-cat:hover { opacity:.65; }
 .art-rel-card-big-titulo { font-family:var(--serif); font-size:clamp(16px,2vw,20px); font-weight:700; line-height:1.2; color:var(--t1); transition:color .18s; }
 .art-rel-card-big:hover .art-rel-card-big-titulo { color:var(--azul); }
 .art-rel-card-big-autor { font-family:var(--ui); font-size:9px; color:var(--t4); margin-top:auto; padding-top:10px; border-top:1px solid var(--bd); }
@@ -734,7 +735,7 @@ html.dark .search-modal { background:var(--bg); }
   </div>
 </div>
 
-<script src="/assets/app.js?v=v14"></script>
+<script src="/assets/app.js?v=v15"></script>
 <script>
   /* OG image dinámica */
   function _setOGImage(url) {
@@ -947,16 +948,20 @@ function _renderRelacionados(arts, artId) {
   const rel  = arts.filter(a => a.id !== artId).slice(0, 3);
   if (!rel.length) return;
   grid.innerHTML = rel.map(a=>`
-    <a class="art-rel-card-big" href="${articuloUrl(a)}">
-      <div class="art-rel-card-big-img">
-        ${a.imagen_url?`<img src="${a.imagen_url}" alt="${a.titulo}" loading="lazy">`:''}
-      </div>
+    <div class="art-rel-card-big">
+      <a href="${articuloUrl(a)}" style="display:contents">
+        <div class="art-rel-card-big-img">
+          ${a.imagen_url?`<img src="${a.imagen_url}" alt="${a.titulo}" loading="lazy">`:''}
+        </div>
+      </a>
       <div class="art-rel-card-big-body">
-        <div class="art-rel-card-big-cat">${a.seccion_tag||''}</div>
-        <div class="art-rel-card-big-titulo">${a.titulo}</div>
-        <div class="art-rel-card-big-autor">${a.autor||''}${fmtFecha(a)?' · '+fmtFecha(a):''}</div>
+        <a class="art-rel-card-big-cat" href="/secciones/${normTag(a.seccion_tag)}">${a.seccion_tag||''}</a>
+        <a href="${articuloUrl(a)}" style="display:contents">
+          <div class="art-rel-card-big-titulo">${a.titulo}</div>
+          <div class="art-rel-card-big-autor">${a.autor||''}${fmtFecha(a)?' · '+fmtFecha(a):''}</div>
+        </a>
       </div>
-    </a>`).join('');
+    </div>`).join('');
   sec.removeAttribute('style');
 }
 
@@ -1201,6 +1206,6 @@ function _getSesionId() {
 
 init();
 </script>
-<script src="/assets/tracking.js?v=v14"></script>
+<script src="/assets/tracking.js?v=v15"></script>
 </body>
 </html>

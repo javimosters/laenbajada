@@ -17,7 +17,7 @@
   <meta name="twitter:description" content="Explora las secciones de La Enbajada: Historias, Conversaciones, Recomendados y más. Revista cultural del Caribe colombiano.">
 <title>La Enbajada — Secciones</title>
   <meta name="robots" content="index, follow">
-<link rel="stylesheet" href="/assets/styles.css?v=v14">
+<link rel="stylesheet" href="/assets/styles.css?v=v15">
 <style>
 
 /* ── RESPONSIVE BASE — Fixes globales ── */
@@ -352,7 +352,7 @@ html.dark .search-modal { background:var(--bg); }
   </div>
 </div>
 
-<script src="/assets/app.js?v=v14"></script>
+<script src="/assets/app.js?v=v15"></script>
 <script>
 /* ── ARTÍCULOS LEÍDOS ── */
 const _LEIDOS_KEY = 'le_leidos';
@@ -558,15 +558,19 @@ function _renderPage() {
 
   cont.innerHTML = `<div class="curatia-grid">
     ${pagina.map(a => `
-      <a class="curatia-card" href="${articuloUrl(a)}">
-        <div class="curatia-img">${a.imagen_url?`<img src="${a.imagen_url}" alt="${a.titulo}" loading="lazy">`:'<div class="ph"></div>'}</div>
+      <div class="curatia-card">
+        <a href="${articuloUrl(a)}" style="display:contents">
+          <div class="curatia-img">${a.imagen_url?`<img src="${a.imagen_url}" alt="${a.titulo}" loading="lazy">`:'<div class="ph"></div>'}</div>
+        </a>
         <div class="curatia-body">
-          <div class="curatia-tipo">${_tagANombre(a.seccion_tag)}</div>
-          <div class="curatia-titulo">${a.titulo}</div>
-          ${a.subtitulo?`<div class="curatia-desc">${a.subtitulo}</div>`:''}
-          <div class="curatia-meta">${a.autor||''}${fmtFecha(a)?' · '+fmtFecha(a):''}</div>
+          <a class="curatia-tipo" href="/secciones/${normTag(a.seccion_tag)}">${_tagANombre(a.seccion_tag)}</a>
+          <a href="${articuloUrl(a)}" style="display:contents">
+            <div class="curatia-titulo">${a.titulo}</div>
+            ${a.subtitulo?`<div class="curatia-desc">${a.subtitulo}</div>`:''}
+            <div class="curatia-meta">${a.autor||''}${fmtFecha(a)?' · '+fmtFecha(a):''}</div>
+          </a>
         </div>
-      </a>`).join('')}
+      </div>`).join('')}
   </div>`;
 
   /* Paginación */
@@ -669,6 +673,6 @@ window.addEventListener('popstate', () => {
 
 init();
 </script>
-<script src="/assets/tracking.js?v=v14"></script>
+<script src="/assets/tracking.js?v=v15"></script>
 </body>
 </html>

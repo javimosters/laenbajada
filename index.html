@@ -22,8 +22,8 @@
 <!-- Preconexión temprana a Supabase — elimina DNS+TCP+TLS en el primer fetch -->
 <link rel="preconnect" href="https://pkilwzcypcyhxjuknkho.supabase.co" crossorigin>
 <!-- Preload de app.js — empieza a descargarlo mientras se parsea el head -->
-<link rel="preload" href="/assets/app.js?v=v14" as="script">
-<link rel="stylesheet" href="/assets/styles.css?v=v14">
+<link rel="preload" href="/assets/app.js?v=v15" as="script">
+<link rel="stylesheet" href="/assets/styles.css?v=v15">
 <style>
 
 /* ── RESPONSIVE BASE — Fixes globales ── */
@@ -183,9 +183,11 @@ input, textarea, select, button { max-width: 100% }
 .idx-art-img{aspect-ratio:3/2;overflow:hidden;background:linear-gradient(135deg,#0a1628,#004AAD);flex-shrink:0;position:relative}
 .idx-art-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 7s var(--ease)}
 .idx-art-card:hover .idx-art-img img{transform:scale(1.04)}
-.idx-art-img-badge{position:absolute;bottom:10px;left:12px;font-family:var(--ui);font-size:7px;font-weight:700;letter-spacing:.20em;text-transform:uppercase;color:rgba(255,255,255,.82);background:rgba(0,0,0,.46);padding:3px 9px;backdrop-filter:blur(4px)}
+.idx-art-img-badge{position:absolute;bottom:10px;left:12px;font-family:var(--ui);font-size:7px;font-weight:700;letter-spacing:.20em;text-transform:uppercase;color:rgba(255,255,255,.82);background:rgba(0,0,0,.46);padding:3px 9px;backdrop-filter:blur(4px);text-decoration:none;transition:background .15s}
+.idx-art-img-badge:hover{background:rgba(0,74,173,.75)}
 .idx-art-body{padding:18px 20px 22px;display:flex;flex-direction:column;flex:1;gap:8px}
-.idx-art-num{font-family:var(--ui);font-size:8px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--azul);display:flex;align-items:center;gap:6px}
+.idx-art-num{font-family:var(--ui);font-size:8px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--azul);display:flex;align-items:center;gap:6px;text-decoration:none;align-self:flex-start;transition:opacity .15s}
+.idx-art-num:hover{opacity:.65}
 .idx-art-num::before{content:'';display:block;width:12px;height:1px;background:var(--azul)}
 .idx-art-titulo{font-family:var(--serif);font-style:italic;font-weight:700;font-size:clamp(15px,1.8vw,20px);color:var(--t1);line-height:1.15;letter-spacing:-.015em;transition:color .18s}
 .idx-art-sub{font-family:var(--ui);font-weight:400;font-size:13px;font-style:normal;color:var(--t2);line-height:1.55}
@@ -500,7 +502,7 @@ input, textarea, select, button { max-width: 100% }
   </div>
 </div>
 
-<script src="/assets/app.js?v=v14"></script>
+<script src="/assets/app.js?v=v15"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════
    La Enbajada — index.html v11
@@ -705,19 +707,23 @@ function _renderGrid(arts,excluirIds,secciones,maxArts,cols){
   if(!lista.length){grid.innerHTML='<div style="padding:48px;text-align:center;color:rgba(12,11,9,.35);font-family:var(--ui);font-size:11px;letter-spacing:.14em;text-transform:uppercase;grid-column:1/-1;background:#F2EDE4">Próximamente más contenido</div>';return}
   grid.innerHTML=lista.map(function(a,i){
     var sn=_secNombre(a.seccion_tag,secciones);
-    return '<a class="idx-art-card reveal" href="'+articuloUrl(a)+'" data-tag="'+_esc(normTag(a.seccion_tag))+'">'+
+    var secUrl='/secciones/'+_esc(normTag(a.seccion_tag));
+    return '<div class="idx-art-card reveal" data-tag="'+_esc(normTag(a.seccion_tag))+'">'+
       '<div class="idx-art-img">'+
+      '<a href="'+articuloUrl(a)+'" style="display:contents">'+
       (a.imagen_url?'<img src="'+_esc(a.imagen_url)+'" alt="'+_esc(a.titulo)+'" loading="'+(i<3?'eager':'lazy')+'">':'<div style="width:100%;height:100%;background:linear-gradient(135deg,#0a1628,#004AAD)"></div>')+
-      '<div class="idx-art-img-badge">'+_esc(sn)+'</div></div>'+
+      '</a>'+
+      '<a class="idx-art-img-badge" href="'+secUrl+'" onclick="event.stopPropagation()">'+_esc(sn)+'</a></div>'+
       '<div class="idx-art-body">'+
-      '<div class="idx-art-num">'+_esc(sn)+'</div>'+
+      '<a class="idx-art-num" href="'+secUrl+'">'+_esc(sn)+'</a>'+
+      '<a href="'+articuloUrl(a)+'" style="display:contents">'+
       '<h3 class="idx-art-titulo">'+_esc(a.titulo)+'</h3>'+
       /* FIX: antes solo miraba a.subtitulo — si ese campo estaba vacío
          (aunque el artículo sí tuviera extracto) no mostraba nada. Ahora
          cae a extracto igual que ya hace el hero de portada. */
       ((a.subtitulo||a.extracto)?'<p class="idx-art-sub">'+_esc(a.subtitulo||a.extracto)+'</p>':'')+
       '<div class="idx-art-meta">'+_esc(a.autor||'')+(fmtFecha(a)?' <span>·</span> '+fmtFecha(a):'')+'</div>'+
-      '</div></a>';
+      '</a></div></div>';
   }).join('');
 }
 
@@ -786,6 +792,6 @@ async function init(){
 init();
 window.addEventListener('pageshow',function(e){if(e.persisted) init()});
 </script>
-<script src="/assets/tracking.js?v=v14"></script>
+<script src="/assets/tracking.js?v=v15"></script>
 </body>
 </html>

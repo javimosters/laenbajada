@@ -17,7 +17,7 @@
   <meta name="twitter:description" content="El contenido de La Enbajada, revista cultural del Caribe colombiano. Artículos, historias y conversaciones.">
 <title>Contenido — La Enbajada</title>
   <meta name="robots" content="index, follow">
-<link rel="stylesheet" href="/assets/styles.css?v=v14">
+<link rel="stylesheet" href="/assets/styles.css?v=v15">
 <style>
 
 /* ── RESPONSIVE BASE — Fixes globales ── */
@@ -35,10 +35,10 @@ input, textarea, select, button { max-width: 100% }
   padding: clamp(60px,9vw,120px) var(--pad) clamp(40px,6vw,72px);
   position: relative; overflow: hidden;
   border-bottom: 1px solid rgba(255,255,255,.07);
-  text-align: center;
 }
-.cont-hero-inner { max-width:860px; margin:0 auto; position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; }
-.cont-eyebrow { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:clamp(14px,2vw,22px); }
+.cont-hero-accent { position:absolute; left:0; top:0; bottom:0; width:3px; background:linear-gradient(to bottom,var(--azul),transparent); }
+.cont-hero-inner { max-width:860px; position:relative; z-index:1; }
+.cont-eyebrow { display:flex; align-items:center; gap:10px; margin-bottom:clamp(14px,2vw,22px); }
 .cont-eyebrow-line { width:22px; height:1px; background:var(--azul); }
 .cont-eyebrow-txt { font-family:var(--ui); font-size:8.5px; font-weight:700; letter-spacing:.28em; text-transform:uppercase; color:var(--azul); }
 .cont-h1 { font-family:var(--serif); font-size:clamp(40px,8vw,88px); font-style:italic; font-weight:700; color:rgba(255,255,255,.92); letter-spacing:-.04em; line-height:.95; margin-bottom:clamp(24px,3.5vw,34px); transition:opacity .3s var(--ease); }
@@ -46,7 +46,7 @@ input, textarea, select, button { max-width: 100% }
 
 
 /* Selector — siempre visible, arriba del todo */
-.cont-select-wrap { max-width:420px; width:100%; margin:0 auto; }
+.cont-select-wrap { max-width:420px; }
 .cont-select-label { display:block; font-family:var(--ui); font-size:9px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.45); margin-bottom:8px; }
 .cont-select {
   width:100%; font-family:var(--ui); font-size:13px; font-weight:600; letter-spacing:.02em;
@@ -187,6 +187,7 @@ html.dark .search-modal { background:var(--bg); }
 
 <main id="main-content">
   <div class="cont-hero">
+    <div class="cont-hero-accent"></div>
     <div class="cont-hero-inner">
       <div class="cont-eyebrow"><div class="cont-eyebrow-line"></div><div class="cont-eyebrow-txt">La Enbajada</div></div>
       <h1 class="cont-h1" id="cont-h1"><em>Contenido</em></h1>
@@ -281,7 +282,7 @@ html.dark .search-modal { background:var(--bg); }
   </div>
 </div>
 
-<script src="/assets/app.js?v=v14"></script>
+<script src="/assets/app.js?v=v15"></script>
 <script>
 /* ── ARTÍCULOS LEÍDOS ── */
 const _LEIDOS_KEY = 'le_leidos';
@@ -400,15 +401,19 @@ function _secNombre(tag) {
 
 function renderCuratiaCard(a) {
   const secNombre = _secNombre(a.seccion_tag);
-  return `<a class="curatia-card" href="${articuloUrl(a)}">
-    <div class="curatia-img">${a.imagen_url?`<img src="${a.imagen_url}" alt="${a.titulo}" loading="lazy">`:'<div class="ph"></div>'}</div>
+  return `<div class="curatia-card">
+    <a href="${articuloUrl(a)}" style="display:contents">
+      <div class="curatia-img">${a.imagen_url?`<img src="${a.imagen_url}" alt="${a.titulo}" loading="lazy">`:'<div class="ph"></div>'}</div>
+    </a>
     <div class="curatia-body">
-      <div class="curatia-tipo">${secNombre}</div>
-      <div class="curatia-titulo">${a.titulo}</div>
-      ${a.subtitulo?`<div class="curatia-desc">${a.subtitulo}</div>`:''}
-      <div class="curatia-meta">${a.autor||''}${fmtFecha(a)?' · '+fmtFecha(a):''}</div>
+      <a class="curatia-tipo" href="/secciones/${normTag(a.seccion_tag)}">${secNombre}</a>
+      <a href="${articuloUrl(a)}" style="display:contents">
+        <div class="curatia-titulo">${a.titulo}</div>
+        ${a.subtitulo?`<div class="curatia-desc">${a.subtitulo}</div>`:''}
+        <div class="curatia-meta">${a.autor||''}${fmtFecha(a)?' · '+fmtFecha(a):''}</div>
+      </a>
     </div>
-  </a>`;
+  </div>`;
 }
 
 function _renderNavSecs(secs) {
@@ -547,6 +552,6 @@ async function init() {
 init();
 
 </script>
-<script src="/assets/tracking.js?v=v14"></script>
+<script src="/assets/tracking.js?v=v15"></script>
 </body>
 </html>

@@ -20,7 +20,7 @@
   <meta name="twitter:description" content="Conoce al equipo editorial de La Enbajada, revista cultural del Caribe colombiano.">
   <meta name="twitter:image" content="https://laenbajada.com/assets/og-image.jpg">
   <link rel="canonical" href="https://laenbajada.com/sobre.html" id="canonical">
-<link rel="stylesheet" href="/assets/styles.css?v=v14">
+<link rel="stylesheet" href="/assets/styles.css?v=v15">
 <style>
 
 /* ── RESPONSIVE BASE — Fixes globales ── */
@@ -106,7 +106,8 @@ input, textarea, select, button { max-width: 100% }
 .ed-art-card-img img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 7s var(--ease); }
 .ed-art-card:hover .ed-art-card-img img { transform:scale(1.04); }
 .ed-art-card-body { padding:16px 18px 20px; display:flex; flex-direction:column; gap:7px; flex:1; }
-.ed-art-card-cat { font-family:var(--ui); font-size:8px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--azul); display:flex; align-items:center; gap:6px; }
+.ed-art-card-cat { font-family:var(--ui); font-size:8px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--azul); display:flex; align-items:center; gap:6px; text-decoration:none; align-self:flex-start; transition:opacity .15s; }
+.ed-art-card-cat:hover { opacity:.65; }
 .ed-art-card-cat::before { content:''; display:block; width:10px; height:1px; background:var(--azul); }
 .ed-art-card-titulo { font-family:var(--serif); font-size:clamp(15px,1.8vw,19px); font-weight:700; font-style:italic; line-height:1.15; color:var(--t1); transition:color .18s; }
 .ed-art-card:hover .ed-art-card-titulo { color:var(--azul); }
@@ -335,7 +336,7 @@ html.dark .search-modal { background:var(--bg); }
   </div>
 </div>
 
-<script src="/assets/app.js?v=v14"></script>
+<script src="/assets/app.js?v=v15"></script>
 <script>
 
 /* ── Sanitize XSS — escapar datos de BD antes de innerHTML ── */
@@ -499,27 +500,35 @@ async function init(){
     } else if(arts.length===1){
       /* Un solo artículo — tarjeta destacada horizontal, no una lista vacía a medias */
       const a=arts[0];
-      grid.innerHTML=`<a class="ed-art-featured" href="${_esc(articuloUrl(a))}">
-        <div class="ed-art-featured-img">${a.imagen_url?`<img src="${_esc(a.imagen_url)}" alt="${_esc(a.titulo)}" loading="lazy">`:'<div class="ph"></div>'}</div>
+      grid.innerHTML=`<div class="ed-art-featured">
+        <a href="${_esc(articuloUrl(a))}" style="display:contents">
+          <div class="ed-art-featured-img">${a.imagen_url?`<img src="${_esc(a.imagen_url)}" alt="${_esc(a.titulo)}" loading="lazy">`:'<div class="ph"></div>'}</div>
+        </a>
         <div class="ed-art-featured-body">
-          <div class="ed-art-card-cat">${_esc(normTag(a.seccion_tag||a.tipo||''))}</div>
-          <div class="ed-art-featured-titulo">${_esc(a.titulo)}</div>
-          ${a.subtitulo?`<div class="ed-art-featured-sub">${_esc(a.subtitulo)}</div>`:''}
-          <div class="ed-art-card-meta">${fmtFecha(a)||''}</div>
-          <div class="ed-art-featured-cta">Leer artículo →</div>
+          <a class="ed-art-card-cat" href="/secciones/${_esc(normTag(a.seccion_tag||a.tipo||''))}">${_esc(normTag(a.seccion_tag||a.tipo||''))}</a>
+          <a href="${_esc(articuloUrl(a))}" style="display:contents">
+            <div class="ed-art-featured-titulo">${_esc(a.titulo)}</div>
+            ${a.subtitulo?`<div class="ed-art-featured-sub">${_esc(a.subtitulo)}</div>`:''}
+            <div class="ed-art-card-meta">${fmtFecha(a)||''}</div>
+            <div class="ed-art-featured-cta">Leer artículo →</div>
+          </a>
         </div>
-      </a>`;
+      </div>`;
     } else {
       grid.innerHTML=`<div class="ed-arts-grid-inner">${arts.map(a=>`
-        <a class="ed-art-card" href="${_esc(articuloUrl(a))}">
-          <div class="ed-art-card-img">${a.imagen_url?`<img src="${_esc(a.imagen_url)}" alt="${_esc(a.titulo)}" loading="lazy">`:'<div class="ph"></div>'}</div>
+        <div class="ed-art-card">
+          <a href="${_esc(articuloUrl(a))}" style="display:contents">
+            <div class="ed-art-card-img">${a.imagen_url?`<img src="${_esc(a.imagen_url)}" alt="${_esc(a.titulo)}" loading="lazy">`:'<div class="ph"></div>'}</div>
+          </a>
           <div class="ed-art-card-body">
-            <div class="ed-art-card-cat">${_esc(normTag(a.seccion_tag||a.tipo||''))}</div>
-            <div class="ed-art-card-titulo">${_esc(a.titulo)}</div>
-            ${a.subtitulo?`<div class="ed-art-card-sub">${_esc(a.subtitulo)}</div>`:''}
-            <div class="ed-art-card-meta">${fmtFecha(a)||''}</div>
+            <a class="ed-art-card-cat" href="/secciones/${_esc(normTag(a.seccion_tag||a.tipo||''))}">${_esc(normTag(a.seccion_tag||a.tipo||''))}</a>
+            <a href="${_esc(articuloUrl(a))}" style="display:contents">
+              <div class="ed-art-card-titulo">${_esc(a.titulo)}</div>
+              ${a.subtitulo?`<div class="ed-art-card-sub">${_esc(a.subtitulo)}</div>`:''}
+              <div class="ed-art-card-meta">${fmtFecha(a)||''}</div>
+            </a>
           </div>
-        </a>`).join('')}
+        </div>`).join('')}
       </div>`;
     }
   }
@@ -540,6 +549,6 @@ async function init(){
 }
 init();
 </script>
-<script src="/assets/tracking.js?v=v14"></script>
+<script src="/assets/tracking.js?v=v15"></script>
 </body>
 </html>
