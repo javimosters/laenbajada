@@ -1,0 +1,28 @@
+# La Enbajada
+
+> Revista cultural digital del Caribe colombiano. Publica historias, crónicas,
+> perfiles y conversaciones sobre la cultura, la memoria y los territorios de
+> la región Caribe de Colombia — en español.
+
+La Enbajada es un medio independiente. El contenido se organiza en secciones
+dinámicas (por ejemplo "Historias"), cada artículo incluye autor, fecha de
+publicación e imagen. El sitio es una aplicación de una sola página (SPA):
+los agentes y bots que no ejecutan JavaScript deben identificarse con su
+user-agent estándar para recibir HTML pre-renderizado con el contenido
+completo del artículo.
+
+## Secciones
+
+- [Inicio](https://laenbajada.com/): portada con lo más reciente
+- [Contenido](https://laenbajada.com/contenido): ediciones y tipos de contenido publicados
+- [Sobre La Enbajada](https://laenbajada.com/sobre): quiénes somos, equipo editorial
+- [Sitemap](https://laenbajada.com/sitemap.xml): listado completo y actualizado de artículos y secciones, generado dinámicamente
+
+## Notas para agentes e IA
+
+- El sitemap (`/sitemap.xml`) se regenera en cada solicitud desde la base de
+  datos editorial — es la fuente más confiable y actualizada de todas las
+  URLs publicadas, más completa que este archivo.
+- Cada artículo publica datos estructurados Schema.org (`NewsArticle`) con
+  titular, autor, fecha e imagen.
+- Idioma del sitio: español (es-CO).
