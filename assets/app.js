@@ -24,11 +24,25 @@ function normTag(v) {
 
 /* ── Cliente Supabase mínimo (sin SDK — fetch directo) ────────── */
 const SB = {
+  /* Token a usar en cada request: el de la sesión real si hay una
+     (admin logueado) — si no, la key anónima pública (lectores).
+     AUTH existe en TODAS las páginas (se define más abajo en este
+     mismo archivo), así que esto funciona igual en el sitio público
+     (sin sesión → siempre key anónima) y en el admin (con sesión →
+     token real, para que RLS lo reconozca como "authenticated"). */
+  _token() {
+    try {
+      const session = AUTH.getSession();
+      if (session?.access_token) return session.access_token;
+    } catch (_) {}
+    return SUPA_KEY;
+  },
+
   async _req(path, opts = {}) {
     const res = await fetch(`${SUPA_URL}/rest/v1${path}`, {
       headers: {
         'apikey':        SUPA_KEY,
-        'Authorization': `Bearer ${SUPA_KEY}`,
+        'Authorization': `Bearer ${this._token()}`,
         'Content-Type':  'application/json',
         'Prefer':        opts.prefer || 'return=representation',
         ...(opts.headers || {}),
@@ -59,7 +73,7 @@ const SB = {
       const res = await fetch(`${SUPA_URL}/rest/v1/${table}?${params}`, {
         headers: {
           'apikey': SUPA_KEY,
-          'Authorization': `Bearer ${SUPA_KEY}`,
+          'Authorization': `Bearer ${this._token()}`,
           'Range-Unit': 'items',
           'Range': `${offset}-${offset + chunk - 1}`,
           'Prefer': 'count=exact',
@@ -81,7 +95,7 @@ const SB = {
         method: 'HEAD',
         headers: {
           'apikey': SUPA_KEY,
-          'Authorization': `Bearer ${SUPA_KEY}`,
+          'Authorization': `Bearer ${this._token()}`,
           'Prefer': 'count=exact',
         },
       });
@@ -340,11 +354,11 @@ const DB = {
       mostrarConversacion: idx.mostrarConversacion !== false,
       mostrarCuratia:      idx.mostrarCuratia      !== false,
       /* ── Textos del boletín ── */
-      tituloBoletin:  idx.tituloBoletin || idx.titbol  || 'Recibe cada número en tu correo',
+      tituloBoletin:  idx.tituloBoletin || idx.titbol  || 'Recibe lo nuevo de La Enbajada en tu correo',
       textoBoletin:   idx.textoBoletin  || idx.txtbol  || 'La Enbajada llega a tu bandeja cuando hay algo que vale la pena leer.',
       kickerBoletin:  idx.kickerBoletin               || 'Boletín editorial',
       btnBoletin:     idx.btnBoletin                  || 'Suscribirse',
-      notaBoletin:    idx.notaBoletin                 || 'Solo enviamos cuando hay un número nuevo.',
+      notaBoletin:    idx.notaBoletin                 || 'Solo enviamos cuando hay algo nuevo.',
       /* ── SEO ── */
       metaTitulo:     idx.metaTitulo  || '',
       metaDesc:       idx.metaDesc    || '',
@@ -819,8 +833,8 @@ async function aplicarSite() {
 
   /* Boletín */
   const idxCfg = ft.index_cfg || {};
-  document.querySelectorAll('.js-boletin-titulo').forEach(e => e.textContent = idxCfg.titbol || 'Recibe cada número en tu correo');
-  document.querySelectorAll('.js-boletin-texto').forEach(e  => e.textContent = idxCfg.txtbol || 'La Enbajada llega a tu bandeja cuando hay algo que vale la pena leer.');
+  document.querySelectorAll('.js-boletin-titulo').forEach(e => e.textContent = idxCfg.tituloBoletin || idxCfg.titbol || 'Recibe lo nuevo de La Enbajada en tu correo');
+  document.querySelectorAll('.js-boletin-texto').forEach(e  => e.textContent = idxCfg.textoBoletin  || idxCfg.txtbol || 'La Enbajada llega a tu bandeja cuando hay algo que vale la pena leer.');
 
   aplicarSEO();
 

@@ -2199,7 +2199,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
             <div class="fg">
               <label class="fl" for="idx-titbol">Título del boletín</label>
               <input class="fi" type="text" id="idx-titbol"
-                placeholder="Recibe cada número en tu correo"
+                placeholder="Recibe lo nuevo de La Enbajada en tu correo"
                 style="font-family:var(--serif);font-weight:700;font-size:15px"
                 oninput="g('boletin-prev-titulo').textContent=this.value||this.placeholder">
             </div>
@@ -2232,7 +2232,7 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
                 <div style="width:20px;height:1px;background:var(--azul)"></div>
                 <span id="boletin-prev-kicker" style="font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--azul)">Boletín editorial</span>
               </div>
-              <div id="boletin-prev-titulo" style="font-family:var(--serif);font-size:28px;font-weight:700;font-style:italic;color:#fff;line-height:1.05;margin-bottom:14px">Recibe cada número en tu correo</div>
+              <div id="boletin-prev-titulo" style="font-family:var(--serif);font-size:28px;font-weight:700;font-style:italic;color:#fff;line-height:1.05;margin-bottom:14px">Recibe lo nuevo de La Enbajada en tu correo</div>
               <div id="boletin-prev-desc" style="font-family:var(--sans);font-size:13px;font-weight:700;color:rgba(255,255,255,.38);line-height:1.7">La Enbajada llega a tu bandeja cuando hay algo que vale la pena leer.</div>
             </div>
             <div>
@@ -2463,27 +2463,52 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
             <div style="width:10px;height:10px;border-radius:50%;background:var(--azul);flex-shrink:0"></div>
             <div>
               <div class="sc-title">Enviar boletín</div>
-              <div class="sc-desc">Prepara el correo de la nueva edición y envíalo a todos los suscriptores activos</div>
+              <div class="sc-desc">Prepara el correo con lo nuevo publicado y envíalo a todos los suscriptores activos</div>
             </div>
           </div>
           <button class="ab ab-s ab-sm" onclick="_toggleBoletinEditor()">✏ Redactar correo</button>
         </div>
 
         <div id="boletin-editor-wrap" style="display:none">
-          <!-- Paso 1: Elegir edición -->
+          <!-- Paso 1: Armar el correo con bloques -->
           <div style="padding:20px;border-top:1px solid var(--bd);background:var(--paper2)">
-            <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--t4);margin-bottom:14px">② ¿A qué contenido pertenece?</div>
-            <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
-              <div class="fg" style="flex:1;min-width:200px;margin:0">
-                <label class="fl">Contenido</label>
-                <select class="fs" id="bol-num-sel" onchange="_onBoletinNumChange(this.value)" style="font-size:13px">
-                  <option value="">— Selecciona una edición —</option>
-                </select>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--t4);margin-bottom:14px">① Arma el correo con bloques</div>
+
+            <select class="fs" id="bol-tipo-sel" onchange="_bolCambiarTipo(this.value)" style="font-size:13px;margin-bottom:10px;max-width:260px">
+              <option value="articulo">📰 Artículo</option>
+              <option value="contenido">📚 Contenido</option>
+              <option value="autor">✍️ Autor destacado</option>
+              <option value="seccion">🗂 Sección destacada</option>
+              <option value="texto">📝 Texto libre / anuncio</option>
+            </select>
+
+            <!-- Buscador + lista (artículo / autor / sección) -->
+            <div id="bol-picker-wrap">
+              <input class="fi" type="search" id="bol-picker-buscar" placeholder="Buscar por título…"
+                oninput="_renderBolPicker(this.value)" style="font-size:13px;margin-bottom:8px">
+              <div id="bol-picker-list" style="max-height:200px;overflow-y:auto;border:1px solid var(--bd);border-radius:5px;background:var(--paper)"></div>
+            </div>
+
+            <!-- Form de texto libre -->
+            <div id="bol-texto-form" style="display:none">
+              <div class="fg" style="margin-bottom:8px">
+                <label class="fl">Título del bloque</label>
+                <input class="fi" type="text" id="bol-txt-titulo" placeholder="Ej. Nos vemos en la Feria del Libro" style="font-size:13px">
               </div>
-              <div class="fg" style="flex:1;min-width:200px;margin:0">
-                <label class="fl">URL del artículo principal (portada)</label>
-                <input class="fi" type="url" id="bol-url" placeholder="https://laenbajada.com/articulo.html?slug=…" style="font-size:12px">
+              <div class="fg" style="margin-bottom:8px">
+                <label class="fl">Texto</label>
+                <textarea class="fta" id="bol-txt-cuerpo" style="min-height:70px;font-size:13px"></textarea>
               </div>
+              <div class="fr fr-2" style="margin-bottom:10px">
+                <div class="fg"><label class="fl">Texto del botón <span style="font-weight:400;color:var(--t4)">(opcional)</span></label><input class="fi" type="text" id="bol-txt-btn-texto" placeholder="Ver más" style="font-size:13px"></div>
+                <div class="fg"><label class="fl">URL del botón <span style="font-weight:400;color:var(--t4)">(opcional)</span></label><input class="fi" type="url" id="bol-txt-btn-url" placeholder="https://…" style="font-size:13px"></div>
+              </div>
+              <button type="button" class="ab ab-or" onclick="_bolAgregarTexto()">+ Agregar bloque de texto</button>
+            </div>
+
+            <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--t4);margin:18px 0 8px">Bloques del correo (<span id="bol-bloques-count">0</span>)</div>
+            <div id="bol-bloques-list" style="border:1px solid var(--bd);border-radius:5px;background:var(--paper)">
+              <div style="padding:16px;text-align:center;font-size:12px;color:var(--t4)">Agrega bloques arriba — aparecerán aquí, en el orden en que se envían</div>
             </div>
           </div>
 
@@ -2505,33 +2530,14 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
               <label class="fl">Mensaje introductorio <span style="font-weight:400;color:var(--t4)">(aparece en el cuerpo del correo)</span></label>
               <textarea class="fta" id="bol-mensaje" style="min-height:100px;font-family:var(--serif);font-size:14px;line-height:1.7"
                 oninput="_actualizarBoletinPreview()"
-                placeholder="Esta edición llegó desde el Caribe colombiano con una historia que no te puedes perder…"></textarea>
+                placeholder="Esto llegó desde el Caribe colombiano con una historia que no te puedes perder…"></textarea>
             </div>
           </div>
 
           <!-- Vista previa del correo -->
           <div style="padding:0 20px 20px">
-            <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--t4);margin-bottom:12px">③ Vista previa del correo</div>
-            <div id="bol-preview" style="border:1px solid var(--bd);border-radius:4px;overflow:hidden;max-width:560px">
-              <!-- Header del correo -->
-              <div style="background:var(--negro);padding:24px 28px;display:flex;align-items:center;gap:12px">
-                <div style="font-family:var(--serif);font-size:22px;font-weight:900;color:#fff;letter-spacing:-.02em">La Enbajada</div>
-                <div style="width:1px;height:20px;background:rgba(255,255,255,.2)"></div>
-                <div style="font-family:var(--sans);font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.15em;text-transform:uppercase">Boletín editorial</div>
-              </div>
-              <!-- Cuerpo -->
-              <div style="padding:28px;background:#fff;font-family:Georgia,serif">
-                <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#004AAD;margin-bottom:10px" id="bol-prev-num-label">Contenido destacado</div>
-                <div style="font-size:22px;font-weight:900;color:#0c0b09;line-height:1.2;margin-bottom:14px;font-style:italic" id="bol-prev-titulo">Título de la edición</div>
-                <div style="font-size:13px;color:#555;line-height:1.8;margin-bottom:20px;font-style:italic" id="bol-prev-mensaje">El mensaje introductorio aparecerá aquí…</div>
-                <a id="bol-prev-cta" href="#" style="display:inline-block;background:#004AAD;color:#fff;padding:12px 24px;font-family:Arial,sans-serif;font-size:12px;font-weight:700;text-decoration:none;letter-spacing:.08em;text-transform:uppercase">Leer edición →</a>
-                <hr style="border:none;border-top:1px solid #eee;margin:24px 0">
-                <div style="font-size:10px;color:#aaa;font-family:Arial,sans-serif;line-height:1.6">
-                  Recibiste este correo porque te suscribiste a La Enbajada.<br>
-                  <span id="bol-prev-unsub" style="color:#004AAD;cursor:pointer">Cancelar suscripción</span>
-                </div>
-              </div>
-            </div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--t4);margin-bottom:12px">③ Vista previa del correo <span style="font-weight:400;text-transform:none;letter-spacing:0">— así llega exactamente</span></div>
+            <iframe id="bol-preview-frame" title="Vista previa del correo" style="width:100%;max-width:600px;height:560px;border:1px solid var(--bd);border-radius:4px;background:#fff"></iframe>
           </div>
 
           <!-- Paso 4: Enviar -->
@@ -5489,29 +5495,68 @@ let _idxCfgState = {};
 
 /* ════ RESEND — envío real de correos ════ */
 
-const RESEND_KEY_STORE = 'lae_resend_key';
-const RESEND_FROM_STORE = 'lae_resend_from';
-const RESEND_NOMBRE_STORE = 'lae_resend_nombre';
+/* Config de Resend: vive en Supabase (tabla config_privada), protegida por
+   RLS que solo permite acceso a usuarios con sesión válida (authenticated).
+   A diferencia de SB._req (que siempre usa la key anónima), esta usa el
+   access_token real de la sesión — así RLS puede diferenciar admin logueado
+   de cualquier visitante con la key pública del sitio. */
+let _resendCfg = { key: '', from: 'onboarding@resend.dev', nombre: 'La Enbajada' };
 
-function _cargarResendCfg() {
-  const key    = localStorage.getItem(RESEND_KEY_STORE)    || '';
-  const from   = localStorage.getItem(RESEND_FROM_STORE)   || 'onboarding@resend.dev';
-  const nombre = localStorage.getItem(RESEND_NOMBRE_STORE) || 'La Enbajada';
-  if (g('cfg-resend-key'))    g('cfg-resend-key').value    = key;
-  if (g('cfg-resend-from'))   g('cfg-resend-from').value   = from;
-  if (g('cfg-resend-nombre')) g('cfg-resend-nombre').value = nombre;
-  /* Actualizar preview remitente en boletín */
-  if (g('bol-from-preview'))  g('bol-from-preview').textContent = 'De: ' + nombre + ' <' + from + '>';
+async function _authFetch(path, opts = {}) {
+  const session = AUTH.getSession();
+  if (!session?.access_token) throw new Error('Sesión expirada — vuelve a iniciar sesión');
+  const res = await fetch(`${SUPA_URL}/rest/v1${path}`, {
+    headers: {
+      'apikey':        SUPA_KEY,
+      'Authorization': `Bearer ${session.access_token}`,
+      'Content-Type':  'application/json',
+      'Prefer':        opts.prefer || 'return=representation',
+      ...(opts.headers || {}),
+    },
+    ...opts,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || err.hint || res.statusText);
+  }
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
 }
 
-function _guardarResendCfg() {
+async function _cargarResendCfg() {
+  try {
+    const rows = await _authFetch('/config_privada?id=eq.1&select=resend_api_key,resend_from,resend_nombre');
+    const row  = rows?.[0];
+    _resendCfg = {
+      key:    row?.resend_api_key || '',
+      from:   row?.resend_from    || 'onboarding@resend.dev',
+      nombre: row?.resend_nombre  || 'La Enbajada',
+    };
+  } catch (e) {
+    notif('No se pudo cargar la configuración de Resend: ' + e.message, 'err');
+  }
+  if (g('cfg-resend-key'))    g('cfg-resend-key').value    = _resendCfg.key;
+  if (g('cfg-resend-from'))   g('cfg-resend-from').value   = _resendCfg.from;
+  if (g('cfg-resend-nombre')) g('cfg-resend-nombre').value = _resendCfg.nombre;
+  if (g('bol-from-preview'))  g('bol-from-preview').textContent = 'De: ' + _resendCfg.nombre + ' <' + _resendCfg.from + '>';
+}
+
+async function _guardarResendCfg() {
   const key    = g('cfg-resend-key')?.value?.trim()    || '';
   const from   = g('cfg-resend-from')?.value?.trim()   || 'onboarding@resend.dev';
   const nombre = g('cfg-resend-nombre')?.value?.trim() || 'La Enbajada';
   if (!key) { notif('Pega la API key de Resend primero', 'warn'); return; }
-  localStorage.setItem(RESEND_KEY_STORE,    key);
-  localStorage.setItem(RESEND_FROM_STORE,   from);
-  localStorage.setItem(RESEND_NOMBRE_STORE, nombre);
+  try {
+    await _authFetch('/config_privada?id=eq.1', {
+      method: 'PATCH',
+      prefer: 'return=minimal',
+      body: JSON.stringify({ resend_api_key: key, resend_from: from, resend_nombre: nombre, updated_at: new Date().toISOString() }),
+    });
+  } catch (e) {
+    notif('Error guardando en Supabase: ' + e.message, 'err');
+    return;
+  }
+  _resendCfg = { key, from, nombre };
   notif('✓ Configuración de Resend guardada', 'ok');
   if (g('bol-from-preview')) g('bol-from-preview').textContent = 'De: ' + nombre + ' <' + from + '>';
 }
@@ -5522,9 +5567,9 @@ function _toggleResendKey() {
 }
 
 async function _testResend() {
-  const key    = localStorage.getItem(RESEND_KEY_STORE);
-  const from   = localStorage.getItem(RESEND_FROM_STORE)   || 'onboarding@resend.dev';
-  const nombre = localStorage.getItem(RESEND_NOMBRE_STORE) || 'La Enbajada';
+  const key    = _resendCfg.key;
+  const from   = _resendCfg.from;
+  const nombre = _resendCfg.nombre;
   const res    = g('resend-test-result');
   if (!key) { notif('Guarda la API key primero', 'warn'); return; }
   if (res) { res.style.display = 'block'; res.style.background = 'var(--paper2)'; res.style.color = 'var(--t3)'; res.textContent = 'Enviando prueba…'; }
@@ -5556,22 +5601,102 @@ async function _testResend() {
   }
 }
 
-/* Construir el HTML del correo con el diseño de La Enbajada */
-function _construirHTMLCorreo(numTitulo, numId, mensaje, urlEdicion, nombreRevista) {
-  var url    = urlEdicion || 'https://laenbajada.com';
-  var numPad = String(numId).padStart(2,'0');
-  var parrafo = mensaje
+/* Construir el HTML del correo con el diseño de La Enbajada.
+   bloques: array de bloques heterogéneos, en el orden en que se
+   agregaron — cada uno con su propio "tipo" (articulo/autor/seccion/
+   texto). Reemplaza el viejo esquema de "un solo contenido = un CTA". */
+function _construirHTMLCorreo(bloques, mensaje, nombreRevista) {
+  var lista = bloques || [];
+  var esc = function(s) { return String(s || ''); };
+
+  var parrafoIntro = mensaje
     ? mensaje.split('\n').filter(Boolean).map(function(p) {
-        return '<p style="font-family:Georgia,\'Times New Roman\',serif;font-size:16px;color:#2c2c2c;line-height:1.85;margin:0 0 20px 0">' + p + '</p>';
+        return '<p style="font-family:Georgia,\'Times New Roman\',serif;font-size:16px;color:#2c2c2c;line-height:1.85;margin:0 0 24px 0">' + p + '</p>';
       }).join('')
-    : '';
+    : (lista.length ? '' : '<p style="font-family:Georgia,\'Times New Roman\',serif;font-size:16px;color:#2c2c2c;line-height:1.85;margin:0 0 24px 0;font-style:italic">Hay algo nuevo de <strong>' + esc(nombreRevista) + '</strong> disponible. Entra y l&#233;elo cuando quieras.</p>');
+
+  function tarjetaArticulo(b, primero, kicker, ctaTexto) {
+    var img = b.imagen
+      ? '<tr><td style="padding-bottom:14px"><img src="' + esc(b.imagen) + '" width="536" style="width:100%;max-width:536px;height:auto;border-radius:4px;display:block" alt=""></td></tr>'
+      : '';
+    var kickerHtml = kicker
+      ? '<tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#004AAD;padding-bottom:8px">' + esc(kicker) + '</td></tr>'
+      : '';
+    var extracto = b.extracto
+      ? '<tr><td style="font-family:Georgia,\'Times New Roman\',serif;font-size:14px;color:#555;line-height:1.75;padding-bottom:10px">' + esc(b.extracto) + '</td></tr>'
+      : '';
+    return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="' + (primero ? '' : 'border-top:1px solid #e8e2d8;padding-top:24px;') + 'margin-bottom:24px">' +
+      kickerHtml +
+      img +
+      '<tr><td style="font-family:Georgia,\'Times New Roman\',serif;font-size:20px;font-weight:900;font-style:italic;color:#0c0b09;line-height:1.2;padding-bottom:8px">' +
+      '<a href="' + esc(b.url) + '" style="color:#0c0b09;text-decoration:none">' + esc(b.titulo) + '</a></td></tr>' +
+      extracto +
+      '<tr><td><a href="' + esc(b.url) + '" style="font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#004AAD;text-decoration:none">' + esc(ctaTexto || 'Leer ahora &#8594;') + '</a></td></tr>' +
+      '</table>';
+  }
+
+  function tarjetaAutor(b, primero) {
+    var foto = b.foto
+      ? '<td width="64" style="vertical-align:top;padding-right:16px"><img src="' + esc(b.foto) + '" width="56" height="56" style="width:56px;height:56px;border-radius:50%;object-fit:cover;display:block" alt=""></td>'
+      : '';
+    return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="' + (primero ? '' : 'border-top:1px solid #e8e2d8;padding-top:24px;') + 'margin-bottom:24px">' +
+      '<tr><td style="font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#004AAD;padding-bottom:10px">Autor destacado</td></tr>' +
+      '<tr><td><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>' +
+      foto +
+      '<td style="vertical-align:top">' +
+      '<div style="font-family:Georgia,\'Times New Roman\',serif;font-size:18px;font-weight:900;font-style:italic;color:#0c0b09">' + esc(b.nombre) + '</div>' +
+      (b.cargo ? '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#888;margin-top:2px">' + esc(b.cargo) + '</div>' : '') +
+      (b.bio ? '<div style="font-family:Georgia,\'Times New Roman\',serif;font-size:13px;color:#555;line-height:1.6;margin-top:8px">' + esc(b.bio) + '</div>' : '') +
+      '<div style="margin-top:10px"><a href="' + esc(b.url) + '" style="font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#004AAD;text-decoration:none">Ver perfil &#8594;</a></div>' +
+      '</td></tr></table></td></tr>' +
+      '</table>';
+  }
+
+  function tarjetaSeccion(b, primero) {
+    return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="' + (primero ? '' : 'border-top:1px solid #e8e2d8;padding-top:24px;') + 'margin-bottom:24px;background:#f7f4ee;border-radius:4px">' +
+      '<tr><td style="padding:18px 20px">' +
+      '<div style="font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#004AAD;margin-bottom:8px">Secci&#243;n destacada</div>' +
+      '<div style="font-family:Georgia,\'Times New Roman\',serif;font-size:19px;font-weight:900;font-style:italic;color:#0c0b09;margin-bottom:6px">' + esc(b.nombre) + '</div>' +
+      (b.descripcion ? '<div style="font-family:Georgia,\'Times New Roman\',serif;font-size:13px;color:#555;line-height:1.6;margin-bottom:10px">' + esc(b.descripcion) + '</div>' : '') +
+      '<a href="' + esc(b.url) + '" style="font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#004AAD;text-decoration:none">Explorar secci&#243;n &#8594;</a>' +
+      '</td></tr>' +
+      '</table>';
+  }
+
+  function tarjetaTexto(b, primero) {
+    var boton = (b.btnTexto && b.btnUrl)
+      ? '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:6px"><tr><td style="border-radius:3px;background:#004AAD">' +
+        '<a href="' + esc(b.btnUrl) + '" style="display:inline-block;padding:12px 26px;font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#ffffff;text-decoration:none">' + esc(b.btnTexto) + '</a>' +
+        '</td></tr></table>'
+      : '';
+    return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="' + (primero ? '' : 'border-top:1px solid #e8e2d8;padding-top:24px;') + 'margin-bottom:24px">' +
+      '<tr><td style="font-family:Georgia,\'Times New Roman\',serif;font-size:19px;font-weight:900;font-style:italic;color:#0c0b09;line-height:1.2;padding-bottom:10px">' + esc(b.titulo) + '</td></tr>' +
+      '<tr><td style="font-family:Georgia,\'Times New Roman\',serif;font-size:14px;color:#555;line-height:1.75;padding-bottom:10px">' + esc(b.texto).replace(/\n/g, '<br>') + '</td></tr>' +
+      (boton ? '<tr><td>' + boton + '</td></tr>' : '') +
+      '</table>';
+  }
+
+  var huboIntro = !!parrafoIntro;
+  var tarjetas = lista.map(function(b, i) {
+    var primero = (i === 0) && !huboIntro;
+    if (b.tipo === 'contenido') return tarjetaArticulo(b, primero, 'Contenido destacado', 'Ver contenido &#8594;');
+    if (b.tipo === 'autor')   return tarjetaAutor(b, primero);
+    if (b.tipo === 'seccion') return tarjetaSeccion(b, primero);
+    if (b.tipo === 'texto')   return tarjetaTexto(b, primero);
+    return tarjetaArticulo(b, primero);
+  }).join('');
+
+  var primeraUrl = lista[0] && lista[0].url;
+  var urlPie = primeraUrl || 'https://laenbajada.com';
+  var tituloDoc = lista.length === 1 && lista[0].titulo ? lista[0].titulo
+    : (lista.length === 1 && lista[0].nombre ? lista[0].nombre : 'Bolet\u00edn editorial');
 
   return '<!DOCTYPE html>' +
   '<html lang="es"><head>' +
   '<meta charset="UTF-8">' +
   '<meta name="viewport" content="width=device-width,initial-scale=1">' +
   '<meta http-equiv="X-UA-Compatible" content="IE=edge">' +
-  '<title>' + numTitulo + ' — ' + nombreRevista + '</title>' +
+  '<title>' + esc(tituloDoc) + ' — ' + esc(nombreRevista) + '</title>' +
   '</head>' +
   '<body style="margin:0;padding:0;background:#f0ece3;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%">' +
   '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0ece3">' +
@@ -5587,7 +5712,7 @@ function _construirHTMLCorreo(numTitulo, numId, mensaje, urlEdicion, nombreRevis
   '<td style="padding:22px 32px">' +
   '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">' +
   '<tr>' +
-  '<td style="font-family:Georgia,\'Times New Roman\',serif;font-size:24px;font-weight:900;font-style:italic;color:#f2ede4;letter-spacing:-.02em">' + nombreRevista + '</td>' +
+  '<td style="font-family:Georgia,\'Times New Roman\',serif;font-size:24px;font-weight:900;font-style:italic;color:#f2ede4;letter-spacing:-.02em">' + esc(nombreRevista) + '</td>' +
   '<td align="right" style="vertical-align:middle">' +
   '<span style="font-family:Arial,Helvetica,sans-serif;font-size:8px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:rgba(242,237,228,.32)">Bolet&#237;n editorial</span>' +
   '</td>' +
@@ -5601,26 +5726,13 @@ function _construirHTMLCorreo(numTitulo, numId, mensaje, urlEdicion, nombreRevis
   '</td></tr>' +
 
   /* ── Cuerpo principal ── */
-  '<tr><td style="background:#ffffff;padding:40px 32px 32px 32px">' +
+  '<tr><td style="background:#ffffff;padding:40px 32px 8px 32px">' +
 
-  /* Número de edición */
-  '<div style="font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#004AAD;margin-bottom:16px">N.&#186;&nbsp;' + numPad + '</div>' +
+  /* Mensaje del editor (una sola vez, arriba de todo) */
+  parrafoIntro +
 
-  /* Título */
-  '<h1 style="font-family:Georgia,\'Times New Roman\',serif;font-size:30px;font-weight:900;font-style:italic;color:#0c0b09;line-height:1.1;margin:0 0 24px 0;letter-spacing:-.02em">' + numTitulo + '</h1>' +
-
-  /* Línea separadora */
-  '<div style="width:40px;height:2px;background:#004AAD;margin-bottom:28px"></div>' +
-
-  /* Mensaje del editor */
-  (parrafo || '<p style="font-family:Georgia,\'Times New Roman\',serif;font-size:16px;color:#2c2c2c;line-height:1.85;margin:0 0 20px 0;font-style:italic">Un nuevo n&#250;mero de <strong>' + nombreRevista + '</strong> ya est&#225; disponible. Entra y l&#233;elo cuando quieras.</p>') +
-
-  /* CTA */
-  '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:8px">' +
-  '<tr><td style="border-radius:3px;background:#004AAD">' +
-  '<a href="' + url + '" style="display:inline-block;padding:14px 30px;font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#ffffff;text-decoration:none">Leer edici&#243;n &#8594;</a>' +
-  '</td></tr>' +
-  '</table>' +
+  /* Un bloque por cada item agregado, en orden */
+  tarjetas +
 
   '</td></tr>' +
 
@@ -5632,11 +5744,11 @@ function _construirHTMLCorreo(numTitulo, numId, mensaje, urlEdicion, nombreRevis
   /* ── Footer ── */
   '<tr><td style="background:#ffffff;padding:24px 32px 32px 32px;border-radius:0 0 6px 6px">' +
   '<p style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#aaa;line-height:1.7;margin:0 0 8px 0">' +
-  'Recibiste este correo porque te suscribiste a <strong style="color:#888">' + nombreRevista + '</strong>.<br>' +
+  'Recibiste este correo porque te suscribiste a <strong style="color:#888">' + esc(nombreRevista) + '</strong>.<br>' +
   'Si no deseas recibirlo m&#225;s, responde a este correo con la palabra <strong style="color:#888">baja</strong>.' +
   '</p>' +
   '<p style="font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#ccc;margin:0">' +
-  '<a href="' + url + '" style="color:#bbb;text-decoration:none">laenbajada.com</a>' +
+  '<a href="' + esc(urlPie) + '" style="color:#bbb;text-decoration:none">laenbajada.com</a>' +
   '</p>' +
   '</td></tr>' +
 
@@ -5650,9 +5762,9 @@ function _construirHTMLCorreo(numTitulo, numId, mensaje, urlEdicion, nombreRevis
 }
 
 async function _enviarConResend() {
-  const key    = localStorage.getItem(RESEND_KEY_STORE);
-  const from   = localStorage.getItem(RESEND_FROM_STORE)   || 'onboarding@resend.dev';
-  const nombre = localStorage.getItem(RESEND_NOMBRE_STORE) || 'La Enbajada';
+  const key    = _resendCfg.key;
+  const from   = _resendCfg.from;
+  const nombre = _resendCfg.nombre;
 
   if (!key) {
     notif('Configura la API key de Resend en Configuración primero', 'warn');
@@ -5660,18 +5772,11 @@ async function _enviarConResend() {
     return;
   }
 
-  const numId   = g('bol-num-sel')?.value?.trim();
   const asunto  = g('bol-asunto')?.value?.trim();
   const mensaje = g('bol-mensaje')?.value?.trim() || '';
-  const url     = g('bol-url')?.value?.trim()     || 'https://laenbajada.com';
 
-  if (!numId)  { notif('Selecciona una edición primero', 'warn'); return; }
+  if (!_bolBloques.length) { notif('Agrega al menos un bloque primero', 'warn'); return; }
   if (!asunto) { notif('Escribe el asunto del correo', 'warn'); return; }
-
-  /* Obtener título del número seleccionado */
-  const nums = await DB.getContenidos().catch(() => []);
-  const num  = nums.find(n => n.id === numId);
-  const titulo = num?.titulo || 'Nueva edición';
 
   /* Cargar suscriptores frescos */
   let subsActivos = [];
@@ -5691,7 +5796,7 @@ async function _enviarConResend() {
   if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
   if (res) { res.style.display = 'none'; }
 
-  const html = _construirHTMLCorreo(titulo, numId, mensaje, url, nombre);
+  const html = _construirHTMLCorreo(_bolBloques, mensaje, nombre);
 
   /* Enviar en lotes de 50 (límite Resend por request en plan free) */
   const LOTE = 50;
@@ -5724,72 +5829,202 @@ async function _enviarConResend() {
   if (errores === 0) {
     if (res) { res.style.display = 'block'; res.style.background = 'rgba(26,122,74,.08)'; res.style.color = '#1a7a4a'; res.style.border = '1.5px solid #c3e9d4'; res.innerHTML = '<strong>✓ Boletín enviado correctamente</strong><br>Se envió a ' + enviados + ' suscriptores activos.'; }
     notif('✓ Boletín enviado a ' + enviados + ' suscriptores', 'ok');
+    if (errores === 0) { _bolBloques = []; _renderBolBloquesList(); _actualizarBoletinPreview(); }
   } else {
     if (res) { res.style.display = 'block'; res.style.background = 'rgba(192,57,43,.08)'; res.style.color = '#c0392b'; res.style.border = '1.5px solid #f5c6c6'; res.innerHTML = '<strong>⚠ Enviados: ' + enviados + ' · Con error: ' + errores + '</strong><br>Revisa la consola para más detalles.'; }
     notif('Enviados ' + enviados + ', errores ' + errores, 'warn');
   }
 }
 
-/* ════ BOLETÍN — redactor + envío ════ */
+/* ════ BOLETÍN — editor de bloques + envío ════ */
+let _bolTipoActual  = 'articulo';
+let _bolPickerCache = { articulo: null, contenido: null, autor: null, seccion: null };
+let _bolBloques      = []; /* [{ _uid, tipo, ...datos ya resueltos para render }] */
+const _BOL_ICONOS = { articulo: '📰', contenido: '📚', autor: '✍️', seccion: '🗂', texto: '📝' };
+
 function _toggleBoletinEditor() {
   const w = g('boletin-editor-wrap');
   if (!w) return;
   const abre = w.style.display === 'none' || w.style.display === '';
   w.style.display = abre ? 'block' : 'none';
-  if (abre) { _cargarNumerosBoletinSel(); _actualizarPaso4(); }
-}
-
-async function _cargarNumerosBoletinSel() {
-  const sel = g('bol-num-sel'); if (!sel) return;
-  const nums = await DB.getContenidos().catch(() => []);
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">— Selecciona un contenido —</option>' +
-    nums.map(n => `<option value="${n.id}" ${n.id===cur?'selected':''}>${n.titulo} ${n.estado==='activo'?'◎':''}</option>`).join('');
-  /* Cargar suscriptores frescos para el contador */
-  try {
-    const todos = await SB.select('suscriptores', 'order=created_at.desc');
-    if (todos) _allSubs = todos;
-    const activos = _allSubs.filter(s => s.activo !== false).length;
-    if (g('bol-count-dest')) g('bol-count-dest').textContent = activos;
-  } catch(_) {
-    const activos = _allSubs.filter(s => s.activo !== false).length;
-    if (g('bol-count-dest')) g('bol-count-dest').textContent = activos || '—';
+  if (abre) {
+    if (g('bol-tipo-sel')) g('bol-tipo-sel').value = 'articulo';
+    _bolCambiarTipo('articulo');
+    _renderBolBloquesList();
+    _actualizarBoletinPreview();
   }
 }
 
-function _onBoletinNumChange(numId) {
-  if (!numId) return;
-  DB.getContenidos().then(nums => {
-    const n = nums.find(x => x.id === numId);
-    if (!n) return;
-    /* Autocompletar asunto */
-    const asuEl = g('bol-asunto');
-    if (asuEl && !asuEl.value) asuEl.value = `La Enbajada — ${n.titulo}`;
-    /* URL del contenido: el slug ya es la ruta pública limpia */
-    const urlEl = g('bol-url');
-    if (urlEl && !urlEl.value && n.slug) {
-      urlEl.value = window.location.origin + '/contenido/' + n.slug;
-    }
-    _actualizarBoletinPreview();
-  });
+/* Misma regla de URL pública que usa netlify/edge-functions/og.js */
+function _urlArticuloBoletin(art) {
+  const tag  = (art.seccion_tag || '').replace(/#/g, '').trim();
+  const slug = art.slug || art.id;
+  return tag
+    ? window.location.origin + '/secciones/' + tag + '/' + encodeURIComponent(slug)
+    : window.location.origin + '/historias/'  + encodeURIComponent(slug);
 }
 
+function _bolCambiarTipo(tipo) {
+  _bolTipoActual = tipo;
+  const esTexto = tipo === 'texto';
+  if (g('bol-picker-wrap'))  g('bol-picker-wrap').style.display  = esTexto ? 'none'  : 'block';
+  if (g('bol-texto-form'))   g('bol-texto-form').style.display   = esTexto ? 'block' : 'none';
+  if (!esTexto) _cargarBolPicker(tipo);
+}
+
+async function _cargarBolPicker(tipo) {
+  if (!_bolPickerCache[tipo]) {
+    try {
+      if (tipo === 'articulo') {
+        const todos = await DB.getArticulos();
+        _bolPickerCache.articulo = (todos || []).filter(a => a.estado === 'publicado');
+      } else if (tipo === 'contenido') {
+        _bolPickerCache.contenido = await DB.getContenidos();
+      } else if (tipo === 'autor') {
+        _bolPickerCache.autor = await SB.select('editores', 'activo=eq.true&order=orden.asc,nombre.asc') || [];
+      } else if (tipo === 'seccion') {
+        _bolPickerCache.seccion = await DB.getSecciones();
+      }
+    } catch(e) { _bolPickerCache[tipo] = []; }
+  }
+  if (g('bol-picker-buscar')) g('bol-picker-buscar').value = '';
+  _renderBolPicker('');
+}
+
+function _renderBolPicker(q) {
+  const wrap = g('bol-picker-list'); if (!wrap) return;
+  const tipo = _bolTipoActual;
+  const fuente = _bolPickerCache[tipo] || [];
+  const query  = (q || '').toLowerCase().trim();
+  const campoNombre = (tipo === 'articulo' || tipo === 'contenido') ? 'titulo' : 'nombre';
+  const lista = query ? fuente.filter(x => (x[campoNombre] || '').toLowerCase().includes(query)) : fuente;
+
+  if (!lista.length) {
+    wrap.innerHTML = '<div style="padding:16px;text-align:center;font-size:12px;color:var(--t4)">Sin resultados</div>';
+    return;
+  }
+
+  wrap.innerHTML = lista.slice(0, 200).map(item => {
+    const label   = item[campoNombre] || '(sin título)';
+    const sub     = tipo === 'autor' ? (item.cargo || '') : (tipo === 'seccion' ? (item.descripcion || '').slice(0, 40) : '');
+    const yaEsta  = _bolBloques.some(b => b.tipo === tipo && b._refId === item.id);
+    return '<div onclick="_bolAgregarDesdePicker(\'' + item.id + '\')" style="padding:9px 14px;border-bottom:1px solid var(--bd);cursor:pointer;font-size:13px;display:flex;justify-content:space-between;gap:10px' + (yaEsta ? ';opacity:.45' : '') + '">' +
+      '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + label + (yaEsta ? ' ✓' : '') + '</span>' +
+      (sub ? '<span style="font-size:10px;color:var(--t4);flex-shrink:0">' + sub + '</span>' : '') +
+      '</div>';
+  }).join('');
+}
+
+function _bolAgregarDesdePicker(id) {
+  const tipo = _bolTipoActual;
+  const item = (_bolPickerCache[tipo] || []).find(x => x.id === id);
+  if (!item) return;
+  if (_bolBloques.some(b => b.tipo === tipo && b._refId === id)) { notif('Ya está agregado', 'warn'); return; }
+
+  const bloque = { _uid: Date.now() + '_' + Math.random().toString(36).slice(2), tipo, _refId: id };
+  if (tipo === 'articulo') {
+    bloque.titulo   = item.titulo;
+    bloque.extracto = item.extracto || item.subtitulo || '';
+    bloque.imagen   = item.imagen_url || '';
+    bloque.url      = _urlArticuloBoletin(item);
+    bloque._label   = item.titulo;
+  } else if (tipo === 'contenido') {
+    bloque.titulo   = item.titulo;
+    bloque.url      = window.location.origin + '/contenido/' + encodeURIComponent(item.slug || item.id);
+    bloque._label   = item.titulo;
+  } else if (tipo === 'autor') {
+    bloque.nombre = item.nombre;
+    bloque.cargo  = item.cargo || '';
+    bloque.bio    = item.bio || '';
+    bloque.foto   = item.foto_url || '';
+    bloque.url    = window.location.origin + '/sobre/equipo/' + encodeURIComponent(item.slug || item.id);
+    bloque._label = item.nombre;
+  } else if (tipo === 'seccion') {
+    bloque.nombre      = item.nombre;
+    bloque.descripcion = item.descripcion || '';
+    bloque.url         = window.location.origin + '/secciones/' + encodeURIComponent(item.tag);
+    bloque._label      = item.nombre;
+  }
+
+  _bolBloques.push(bloque);
+  _renderBolPicker(g('bol-picker-buscar')?.value || '');
+  _renderBolBloquesList();
+  _actualizarBoletinPreview();
+}
+
+function _bolAgregarTexto() {
+  const titulo = g('bol-txt-titulo')?.value?.trim();
+  const cuerpo = g('bol-txt-cuerpo')?.value?.trim();
+  if (!titulo || !cuerpo) { notif('Escribe título y texto del bloque', 'warn'); return; }
+
+  _bolBloques.push({
+    _uid: Date.now() + '_' + Math.random().toString(36).slice(2),
+    tipo: 'texto',
+    titulo,
+    texto: cuerpo,
+    btnTexto: g('bol-txt-btn-texto')?.value?.trim() || '',
+    btnUrl:   g('bol-txt-btn-url')?.value?.trim()   || '',
+    _label: titulo,
+  });
+
+  if (g('bol-txt-titulo'))    g('bol-txt-titulo').value    = '';
+  if (g('bol-txt-cuerpo'))    g('bol-txt-cuerpo').value    = '';
+  if (g('bol-txt-btn-texto')) g('bol-txt-btn-texto').value = '';
+  if (g('bol-txt-btn-url'))   g('bol-txt-btn-url').value   = '';
+
+  notif('✓ Bloque de texto agregado', 'ok');
+  _renderBolBloquesList();
+  _actualizarBoletinPreview();
+}
+
+function _renderBolBloquesList() {
+  const wrap = g('bol-bloques-list'); if (!wrap) return;
+  if (g('bol-bloques-count')) g('bol-bloques-count').textContent = _bolBloques.length;
+
+  if (!_bolBloques.length) {
+    wrap.innerHTML = '<div style="padding:16px;text-align:center;font-size:12px;color:var(--t4)">Agrega bloques arriba — aparecerán aquí, en el orden en que se envían</div>';
+    return;
+  }
+
+  wrap.innerHTML = _bolBloques.map((b, i) => {
+    const arriba = i === 0;
+    const abajo  = i === _bolBloques.length - 1;
+    return '<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--bd);font-size:13px">' +
+      '<span>' + (_BOL_ICONOS[b.tipo] || '•') + '</span>' +
+      '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (b._label || '') + '</span>' +
+      '<button type="button" onclick="_bolMoverBloque(\'' + b._uid + '\',-1)" ' + (arriba ? 'disabled style="opacity:.25;border:none;background:none;font-size:13px"' : 'style="border:none;background:none;cursor:pointer;font-size:13px"') + '>↑</button>' +
+      '<button type="button" onclick="_bolMoverBloque(\'' + b._uid + '\',1)" '  + (abajo  ? 'disabled style="opacity:.25;border:none;background:none;font-size:13px"' : 'style="border:none;background:none;cursor:pointer;font-size:13px"') + '>↓</button>' +
+      '<button type="button" onclick="_bolQuitarBloque(\'' + b._uid + '\')" style="border:none;background:none;cursor:pointer;font-size:13px;color:#c0392b">✕</button>' +
+      '</div>';
+  }).join('');
+}
+
+function _bolMoverBloque(uid, dir) {
+  const i = _bolBloques.findIndex(b => b._uid === uid);
+  const j = i + dir;
+  if (i < 0 || j < 0 || j >= _bolBloques.length) return;
+  const tmp = _bolBloques[i]; _bolBloques[i] = _bolBloques[j]; _bolBloques[j] = tmp;
+  _renderBolBloquesList();
+  _actualizarBoletinPreview();
+}
+
+function _bolQuitarBloque(uid) {
+  _bolBloques = _bolBloques.filter(b => b._uid !== uid);
+  _renderBolPicker(g('bol-picker-buscar')?.value || '');
+  _renderBolBloquesList();
+  _actualizarBoletinPreview();
+}
+
+/* Vista previa REAL: el mismo HTML que se envía, dentro de un iframe */
 function _actualizarBoletinPreview() {
-  const numId = g('bol-num-sel')?.value || '';
-  const msg   = g('bol-mensaje')?.value?.trim() || '';
-  const url   = g('bol-url')?.value?.trim()     || '#';
-  DB.getContenidos().then(nums => {
-    const n = nums.find(x => x.id === numId);
-    if (g('bol-prev-num-label')) g('bol-prev-num-label').textContent = n ? n.titulo : 'Contenido destacado';
-    if (g('bol-prev-titulo'))   g('bol-prev-titulo').textContent   = n?.titulo || 'Título del contenido';
-    if (g('bol-prev-mensaje'))  g('bol-prev-mensaje').textContent  = msg || 'El mensaje introductorio aparecerá aquí…';
-    const cta = g('bol-prev-cta'); if (cta) cta.href = url;
-  }).catch(() => {});
-  /* También actualizar paso 4 */
+  const mensaje = g('bol-mensaje')?.value?.trim() || '';
+  const nombre  = g('bol-de')?.value?.trim() || 'La Enbajada';
+  const frame = g('bol-preview-frame');
+  if (frame) frame.srcdoc = _construirHTMLCorreo(_bolBloques, mensaje, nombre);
   _actualizarPaso4();
 }
 
-/* ── Actualizar previews del paso 4 en tiempo real ── */
+/* ── Actualizar previews del paso 4 (copiar por partes) en tiempo real ── */
 async function _actualizarPaso4() {
   let subsActivos = _allSubs.filter(s => s.activo !== false).map(s => s.email);
   if (!subsActivos.length) {
@@ -5800,10 +6035,14 @@ async function _actualizarPaso4() {
   }
   const asunto  = g('bol-asunto')?.value?.trim()  || '';
   const mensaje = g('bol-mensaje')?.value?.trim()  || '';
-  const url     = g('bol-url')?.value?.trim()      || '';
   const cuerpoLineas = [];
   if (mensaje) cuerpoLineas.push(mensaje);
-  if (url)     cuerpoLineas.push('', 'Leer contenido completo: ' + url);
+  _bolBloques.forEach(b => {
+    if (b.tipo === 'articulo' || b.tipo === 'contenido') cuerpoLineas.push('', b.titulo, b.url);
+    else if (b.tipo === 'autor')    cuerpoLineas.push('', b.nombre + (b.cargo ? ' — ' + b.cargo : ''), b.url);
+    else if (b.tipo === 'seccion')  cuerpoLineas.push('', b.nombre, b.url);
+    else if (b.tipo === 'texto')  { cuerpoLineas.push('', b.titulo, b.texto); if (b.btnUrl) cuerpoLineas.push(b.btnUrl); }
+  });
   cuerpoLineas.push('', '—', 'La Enbajada · laenbajada.com');
   if (g('bol-emails-preview'))  g('bol-emails-preview').textContent  = subsActivos.join(', ') || '—';
   if (g('bol-asunto-preview'))  g('bol-asunto-preview').textContent  = asunto || '—';
@@ -5829,13 +6068,17 @@ function _copiarAsuntoBoletin() {
 
 function _copiarCuerpoBoletin() {
   const mensaje = g('bol-mensaje')?.value?.trim() || '';
-  const url     = g('bol-url')?.value?.trim()     || '';
   const lineas  = [];
   if (mensaje) lineas.push(mensaje);
-  if (url)     lineas.push('', 'Leer edición completa: ' + url);
+  _bolBloques.forEach(b => {
+    if (b.tipo === 'articulo' || b.tipo === 'contenido') lineas.push('', b.titulo, b.url);
+    else if (b.tipo === 'autor')    lineas.push('', b.nombre + (b.cargo ? ' — ' + b.cargo : ''), b.url);
+    else if (b.tipo === 'seccion')  lineas.push('', b.nombre, b.url);
+    else if (b.tipo === 'texto')  { lineas.push('', b.titulo, b.texto); if (b.btnUrl) lineas.push(b.btnUrl); }
+  });
   lineas.push('', '—', 'La Enbajada · laenbajada.com');
   const cuerpo = lineas.join('\n');
-  if (!mensaje && !url) { notif('Escribe el mensaje primero', 'warn'); return; }
+  if (!mensaje && !_bolBloques.length) { notif('Escribe el mensaje o agrega bloques primero', 'warn'); return; }
   navigator.clipboard.writeText(cuerpo).then(() => {
     notif('✓ Cuerpo copiado — pégalo en el cuerpo del correo en Gmail', 'ok');
   }).catch(() => prompt('Copia el cuerpo:', cuerpo));
@@ -6002,7 +6245,7 @@ async function cargarIndexCfg() {
     if (g('idx-meta-titulo')) { g('idx-meta-titulo').value = idx.metaTitulo || ''; g('seo-char-titulo').textContent = (idx.metaTitulo||'').length; }
     if (g('idx-meta-desc'))   { g('idx-meta-desc').value   = idx.metaDesc   || ''; g('seo-char-desc').textContent   = (idx.metaDesc||'').length; }
     /* Preview boletín */
-    if (g('boletin-prev-titulo')) g('boletin-prev-titulo').textContent = idx.tituloBoletin || idx.titbol || 'Recibe cada número en tu correo';
+    if (g('boletin-prev-titulo')) g('boletin-prev-titulo').textContent = idx.tituloBoletin || idx.titbol || 'Recibe lo nuevo de La Enbajada en tu correo';
     if (g('boletin-prev-desc'))   g('boletin-prev-desc').textContent   = idx.textoBoletin  || idx.txtbol || 'La Enbajada llega a tu bandeja cuando hay algo que vale la pena leer.';
     if (g('boletin-prev-kicker')) g('boletin-prev-kicker').textContent = idx.kickerBoletin || 'Boletín editorial';
     if (g('boletin-prev-btn'))    g('boletin-prev-btn').textContent    = idx.btnBoletin    || 'Suscribirse';
@@ -7218,6 +7461,9 @@ async function initAdmin() {
 
   /* Stats del dashboard */
   updateStats();
+
+  /* Config de Resend (para que esté lista aunque no se abra la pestaña Configuración) */
+  _cargarResendCfg();
 
   /* Listeners autosave */
   _initAutosaveDetector();
