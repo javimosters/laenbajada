@@ -327,18 +327,18 @@ html.dark .search-modal { background:var(--bg); }
     <button class="sub-modal-close" onclick="closeSubscribe()" aria-label="Cerrar">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
-    <div class="sub-modal-kicker">Boletín editorial</div>
-    <h2 class="sub-modal-titulo js-boletin-titulo">Recibe cada número en tu correo</h2>
+    <div class="sub-modal-kicker js-boletin-kicker">Boletín editorial</div>
+    <h2 class="sub-modal-titulo js-boletin-titulo">Recibe lo nuevo de La Enbajada en tu correo</h2>
     <p class="sub-modal-texto js-boletin-texto">La Enbajada llega a tu bandeja cuando hay algo que vale la pena leer.</p>
     <div class="sub-modal-form">
       <input class="sub-modal-input" type="email" id="boletin-email" placeholder="tu@correo.com" autocomplete="email" onkeydown="if(event.key==='Enter')suscribirse(this.nextElementSibling)">
-      <button class="sub-modal-btn" onclick="suscribirse(this)">Suscribirse</button>
+      <button class="sub-modal-btn js-boletin-btn" onclick="suscribirse(this)">Suscribirse</button>
     </div>
     <p class="sub-modal-feedback" id="boletin-feedback"></p>
   </div>
 </div>
 
-<script src="/assets/app.js?v=v14"></script>
+<script src="/assets/app.js?v=v16"></script>
 <script>
 
 /* ── Sanitize XSS — escapar datos de BD antes de innerHTML ── */
