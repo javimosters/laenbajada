@@ -835,8 +835,26 @@ async function aplicarSite() {
   const idxCfg = ft.index_cfg || {};
   document.querySelectorAll('.js-boletin-titulo').forEach(e => e.textContent = idxCfg.tituloBoletin || idxCfg.titbol || 'Recibe lo nuevo de La Enbajada en tu correo');
   document.querySelectorAll('.js-boletin-texto').forEach(e  => e.textContent = idxCfg.textoBoletin  || idxCfg.txtbol || 'La Enbajada llega a tu bandeja cuando hay algo que vale la pena leer.');
+  document.querySelectorAll('.js-boletin-kicker').forEach(e => e.textContent = idxCfg.kickerBoletin || 'Boletín editorial');
+  document.querySelectorAll('.js-boletin-btn').forEach(e    => e.textContent = idxCfg.btnBoletin    || 'Suscribirse');
+  document.querySelectorAll('.js-boletin-nota').forEach(e   => e.textContent = idxCfg.notaBoletin    || 'Solo enviamos cuando hay algo nuevo.');
 
   aplicarSEO();
+
+  /* SEO sitewide (pestaña "SEO y metadatos" del admin) — se aplica en
+     TODAS las páginas como default. Páginas con SEO propio (artículo,
+     editor, sección…) llaman aplicarSEO() de nuevo después de initSite()
+     con sus propios datos, y esos pisan esto — como debe ser. */
+  if (idxCfg.metaTitulo) {
+    document.title = idxCfg.metaTitulo;
+    setMeta('og:title', idxCfg.metaTitulo);
+    setMeta('twitter:title', idxCfg.metaTitulo);
+  }
+  if (idxCfg.metaDesc) {
+    setMeta('description', idxCfg.metaDesc);
+    setMeta('og:description', idxCfg.metaDesc);
+    setMeta('twitter:description', idxCfg.metaDesc);
+  }
 
   /* theme-color */
   let tm = document.querySelector('meta[name="theme-color"]');

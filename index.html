@@ -491,12 +491,12 @@ input, textarea, select, button { max-width: 100% }
     <button class="sub-modal-close" onclick="closeSubscribe()" aria-label="Cerrar">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
-    <div class="sub-modal-kicker">Boletín editorial</div>
-    <h2 class="sub-modal-titulo js-boletin-titulo">Recibe cada número en tu correo</h2>
+    <div class="sub-modal-kicker js-boletin-kicker">Boletín editorial</div>
+    <h2 class="sub-modal-titulo js-boletin-titulo">Recibe lo nuevo de La Enbajada en tu correo</h2>
     <p class="sub-modal-texto js-boletin-texto">La Enbajada llega a tu bandeja cuando hay algo que vale la pena leer.</p>
     <div class="sub-modal-form">
       <input class="sub-modal-input" type="email" id="boletin-email" placeholder="tu@correo.com" autocomplete="email" onkeydown="if(event.key==='Enter')suscribirse(this.nextElementSibling)">
-      <button class="sub-modal-btn" onclick="suscribirse(this)">Suscribirse</button>
+      <button class="sub-modal-btn js-boletin-btn" onclick="suscribirse(this)">Suscribirse</button>
     </div>
     <p class="sub-modal-feedback" id="boletin-feedback"></p>
   </div>
@@ -756,7 +756,6 @@ function suscribirseBtn(btn){
    ════════════════════════════════════════ */
 async function init(){
   try{
-    var tituloDefecto=document.title;
     /* Arrancar todas las queries en paralelo ANTES de que initSite bloquee */
     var resultsPromise=Promise.all([DB.getConfig(),DB.getArticulos().then(function(a){return a.filter(function(x){return x.estado==='publicado'})}),DB.getContenidos(),DB.getSecciones(),DB.getIndexCfg()]);
     await initSite();
@@ -769,18 +768,6 @@ async function init(){
     var portadaId=await _renderHero(cfg,contenidoDestacado,secciones,arts);
     _renderGrid(arts,[portadaId],secciones,idxCfg.maxArtsGrid,idxCfg.colsGrid);
     _renderRuptura();
-    /* Boletín desde admin */
-    var kickerEl=document.querySelector('.js-boletin-kicker');
-    if(kickerEl&&idxCfg.kickerBoletin) kickerEl.textContent=idxCfg.kickerBoletin;
-    var btnBol=document.querySelector('.js-boletin-btn');
-    if(btnBol&&idxCfg.btnBoletin){btnBol.textContent=idxCfg.btnBoletin;btnBol.dataset.label=idxCfg.btnBoletin}
-    var notaEl=document.querySelector('.js-boletin-nota');
-    if(notaEl&&idxCfg.notaBoletin) notaEl.textContent=idxCfg.notaBoletin;
-
-    /* SEO desde admin */
-    document.title=idxCfg.metaTitulo||tituloDefecto;
-    if(idxCfg.metaTitulo) document.getElementById('og-title')?.setAttribute('content',idxCfg.metaTitulo);
-    if(idxCfg.metaDesc){document.getElementById('meta-desc')?.setAttribute('content',idxCfg.metaDesc);document.getElementById('og-desc')?.setAttribute('content',idxCfg.metaDesc)}
 
     observeReveal();
   }catch(err){
