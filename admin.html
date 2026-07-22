@@ -5611,7 +5611,7 @@ async function _testResend() {
    bloques: array de bloques heterogéneos, en el orden en que se
    agregaron — cada uno con su propio "tipo" (articulo/autor/seccion/
    texto). Reemplaza el viejo esquema de "un solo contenido = un CTA". */
-function _construirHTMLCorreo(bloques, mensaje, nombreRevista) {
+function _construirHTMLCorreo(bloques, mensaje, nombreRevista, emailContacto) {
   var lista = bloques || [];
   var esc = function(s) { return String(s || ''); };
 
@@ -5751,7 +5751,9 @@ function _construirHTMLCorreo(bloques, mensaje, nombreRevista) {
   '<tr><td style="background:#ffffff;padding:24px 32px 32px 32px;border-radius:0 0 6px 6px">' +
   '<p style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#aaa;line-height:1.7;margin:0 0 8px 0">' +
   'Recibiste este correo porque te suscribiste a <strong style="color:#888">' + esc(nombreRevista) + '</strong>.<br>' +
-  'Si no deseas recibirlo m&#225;s, responde a este correo con la palabra <strong style="color:#888">baja</strong>.' +
+  (emailContacto
+    ? 'Si ya no quieres recibirlo, escr&#237;benos a <a href="mailto:' + esc(emailContacto) + '" style="color:#888">' + esc(emailContacto) + '</a>.'
+    : 'Si ya no quieres recibirlo, escr&#237;benos por nuestras redes sociales.') +
   '</p>' +
   '<p style="font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#ccc;margin:0">' +
   '<a href="' + esc(urlPie) + '" style="color:#bbb;text-decoration:none">laenbajada.com</a>' +
@@ -5802,7 +5804,9 @@ async function _enviarConResend() {
   if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
   if (res) { res.style.display = 'none'; }
 
-  const html = _construirHTMLCorreo(_bolBloques, mensaje, nombre);
+  const cfgActual   = await DB.getConfig().catch(() => ({}));
+  const emailContacto = cfgActual.footer?.email || '';
+  const html = _construirHTMLCorreo(_bolBloques, mensaje, nombre, emailContacto);
 
   /* Enviar en lotes de 50 (límite Resend por request en plan free) */
   const LOTE = 50;
@@ -6022,11 +6026,13 @@ function _bolQuitarBloque(uid) {
 }
 
 /* Vista previa REAL: el mismo HTML que se envía, dentro de un iframe */
-function _actualizarBoletinPreview() {
+async function _actualizarBoletinPreview() {
   const mensaje = g('bol-mensaje')?.value?.trim() || '';
   const nombre  = g('bol-de')?.value?.trim() || 'La Enbajada';
+  const cfgActual = await DB.getConfig().catch(() => ({}));
+  const emailContacto = cfgActual.footer?.email || '';
   const frame = g('bol-preview-frame');
-  if (frame) frame.srcdoc = _construirHTMLCorreo(_bolBloques, mensaje, nombre);
+  if (frame) frame.srcdoc = _construirHTMLCorreo(_bolBloques, mensaje, nombre, emailContacto);
   _actualizarPaso4();
 }
 

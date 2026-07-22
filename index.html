@@ -687,8 +687,6 @@ async function _renderHero(cfg,contenidoDestacado,secciones,pubs){
     });
   }
 
-  /* SEO */
-  aplicarSEO({titulo:portada.titulo,desc:portada.extracto||portada.subtitulo||ft.desc||'',imagen:portada.imagen_url||''});
   return portada.id;
 }
 
