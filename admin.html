@@ -2582,6 +2582,88 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
         </div>
       </div>
 
+      <!-- ════ COMUNICADO INDIVIDUAL ════ -->
+      <div class="sc" style="margin-bottom:16px">
+        <div class="sc-head">
+          <div class="sc-head-left"><div class="sc-head-dot"></div><div>
+            <div class="sc-title">Enviar comunicado</div>
+            <div class="sc-desc">Un correo con el diseño de La Enbajada, a una sola persona (no a la lista completa)</div>
+          </div></div>
+          <button class="ab ab-s" onclick="_toggleComunicadoEditor()">✉ Redactar comunicado</button>
+        </div>
+
+        <div id="comunicado-editor-wrap" style="display:none">
+          <div style="padding:20px;border-top:1px solid var(--bd);background:var(--paper2)">
+            <div style="margin-bottom:18px">
+              <label class="fl" style="margin-bottom:8px;display:block">Plantillas rápidas <span style="font-weight:400;color:var(--t4)">(para no partir de cero — igual puedes editarlas después)</span></label>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button type="button" class="ab ab-s ab-sm" onclick="_comPlantilla('bienvenida')">👋 Bienvenida</button>
+                <button type="button" class="ab ab-s ab-sm" onclick="_comPlantilla('baja')">✓ Confirmar baja</button>
+                <button type="button" class="ab ab-s ab-sm" onclick="_comPlantilla('gracias')">🙏 Agradecimiento</button>
+              </div>
+            </div>
+            <div class="fg" style="margin-bottom:14px">
+              <label class="fl" for="com-destinatario">Para (correo del destinatario)</label>
+              <input class="fi" type="email" id="com-destinatario" placeholder="persona@correo.com" style="font-size:13px">
+            </div>
+            <div class="fg" style="margin-bottom:14px">
+              <label class="fl" for="com-asunto">Asunto del correo</label>
+              <input class="fi" type="text" id="com-asunto" placeholder="La Enbajada — ..." style="font-size:13px" oninput="_actualizarComunicadoPreview()">
+            </div>
+            <div class="fg" style="margin-bottom:18px">
+              <label class="fl" for="com-mensaje">Mensaje</label>
+              <textarea class="fta" id="com-mensaje" style="min-height:80px;font-size:13px" oninput="_actualizarComunicadoPreview()" placeholder="Escribe el mensaje para esta persona…"></textarea>
+            </div>
+
+            <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--t4);margin-bottom:14px">Agregar bloques (opcional)</div>
+            <select class="fs" id="com-tipo-sel" onchange="_comCambiarTipo(this.value)" style="font-size:13px;margin-bottom:10px;max-width:260px">
+              <option value="articulo">📰 Artículo</option>
+              <option value="contenido">📚 Contenido</option>
+              <option value="autor">✍️ Autor destacado</option>
+              <option value="seccion">🗂 Sección destacada</option>
+              <option value="texto">📝 Texto libre / anuncio</option>
+            </select>
+
+            <div id="com-picker-wrap">
+              <input class="fi" type="search" id="com-picker-buscar" placeholder="Buscar por título…"
+                oninput="_renderComPicker(this.value)" style="font-size:13px;margin-bottom:8px">
+              <div id="com-picker-list" style="max-height:180px;overflow-y:auto;border:1px solid var(--bd);border-radius:5px;background:var(--paper)"></div>
+            </div>
+
+            <div id="com-texto-form" style="display:none">
+              <div class="fg" style="margin-bottom:8px">
+                <label class="fl">Título del bloque</label>
+                <input class="fi" type="text" id="com-txt-titulo" style="font-size:13px">
+              </div>
+              <div class="fg" style="margin-bottom:8px">
+                <label class="fl">Texto</label>
+                <textarea class="fta" id="com-txt-cuerpo" style="min-height:60px;font-size:13px"></textarea>
+              </div>
+              <div class="fr fr-2" style="margin-bottom:10px">
+                <div class="fg"><label class="fl">Texto del botón <span style="font-weight:400;color:var(--t4)">(opcional)</span></label><input class="fi" type="text" id="com-txt-btn-texto" style="font-size:13px"></div>
+                <div class="fg"><label class="fl">URL del botón <span style="font-weight:400;color:var(--t4)">(opcional)</span></label><input class="fi" type="url" id="com-txt-btn-url" style="font-size:13px"></div>
+              </div>
+              <button type="button" class="ab ab-or" onclick="_comAgregarTexto()">+ Agregar bloque de texto</button>
+            </div>
+
+            <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--t4);margin:18px 0 8px">Bloques agregados (<span id="com-bloques-count">0</span>)</div>
+            <div id="com-bloques-list" style="border:1px solid var(--bd);border-radius:5px;background:var(--paper)">
+              <div style="padding:14px;text-align:center;font-size:12px;color:var(--t4)">Sin bloques — el mensaje de arriba también se puede enviar solo</div>
+            </div>
+          </div>
+
+          <div style="padding:20px">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--t4);margin-bottom:12px">Vista previa</div>
+            <iframe id="com-preview-frame" title="Vista previa del comunicado" style="width:100%;max-width:600px;height:420px;border:1px solid var(--bd);border-radius:4px;background:#fff"></iframe>
+          </div>
+
+          <div style="padding:0 20px 20px">
+            <button class="ab ab-p" id="btn-enviar-comunicado" onclick="_enviarComunicado()"><span style="font-size:16px">✉</span> Enviar comunicado</button>
+            <div id="com-send-result" style="display:none;margin-top:14px;padding:12px 16px;border-radius:5px;font-size:13px;font-family:var(--sans);line-height:1.5"></div>
+          </div>
+        </div>
+      </div>
+
       <!-- Lista de suscriptores -->
       <div class="sc" style="margin-bottom:16px">
         <div class="sc-head" style="flex-wrap:wrap;gap:10px">
@@ -2746,15 +2828,22 @@ html.dark .prev-bloque-qa-q { color: #79a9e8; }
                   style="font-family:var(--mono);font-size:13px;flex:1">
                 <button class="ab ab-s ab-sm" onclick="_toggleResendKey()" style="flex-shrink:0">👁</button>
               </div>
-              <div class="fh">Encriptada en localStorage. Nunca sale del navegador.</div>
+              <div class="fh">Se guarda en Supabase (solo visible con sesión iniciada). Nunca sale del navegador sin cifrar la conexión.</div>
             </div>
             <div class="fg">
-              <label class="fl">Correo del remitente</label>
+              <label class="fl">Correo del remitente <span style="font-weight:400;color:var(--t4)">(boletín masivo)</span></label>
               <input class="fi" type="email" id="cfg-resend-from"
                 placeholder="onboarding@resend.dev"
                 value="onboarding@resend.dev"
                 style="font-size:13px;max-width:320px">
               <div class="fh">Usa <code style="font-size:11px;font-family:var(--mono)">onboarding@resend.dev</code> mientras no tengas dominio propio.</div>
+            </div>
+            <div class="fg">
+              <label class="fl">Correo remitente <span style="font-weight:400;color:var(--t4)">(comunicados individuales)</span></label>
+              <input class="fi" type="email" id="cfg-contacto-from"
+                placeholder="contacto@laenbajada.com"
+                style="font-size:13px;max-width:320px">
+              <div class="fh">El que se usa al mandar un comunicado a una sola persona (distinto del boletín masivo).</div>
             </div>
             <div class="fg">
               <label class="fl">Nombre del remitente</label>
@@ -5506,7 +5595,7 @@ let _idxCfgState = {};
    A diferencia de SB._req (que siempre usa la key anónima), esta usa el
    access_token real de la sesión — así RLS puede diferenciar admin logueado
    de cualquier visitante con la key pública del sitio. */
-let _resendCfg = { key: '', from: 'onboarding@resend.dev', nombre: 'La Enbajada' };
+let _resendCfg = { key: '', from: 'onboarding@resend.dev', nombre: 'La Enbajada', contactoFrom: 'contacto@laenbajada.com' };
 
 async function _authFetch(path, opts = {}) {
   const session = AUTH.getSession();
@@ -5531,12 +5620,13 @@ async function _authFetch(path, opts = {}) {
 
 async function _cargarResendCfg() {
   try {
-    const rows = await _authFetch('/config_privada?id=eq.1&select=resend_api_key,resend_from,resend_nombre');
+    const rows = await _authFetch('/config_privada?id=eq.1&select=resend_api_key,resend_from,resend_nombre,contacto_email');
     const row  = rows?.[0];
     _resendCfg = {
-      key:    row?.resend_api_key || '',
-      from:   row?.resend_from    || 'onboarding@resend.dev',
-      nombre: row?.resend_nombre  || 'La Enbajada',
+      key:          row?.resend_api_key || '',
+      from:         row?.resend_from    || 'onboarding@resend.dev',
+      nombre:       row?.resend_nombre  || 'La Enbajada',
+      contactoFrom: row?.contacto_email || 'contacto@laenbajada.com',
     };
   } catch (e) {
     notif('No se pudo cargar la configuración de Resend: ' + e.message, 'err');
@@ -5544,25 +5634,27 @@ async function _cargarResendCfg() {
   if (g('cfg-resend-key'))    g('cfg-resend-key').value    = _resendCfg.key;
   if (g('cfg-resend-from'))   g('cfg-resend-from').value   = _resendCfg.from;
   if (g('cfg-resend-nombre')) g('cfg-resend-nombre').value = _resendCfg.nombre;
+  if (g('cfg-contacto-from')) g('cfg-contacto-from').value = _resendCfg.contactoFrom;
   if (g('bol-from-preview'))  g('bol-from-preview').textContent = 'De: ' + _resendCfg.nombre + ' <' + _resendCfg.from + '>';
 }
 
 async function _guardarResendCfg() {
-  const key    = g('cfg-resend-key')?.value?.trim()    || '';
-  const from   = g('cfg-resend-from')?.value?.trim()   || 'onboarding@resend.dev';
-  const nombre = g('cfg-resend-nombre')?.value?.trim() || 'La Enbajada';
+  const key          = g('cfg-resend-key')?.value?.trim()    || '';
+  const from         = g('cfg-resend-from')?.value?.trim()   || 'onboarding@resend.dev';
+  const nombre       = g('cfg-resend-nombre')?.value?.trim() || 'La Enbajada';
+  const contactoFrom = g('cfg-contacto-from')?.value?.trim() || 'contacto@laenbajada.com';
   if (!key) { notif('Pega la API key de Resend primero', 'warn'); return; }
   try {
     await _authFetch('/config_privada?id=eq.1', {
       method: 'PATCH',
       prefer: 'return=minimal',
-      body: JSON.stringify({ resend_api_key: key, resend_from: from, resend_nombre: nombre, updated_at: new Date().toISOString() }),
+      body: JSON.stringify({ resend_api_key: key, resend_from: from, resend_nombre: nombre, contacto_email: contactoFrom, updated_at: new Date().toISOString() }),
     });
   } catch (e) {
     notif('Error guardando en Supabase: ' + e.message, 'err');
     return;
   }
-  _resendCfg = { key, from, nombre };
+  _resendCfg = { key, from, nombre, contactoFrom };
   notif('✓ Configuración de Resend guardada', 'ok');
   if (g('bol-from-preview')) g('bol-from-preview').textContent = 'De: ' + nombre + ' <' + from + '>';
 }
@@ -5611,7 +5703,8 @@ async function _testResend() {
    bloques: array de bloques heterogéneos, en el orden en que se
    agregaron — cada uno con su propio "tipo" (articulo/autor/seccion/
    texto). Reemplaza el viejo esquema de "un solo contenido = un CTA". */
-function _construirHTMLCorreo(bloques, mensaje, nombreRevista, emailContacto) {
+function _construirHTMLCorreo(bloques, mensaje, nombreRevista, emailContacto, kickerHeader) {
+  var kicker = kickerHeader || 'Bolet\u00edn editorial';
   var lista = bloques || [];
   var esc = function(s) { return String(s || ''); };
 
@@ -5720,7 +5813,7 @@ function _construirHTMLCorreo(bloques, mensaje, nombreRevista, emailContacto) {
   '<tr>' +
   '<td style="font-family:Georgia,\'Times New Roman\',serif;font-size:24px;font-weight:900;font-style:italic;color:#f2ede4;letter-spacing:-.02em">' + esc(nombreRevista) + '</td>' +
   '<td align="right" style="vertical-align:middle">' +
-  '<span style="font-family:Arial,Helvetica,sans-serif;font-size:8px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:rgba(242,237,228,.32)">Bolet&#237;n editorial</span>' +
+  '<span style="font-family:Arial,Helvetica,sans-serif;font-size:8px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:rgba(242,237,228,.32)">' + esc(kicker) + '</span>' +
   '</td>' +
   '</tr>' +
   '</table>' +
@@ -6094,6 +6187,222 @@ function _copiarCuerpoBoletin() {
   navigator.clipboard.writeText(cuerpo).then(() => {
     notif('✓ Cuerpo copiado — pégalo en el cuerpo del correo en Gmail', 'ok');
   }).catch(() => prompt('Copia el cuerpo:', cuerpo));
+}
+
+/* ════ COMUNICADO INDIVIDUAL — reusa el picker, la caché y el
+   constructor de HTML del boletín, pero manda a UN solo destinatario ════ */
+let _comTipoActual = 'articulo';
+let _comBloques     = [];
+
+const _COM_PLANTILLAS = {
+  bienvenida: {
+    asunto:  '¡Bienvenido/a a La Enbajada!',
+    mensaje: 'Gracias por sumarte a La Enbajada. Nos alegra mucho tenerte por aquí — desde ahora te vamos a escribir cuando haya algo que valga la pena leer.\n\nSi tienes alguna pregunta o recomendación, este mismo correo te sirve para responder.',
+  },
+  baja: {
+    asunto:  'Listo, te dimos de baja de La Enbajada',
+    mensaje: 'Ya quedaste fuera de nuestra lista de correos — no vas a recibir más boletines de nuestra parte.\n\nSi cambias de opinión, siempre puedes volver a suscribirte desde nuestro sitio.',
+  },
+  gracias: {
+    asunto:  'Gracias por tu mensaje a La Enbajada',
+    mensaje: 'Gracias por escribirnos y por tu recomendación — la tenemos muy en cuenta.\n\nSi surge algo más, no dudes en volver a contactarnos.',
+  },
+};
+
+function _comPlantilla(tipo) {
+  const p = _COM_PLANTILLAS[tipo];
+  if (!p) return;
+  if (g('com-asunto'))  g('com-asunto').value  = p.asunto;
+  if (g('com-mensaje')) g('com-mensaje').value = p.mensaje;
+  _actualizarComunicadoPreview();
+}
+
+function _toggleComunicadoEditor() {
+  const w = g('comunicado-editor-wrap'); if (!w) return;
+  const abre = w.style.display === 'none' || w.style.display === '';
+  w.style.display = abre ? 'block' : 'none';
+  if (abre) {
+    if (g('com-tipo-sel')) g('com-tipo-sel').value = 'articulo';
+    _comCambiarTipo('articulo');
+    _renderComBloquesList();
+    _actualizarComunicadoPreview();
+  }
+}
+
+function _comCambiarTipo(tipo) {
+  _comTipoActual = tipo;
+  const esTexto = tipo === 'texto';
+  if (g('com-picker-wrap')) g('com-picker-wrap').style.display = esTexto ? 'none'  : 'block';
+  if (g('com-texto-form'))  g('com-texto-form').style.display  = esTexto ? 'block' : 'none';
+  if (!esTexto) _cargarBolPicker(tipo).then(() => _renderComPicker(''));
+}
+
+function _renderComPicker(q) {
+  const wrap = g('com-picker-list'); if (!wrap) return;
+  const tipo = _comTipoActual;
+  const fuente = _bolPickerCache[tipo] || [];
+  const query  = (q || '').toLowerCase().trim();
+  const campoNombre = (tipo === 'articulo' || tipo === 'contenido') ? 'titulo' : 'nombre';
+  const lista = query ? fuente.filter(x => (x[campoNombre] || '').toLowerCase().includes(query)) : fuente;
+
+  if (!lista.length) {
+    wrap.innerHTML = '<div style="padding:14px;text-align:center;font-size:12px;color:var(--t4)">Sin resultados</div>';
+    return;
+  }
+  wrap.innerHTML = lista.slice(0, 200).map(item =>
+    '<div onclick="_comAgregarDesdePicker(\'' + item.id + '\')" style="padding:8px 12px;border-bottom:1px solid var(--bd);cursor:pointer;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' +
+    (item[campoNombre] || '(sin título)') + '</div>'
+  ).join('');
+}
+
+function _comAgregarDesdePicker(id) {
+  const tipo = _comTipoActual;
+  const item = (_bolPickerCache[tipo] || []).find(x => x.id === id);
+  if (!item) return;
+
+  const bloque = { _uid: Date.now() + '_' + Math.random().toString(36).slice(2), tipo };
+  if (tipo === 'articulo') {
+    bloque.titulo   = item.titulo;
+    bloque.extracto = item.extracto || item.subtitulo || '';
+    bloque.imagen   = item.imagen_url || '';
+    bloque.url      = _urlArticuloBoletin(item);
+    bloque._label   = item.titulo;
+  } else if (tipo === 'contenido') {
+    bloque.titulo = item.titulo;
+    bloque.url    = window.location.origin + '/contenido/' + encodeURIComponent(item.slug || item.id);
+    bloque._label = item.titulo;
+  } else if (tipo === 'autor') {
+    bloque.nombre = item.nombre;
+    bloque.cargo  = item.cargo || '';
+    bloque.bio    = item.bio || '';
+    bloque.foto   = item.foto_url || '';
+    bloque.url    = window.location.origin + '/sobre/equipo/' + encodeURIComponent(item.slug || item.id);
+    bloque._label = item.nombre;
+  } else if (tipo === 'seccion') {
+    bloque.nombre      = item.nombre;
+    bloque.descripcion = item.descripcion || '';
+    bloque.url         = window.location.origin + '/secciones/' + encodeURIComponent(item.tag);
+    bloque._label      = item.nombre;
+  }
+
+  _comBloques.push(bloque);
+  _renderComBloquesList();
+  _actualizarComunicadoPreview();
+}
+
+function _comAgregarTexto() {
+  const titulo = g('com-txt-titulo')?.value?.trim();
+  const cuerpo = g('com-txt-cuerpo')?.value?.trim();
+  if (!titulo || !cuerpo) { notif('Escribe título y texto del bloque', 'warn'); return; }
+
+  _comBloques.push({
+    _uid: Date.now() + '_' + Math.random().toString(36).slice(2),
+    tipo: 'texto',
+    titulo,
+    texto: cuerpo,
+    btnTexto: g('com-txt-btn-texto')?.value?.trim() || '',
+    btnUrl:   g('com-txt-btn-url')?.value?.trim()   || '',
+    _label: titulo,
+  });
+
+  if (g('com-txt-titulo'))    g('com-txt-titulo').value    = '';
+  if (g('com-txt-cuerpo'))    g('com-txt-cuerpo').value    = '';
+  if (g('com-txt-btn-texto')) g('com-txt-btn-texto').value = '';
+  if (g('com-txt-btn-url'))   g('com-txt-btn-url').value   = '';
+
+  _renderComBloquesList();
+  _actualizarComunicadoPreview();
+}
+
+function _renderComBloquesList() {
+  const wrap = g('com-bloques-list'); if (!wrap) return;
+  if (g('com-bloques-count')) g('com-bloques-count').textContent = _comBloques.length;
+
+  if (!_comBloques.length) {
+    wrap.innerHTML = '<div style="padding:14px;text-align:center;font-size:12px;color:var(--t4)">Sin bloques — el mensaje de arriba también se puede enviar solo</div>';
+    return;
+  }
+  wrap.innerHTML = _comBloques.map(b =>
+    '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--bd);font-size:12.5px">' +
+    '<span>' + (_BOL_ICONOS[b.tipo] || '•') + '</span>' +
+    '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (b._label || '') + '</span>' +
+    '<button type="button" onclick="_comQuitarBloque(\'' + b._uid + '\')" style="border:none;background:none;cursor:pointer;font-size:13px;color:#c0392b">✕</button>' +
+    '</div>'
+  ).join('');
+}
+
+function _comQuitarBloque(uid) {
+  _comBloques = _comBloques.filter(b => b._uid !== uid);
+  _renderComBloquesList();
+  _actualizarComunicadoPreview();
+}
+
+async function _actualizarComunicadoPreview() {
+  const mensaje = g('com-mensaje')?.value?.trim() || '';
+  const cfgActual = await DB.getConfig().catch(() => ({}));
+  const emailContacto = cfgActual.footer?.email || '';
+  const frame = g('com-preview-frame');
+  if (frame) frame.srcdoc = _construirHTMLCorreo(_comBloques, mensaje, _resendCfg.nombre || 'La Enbajada', emailContacto, 'Comunicado');
+}
+
+async function _enviarComunicado() {
+  const key    = _resendCfg.key;
+  const from   = _resendCfg.contactoFrom || 'contacto@laenbajada.com';
+  const nombre = _resendCfg.nombre;
+  if (!key) { notif('Configura la API key de Resend en Configuración primero', 'warn'); irTab('config', null); return; }
+
+  const destinatario = g('com-destinatario')?.value?.trim();
+  const asunto        = g('com-asunto')?.value?.trim();
+  const mensaje        = g('com-mensaje')?.value?.trim() || '';
+
+  if (!destinatario) { notif('Escribe el correo del destinatario', 'warn'); return; }
+  if (!asunto)        { notif('Escribe el asunto del correo', 'warn'); return; }
+  if (!mensaje && !_comBloques.length) { notif('Escribe un mensaje o agrega al menos un bloque', 'warn'); return; }
+
+  if (!confirm('¿Enviar este comunicado a ' + destinatario + '?')) return;
+
+  const btn = g('btn-enviar-comunicado');
+  const res = g('com-send-result');
+  if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
+  if (res) res.style.display = 'none';
+
+  const cfgActual      = await DB.getConfig().catch(() => ({}));
+  const emailContacto  = cfgActual.footer?.email || '';
+  const html           = _construirHTMLCorreo(_comBloques, mensaje, nombre, emailContacto, 'Comunicado');
+
+  try {
+    const r = await fetch('/.netlify/functions/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ apiKey: key, from: nombre + ' <' + from + '>', to: destinatario, subject: asunto, html }),
+    });
+    const data = await r.json().catch(() => ({}));
+
+    if (r.ok) {
+      if (res) {
+        res.style.display = 'block'; res.style.background = 'rgba(26,122,74,.08)'; res.style.color = '#1a7a4a'; res.style.border = '1.5px solid #c3e9d4';
+        res.innerHTML = '<strong>✓ Comunicado enviado</strong><br>Se envió a ' + destinatario + '.';
+      }
+      notif('✓ Comunicado enviado a ' + destinatario, 'ok');
+      _comBloques = [];
+      _renderComBloquesList();
+      if (g('com-destinatario')) g('com-destinatario').value = '';
+      if (g('com-asunto'))        g('com-asunto').value        = '';
+      if (g('com-mensaje'))       g('com-mensaje').value        = '';
+      _actualizarComunicadoPreview();
+    } else {
+      if (res) {
+        res.style.display = 'block'; res.style.background = 'rgba(192,57,43,.08)'; res.style.color = '#c0392b'; res.style.border = '1.5px solid #f5c6c6';
+        res.innerHTML = '<strong>⚠ No se pudo enviar</strong><br>' + (data.message || data.name || 'Error desconocido');
+      }
+      notif('Error enviando: ' + (data.message || 'desconocido'), 'err');
+    }
+  } catch(e) {
+    notif('Error de red: ' + e.message, 'err');
+    if (res) { res.style.display = 'block'; res.style.background = 'rgba(192,57,43,.08)'; res.style.color = '#c0392b'; res.style.border = '1.5px solid #f5c6c6'; res.innerHTML = '<strong>⚠ Error de red</strong><br>' + e.message; }
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<span style="font-size:16px">✉</span> Enviar comunicado'; }
+  }
 }
 
 /* Mantener _copiarEmailsSubs y _enviarBoletinMailto como aliases */
